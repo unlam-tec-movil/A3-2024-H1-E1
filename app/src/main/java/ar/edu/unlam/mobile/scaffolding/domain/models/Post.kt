@@ -11,5 +11,6 @@ class Post(
     val age:Int,
     val color:COLOR,
     val location:String,
-    val contact:Int
+    val contact:Int,
+    val images:List<String>
 )
