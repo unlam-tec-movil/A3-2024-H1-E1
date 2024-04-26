@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ar.edu.unlam.mobile.scaffolding.ui.screens.homeScreen.HomeScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.mapScreen.MapScreen
 
 @Composable
 fun NavigationComponent(
@@ -14,9 +15,13 @@ fun NavigationComponent(
 ) {
     NavHost(
         navController = navigationController,
-        startDestination = NavigationRoutes.Home.route,
+        startDestination = NavigationRoutes.MapScreen.route,
         modifier = modifier,
     ) {
+        composable(NavigationRoutes.MapScreen.route) {
+            MapScreen()
+        }
+
         composable(NavigationRoutes.Home.route) {
             HomeScreen()
         }
