@@ -16,9 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import ar.edu.unlam.mobile.scaffolding.ui.screens.PostViewModel
 
 @Composable
-fun CardImage(data: String?, pageOffset: Float, content: @Composable () -> Unit) {
+fun CardImage(postViewModel: PostViewModel, page:Int, pageOffset: Float, content: @Composable () -> Unit) {
     var showDialog by remember{
         mutableStateOf(false)
     }
@@ -72,13 +73,10 @@ fun CardImage(data: String?, pageOffset: Float, content: @Composable () -> Unit)
             }
             if (showDialog) {
                 SettingImage(
-                    image = data,
-                    onDissmissButon = { showDialog = false },
-                    onTakePicture = { /*TODO*/ },
-                    onUploadImage = {}
-                ) {
-                    ///logica para subir foto
-                }
+                    postViewModel = postViewModel,
+                    page = page,
+                    onDissmissButon = { showDialog = false }
+                )
             }
         }
     }

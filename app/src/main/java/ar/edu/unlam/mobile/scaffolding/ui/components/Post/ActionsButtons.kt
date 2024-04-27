@@ -16,11 +16,10 @@ import androidx.compose.ui.unit.dp
 fun ActionButton(
     text: String,
     icon: Painter,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
 
-    Button(onClick = onClick) {
+    Button(onClick = {onClick()}) {
         Row {
             Icon(
                 painter = icon,
