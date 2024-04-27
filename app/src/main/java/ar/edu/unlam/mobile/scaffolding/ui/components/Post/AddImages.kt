@@ -27,8 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.screens.PostViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
@@ -42,7 +42,7 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun AddImages(
-    PostViewModel: ViewModel = hiltViewModel(),
+    postViewModel: PostViewModel = hiltViewModel(),
 ){
     val pagerState = rememberPagerState(initialPage = 1)
     /* TODO:declarar variables como la lista, el launch de la camara,
@@ -65,9 +65,9 @@ fun AddImages(
         ) {
             page->
             val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
-
+            /*cambiar por lista del viewModel*/
             if(sliderList.getOrNull(page) == null){
-                CardImage(PostViewModel,page,pageOffset){
+                CardImage(postViewModel = postViewModel,page,pageOffset){
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = null,
@@ -75,7 +75,7 @@ fun AddImages(
                     )
                 }
             }else{
-                CardImage(PostViewModel, page = page, pageOffset) {
+                CardImage(postViewModel = postViewModel, page = page, pageOffset) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(sliderList[page])
@@ -86,7 +86,6 @@ fun AddImages(
                         placeholder = painterResource(id = R.drawable.loading_image),
                         error = painterResource(id = R.drawable.images_error)
                     )
-
                 }
             }
 
