@@ -42,7 +42,7 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun AddImages(
-    postViewModel: PostViewModel = hiltViewModel(),
+    postViewModel: PostViewModel
 ){
     val pagerState = rememberPagerState(initialPage = 1)
     /* TODO:declarar variables como la lista, el launch de la camara,
@@ -116,5 +116,5 @@ fun AddImages(
 @Composable
 fun AdImagePreview(
 ){
-    AddImages()
+    AddImages(postViewModel = PostViewModel() )
 }
