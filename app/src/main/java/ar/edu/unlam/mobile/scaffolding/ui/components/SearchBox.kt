@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,11 +62,22 @@ fun SearchBox(
             Text(placeholderText)
         },
         leadingIcon = {
-            Icon(
-                modifier = Modifier.clickable(onClick = onLeadingIconClick),
-                imageVector = Icons.Filled.Menu,
-                contentDescription = "Filter Icon",
-            )
+            if (active) {
+                Icon(
+                    modifier =
+                        Modifier.clickable {
+                            active = false
+                        },
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back Icon",
+                )
+            } else {
+                Icon(
+                    modifier = Modifier.clickable(onClick = onLeadingIconClick),
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Filter Icon",
+                )
+            }
         },
         trailingIcon = {
             if (active) {

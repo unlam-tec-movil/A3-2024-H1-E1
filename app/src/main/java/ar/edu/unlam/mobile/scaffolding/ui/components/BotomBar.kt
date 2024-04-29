@@ -42,6 +42,10 @@ fun BottomBar(controller: NavHostController) {
             },
         )
         Spacer(modifier = Modifier.width(16.dp))
+        QRFloatingButton(
+            onClick = { /*controller.navigate(NavigationRoutes.QRScanner.route) */ },
+        )
+        Spacer(modifier = Modifier.width(16.dp))
         NavigationBarItem(
             selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == NavigationRoutes.Home.route } == true,
             onClick = { controller.navigate(NavigationRoutes.Home.route) },
