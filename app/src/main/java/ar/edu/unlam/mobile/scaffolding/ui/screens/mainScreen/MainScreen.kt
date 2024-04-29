@@ -21,9 +21,6 @@ fun MainScreen() {
     Scaffold(
         bottomBar = { BottomBar(controller = controller) },
         floatingActionButton = {
-//            IconButton(onClick = { controller.navigate("home") }) {
-//                Icon(Icons.Filled.Add, contentDescription = "add")
-//            }
             FloatingActionButton(onClick = { /*TODO*/ }) {
                 Icon(Icons.Filled.Add, "Floating action button.")
             }
