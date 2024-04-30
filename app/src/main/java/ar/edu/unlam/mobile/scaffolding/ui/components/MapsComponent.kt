@@ -19,7 +19,7 @@ fun MapsComponent(modifier: Modifier = Modifier) {
     }
 
     var properties by remember {
-        mutableStateOf(MapProperties(mapType = MapType.TERRAIN))
+        mutableStateOf(MapProperties(mapType = MapType.NORMAL))
     }
 
     GoogleMap(
@@ -27,5 +27,6 @@ fun MapsComponent(modifier: Modifier = Modifier) {
             modifier
                 .fillMaxSize(),
         uiSettings = uiSettings,
+        properties = properties,
     )
 }
