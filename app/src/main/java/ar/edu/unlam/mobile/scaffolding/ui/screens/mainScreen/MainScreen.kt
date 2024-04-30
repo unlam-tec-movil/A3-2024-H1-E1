@@ -3,8 +3,8 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.mainScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,8 +21,8 @@ fun MainScreen() {
     Scaffold(
         bottomBar = { BottomBar(controller = controller) },
         floatingActionButton = {
-            IconButton(onClick = { controller.navigate("home") }) {
-                Icon(Icons.Filled.Add, contentDescription = "add")
+            FloatingActionButton(onClick = { /*TODO*/ }) {
+                Icon(Icons.Filled.Add, "Floating action button.")
             }
         },
     ) { paddingValue ->
