@@ -175,4 +175,7 @@ fun FilterScreenPreview() {
         onOptionSelected = { option -> selectedOption.value = option },
         onSearchQueryChanged = { /* Implementa la lógica de búsqueda si es necesario */ }
     )
+
+
+    
 }
