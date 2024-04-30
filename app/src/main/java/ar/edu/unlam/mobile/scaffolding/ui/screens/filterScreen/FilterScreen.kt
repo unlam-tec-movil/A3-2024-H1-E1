@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.FilterScreen
+package ar.edu.unlam.mobile.scaffolding.ui.screens.filterScreen
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import java.util.*
 
@@ -22,7 +22,7 @@ import java.util.*
 inline fun <reified T> SelectComponent(
     contactList: List<T>,
     label: String,
-    crossinline onItemSelected: (T) -> Unit
+    crossinline onItemSelected: (T) -> Unit,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(contactList.firstOrNull()) }
@@ -64,11 +64,7 @@ inline fun <reified T> SelectComponent(
 @Composable
 fun FilterScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
-    snackbarHostState: SnackbarHostState,
-    options: List<String>,
-    onOptionSelected: (String) -> Unit,
-    onSearchQueryChanged: (String) -> Unit,
+    controller: NavHostController,
 ) {
     val list = listOf("Perro", "Gato", "Pajaro", "Tortuga", "Otros Especies")
     var selectedText by remember {
@@ -77,103 +73,99 @@ fun FilterScreen(
     var isExpanded by remember {
         mutableStateOf(false)
     }
-    val buttonModifier = Modifier
-        .padding(16.dp)
+    val buttonModifier =
+        Modifier
+            .padding(16.dp)
     var fecha by rememberSaveable { mutableStateOf("") }
     val distanceSliderState = remember { mutableStateOf(0f) }
     val expandedState = remember { mutableStateOf(false) }
     val mCalendar: Calendar = Calendar.getInstance()
 
-    val mDatePickerDialog = DatePickerDialog(
-        LocalContext.current,
-        { _, year: Int, month: Int, day: Int ->
-            fecha = "$day/${month + 1}/$year"
-        },
-        mCalendar.get(Calendar.YEAR),
-        mCalendar.get(Calendar.MONTH),
-        mCalendar.get(Calendar.DAY_OF_MONTH)
-    )
+    val mDatePickerDialog =
+        DatePickerDialog(
+            LocalContext.current,
+            { _, year: Int, month: Int, day: Int ->
+                fecha = "$day/${month + 1}/$year"
+            },
+            mCalendar.get(Calendar.YEAR),
+            mCalendar.get(Calendar.MONTH),
+            mCalendar.get(Calendar.DAY_OF_MONTH),
+        )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "") }
+                title = { Text(text = "") },
             )
         },
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Button(
                     onClick = { /* Implementar la navegacion a pantalla de Lista */ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                 ) {
                     Text("Aplicar Filtros")
                 }
             }
-        }
+        },
     ) {
-            Column(
-                modifier = modifier.fillMaxSize()
-            ) {
-                Text("Distancia: ${distanceSliderState.value} km")
-                Spacer(modifier = Modifier.height(20.dp))
-                Slider(
-                    value = distanceSliderState.value,
-                    onValueChange = { newValue -> distanceSliderState.value = newValue },
-                    valueRange = 0f..10f,
-                    steps = 1
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                Text("Fecha")
-                Spacer(modifier = Modifier.padding(6.dp))
+        Column(
+            modifier = modifier.fillMaxSize(),
+        ) {
+            Text("Distancia: ${distanceSliderState.value} km")
+            Spacer(modifier = Modifier.height(20.dp))
+            Slider(
+                value = distanceSliderState.value,
+                onValueChange = { newValue -> distanceSliderState.value = newValue },
+                valueRange = 0f..10f,
+                steps = 1,
+            )
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text("Fecha")
+            Spacer(modifier = Modifier.padding(6.dp))
 
-                OutlinedTextField(
-                    value = fecha,
-                    onValueChange = { fecha = it },
-                    readOnly = true,
-                    label = { Text(text = "dd/mm/yy") }
-                )
-                Icon(
-                    imageVector = Icons.Filled.DateRange,
-                    contentDescription = null,
-                    modifier = Modifier.size(60.dp)
+            OutlinedTextField(
+                value = fecha,
+                onValueChange = { fecha = it },
+                readOnly = true,
+                label = { Text(text = "dd/mm/yy") },
+            )
+            Icon(
+                imageVector = Icons.Filled.DateRange,
+                contentDescription = null,
+                modifier =
+                    Modifier.size(60.dp)
                         .padding(4.dp)
                         .clickable {
                             mDatePickerDialog.show()
-                        }
-                )
+                        },
+            )
 
-                Spacer(modifier = Modifier.padding(10.dp))
-                Text(text = "Especie")
-                Spacer(modifier = Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text(text = "Especie")
+            Spacer(modifier = Modifier.padding(10.dp))
 
-                SelectComponent(
-                    contactList = list,
-                    label = "Selecciona una forma de contacto"
-                ) { selectedItem ->
-                    selectedText = selectedItem.toString()
-                }
+            SelectComponent(
+                contactList = list,
+                label = "Selecciona una forma de contacto",
+            ) { selectedItem ->
+                selectedText = selectedItem.toString()
             }
-
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun FilterScreenPreview() {
-    val navController = rememberNavController()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val options = listOf("Option 1", "Option 2", "Option 3")
-    val selectedOption = remember { mutableStateOf(options.firstOrNull()) }
+    val controller = rememberNavController()
 
     FilterScreen(
-        navController = navController,
-        snackbarHostState = snackbarHostState,
-        options = options,
-        onOptionSelected = { option -> selectedOption.value = option },
-       onSearchQueryChanged = {}
+        controller = controller,
     )
 }
