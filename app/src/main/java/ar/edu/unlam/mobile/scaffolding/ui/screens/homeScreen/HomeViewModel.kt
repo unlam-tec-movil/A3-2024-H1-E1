@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens
+package ar.edu.unlam.mobile.scaffolding.ui.screens.homeScreen
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
