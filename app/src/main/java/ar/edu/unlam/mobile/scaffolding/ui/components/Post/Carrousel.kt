@@ -25,9 +25,6 @@ fun Carrousel(
     HorizontalPager(
         count = listOfImage.size,
         state = pagerState,
-        contentPadding = PaddingValues(horizontal = 85.dp),
-        modifier = Modifier
-            .height(350.dp)
     ) { page ->
         val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
         /*si el tamaño de la lista es o entonces muestro un boton de agregar fotos */

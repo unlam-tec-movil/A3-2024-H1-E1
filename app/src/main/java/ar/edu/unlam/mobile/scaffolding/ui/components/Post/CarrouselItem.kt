@@ -45,7 +45,6 @@ fun CarrouselItem(
             .clickable {
                 item?.let { onItemClick(it) }
             }
-            .border(2.dp, Color.LightGray)
     ) {
         CoilImage(
             data = item,
