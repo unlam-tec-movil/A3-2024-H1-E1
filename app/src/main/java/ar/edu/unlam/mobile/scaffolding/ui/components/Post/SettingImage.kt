@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,16 +36,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.ui.screens.PostViewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import coil.size.Scale
 
 @Composable
 fun SettingImage(
-    postViewModel:PostViewModel,
-    page:Int,
-    onDissmissButon:()->Unit
+    item:String?,
+    onDissmissButon:()->Unit,
+    onUploadPhoto:(()->Unit)? = null,
+    onTakePhoto: (()->Unit)? = null,
+    onDeletePhoto:(()->Unit)? = null
 ){
     Dialog(
         onDismissRequest = {
@@ -81,19 +81,16 @@ fun SettingImage(
                 ){
                     /*en la parte de data va a ir la funcion del viewModel que traiga un elemento de la lista
                     correspondiente a la page,
-                     * */
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data("https://picsum.photos/id/1/700/800")
-                            .crossfade(true)
-                            .scale(Scale.FIT)
-                            .build(),
+                     * esto deberia ser un componente aparte ya que lo reutilizo */
+                    CoilImage(
+                        data = item,
+                        context = LocalContext.current,
+                        scale = Scale.FILL,
+                        crossFade = true,
                         contentDescription = null,
-                        placeholder = painterResource(id = R.drawable.loading_image) ,
+                        placeHolder = painterResource(id = R.drawable.loading_image),
                         error = painterResource(id = R.drawable.images_error),
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
                 Column(
@@ -107,12 +104,24 @@ fun SettingImage(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         /*en los onclick pasaremos la funcion del viewModel para el que sea correspondiente*/
-                        ActionButton(text = "Subir", icon = painterResource(id = R.drawable.icon_abrir_galeria), onClick = {  })
+                        ActionButton(
+                            text = "Subir",
+                            icon = painterResource(id = R.drawable.icon_abrir_galeria),
+                            onClick = { onUploadPhoto }
+                        )
                         Spacer(modifier = Modifier.padding(3.dp))
-                        ActionButton(text = "Tomar", icon = painterResource(id = R.drawable.icons_tomar_foto), onClick = { })
+                        ActionButton(
+                            text = "Tomar",
+                            icon = painterResource(id = R.drawable.icons_tomar_foto),
+                            onClick = {onTakePhoto }
+                        )
                     }
                     Spacer(modifier = Modifier.padding(3.dp))
-                    ActionButton(text = "Eliminar", icon = painterResource(id = R.drawable.icons_eliminar_img), onClick = {  })
+                    ActionButton(
+                        text = "Eliminar",
+                        icon = painterResource(id = R.drawable.icons_eliminar_img),
+                        onClick = { onDeletePhoto }
+                    )
                 }
             }
         }
@@ -128,9 +137,11 @@ fun DialogImagePreview(){
         modifier = Modifier.background(MaterialTheme.colorScheme.background)
     ) {
         SettingImage(
-            postViewModel = PostViewModel(),
-            page = 0,
+            item = null,
             onDissmissButon = { showDialog = false },
+            onDeletePhoto = {},
+            onTakePhoto = {},
+            onUploadPhoto = {}
         )
     }
 
