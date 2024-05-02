@@ -20,18 +20,17 @@ sealed interface ImageState {
 
 data class ListUIState(val imageState: ImageState)
 
-
 @HiltViewModel
 class ListViewModel
-@Inject
-constructor() : ViewModel() {
-    private val imagePet = MutableStateFlow(ImageState.Loading)
+    @Inject
+    constructor() : ViewModel() {
+        private val imagePet = MutableStateFlow(ImageState.Loading)
 
-    private val _uiState = MutableStateFlow(ListUIState(imagePet.value))
+        private val _uiState = MutableStateFlow(ListUIState(imagePet.value))
 
-    val uiState = _uiState.asStateFlow()
+        val uiState = _uiState.asStateFlow()
 
-    init {
-        _uiState.value = ListUIState(ImageState.Success(R.drawable.pichi))
+        init {
+            _uiState.value = ListUIState(ImageState.Success(R.drawable.pichi))
+        }
     }
-}
