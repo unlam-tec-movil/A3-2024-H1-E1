@@ -133,10 +133,13 @@ fun FilterScreen(
 
         SelectComponent(
             contactList = list,
-            label = "Selecciona una forma de contacto",
+            label = "Selecciona una especie de la mascota",
         ) { selectedItem ->
             selectedText = selectedItem.toString()
         }
+        Spacer (modifier.padding(10.dp))
+        Text
+
         Spacer(modifier = Modifier.weight(1f))
         Row(
             modifier =
