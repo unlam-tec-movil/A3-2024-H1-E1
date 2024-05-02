@@ -35,88 +35,92 @@ import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.theme.PurpleGrey40
 
 @Composable
-fun PostListItem() { //TODO se debe pasar por parametro un elemento de tipo post
+fun PostListItem() { // TODO se debe pasar por parametro un elemento de tipo post
     val verMasButton = remember { mutableStateOf(false) }
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(4.dp))
-            .background(/*MaterialTheme.colorScheme.surfaceVariant*/ color = PurpleGrey40)
-            .padding(horizontal = 10.dp, vertical = 5.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(4.dp))
+                .background(color = PurpleGrey40)
+                .padding(horizontal = 10.dp, vertical = 5.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.pichi),
                     contentDescription = "",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+                    modifier =
+                        Modifier
+                            .size(80.dp)
+                            .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
                 )
             }
             Spacer(modifier = Modifier.width(5.dp))
             Column(
                 modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.Start,
             ) {
                 Text(
-                    text = "Titulo", style = MaterialTheme.typography.titleMedium
+                    text = "Titulo",
+                    style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
                     text = "Edad-Genero-Tamaño",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 if (verMasButton.value) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Descripción\nInfo del contacto: 11223344",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
                 OutlinedButton(
                     onClick = { verMasButton.value = !verMasButton.value },
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.primary
-                    )
+                    colors =
+                        ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.primary,
+                        ),
                 ) {
                     Text(if (verMasButton.value) "Ocultar" else "ver mas", color = Color.Black)
                 }
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column(
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.End,
             ) {
                 Text(text = "En adopcion", style = MaterialTheme.typography.labelSmall)
                 Spacer(modifier = Modifier.size(5.dp))
                 Text(
                     text = "2 km",
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier
-                        .border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            shape = MaterialTheme.shapes.small
-                        )
-                        .padding(8.dp),
-                    textAlign = TextAlign.Center
+                    modifier =
+                        Modifier
+                            .border(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                shape = MaterialTheme.shapes.small,
+                            )
+                            .padding(8.dp),
+                    textAlign = TextAlign.Center,
                 )
             }
-
         }
-
-
     }
 }
+
 @Preview(showBackground = true)
 @Composable
- fun PreviewItem() {
+fun PreviewItem() {
     PostListItem()
 }
