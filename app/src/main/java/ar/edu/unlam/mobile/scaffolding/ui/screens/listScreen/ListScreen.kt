@@ -118,8 +118,8 @@ fun ListScreen() {
 
     Column(
         modifier =
-        Modifier
-            .fillMaxSize(),
+            Modifier
+                .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SearchBox()
