@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.filterScreen
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -16,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,6 +88,7 @@ fun FilterScreen(
     val expandedState = remember { mutableStateOf(false) }
     val mCalendar: Calendar = Calendar.getInstance()
 
+
     val mDatePickerDialog =
         DatePickerDialog(
             LocalContext.current,
@@ -102,16 +105,19 @@ fun FilterScreen(
                 .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Spacer(modifier = Modifier.height(30.dp))
         Text("Distancia: ${distanceSliderState.value} km")
-        Spacer(modifier = Modifier.height(20.dp))
-        Slider(
-            value = distanceSliderState.value,
-            onValueChange = { newValue -> distanceSliderState.value = newValue },
-            valueRange = 0f..10f,
-            steps = 1,
-        )
-        Spacer(modifier = Modifier.padding(10.dp))
-        Text("Fecha")
+        Spacer(modifier = Modifier.height(5.dp))
+        Surface(modifier = Modifier.padding(16.dp)){
+            Slider(
+                value = distanceSliderState.value,
+                onValueChange = { newValue -> distanceSliderState.value = newValue },
+                valueRange = 0f..20f,
+                steps = 20,
+            )
+        }
+        Spacer(modifier = Modifier.padding(5.dp))
+        Text("Selecciona la fecha")
         Spacer(modifier = Modifier.padding(6.dp))
 
         Row {
