@@ -67,9 +67,13 @@ fun FilterScreen(
     modifier: Modifier = Modifier,
     controller: NavHostController,
 ) {
-    val list = listOf("Perro", "Gato", "Pajaro", "Tortuga", "Otros Especies")
+    val list = listOf("","Vista","Busqueda")
     var selectedText by remember {
         mutableStateOf(list[0])
+    }
+    val list1 = listOf("","Perro", "Gato", "Pajaro", "Tortuga", "Otros Especies")
+    var selectedText1 by remember {
+        mutableStateOf(list1[0])
     }
     var isExpanded by remember {
         mutableStateOf(false)
@@ -110,35 +114,44 @@ fun FilterScreen(
         Text("Fecha")
         Spacer(modifier = Modifier.padding(6.dp))
 
-        OutlinedTextField(
-            value = fecha,
-            onValueChange = { fecha = it },
-            readOnly = true,
-            label = { Text(text = "dd/mm/yy") },
-        )
-        Icon(
-            imageVector = Icons.Filled.DateRange,
-            contentDescription = null,
-            modifier =
+        Row {
+            OutlinedTextField(
+                value = fecha,
+                onValueChange = { fecha = it },
+                readOnly = true,
+                label = { Text(text = "dd/mm/yy") },
+            )
+            Icon(
+                imageVector = Icons.Filled.DateRange,
+                contentDescription = null,
+                modifier =
                 Modifier.size(60.dp)
                     .padding(4.dp)
                     .clickable {
                         mDatePickerDialog.show()
                     },
-        )
-
+            )
+        }
         Spacer(modifier = Modifier.padding(10.dp))
-        Text(text = "Especie")
+        /*Text(text = "Especie")
         Spacer(modifier = Modifier.padding(10.dp))
-
+*/
+        SelectComponent(
+            contactList = list1,
+            label = "Selecciona la especie del animal",
+        ) { selectedItem ->
+            selectedText1 = selectedItem.toString()
+        }
+        Spacer (modifier.padding(10.dp))
+     /*   Text(text = "Tipo de publicacion" )
+        Spacer (modifier.padding(10.dp))
+*/
         SelectComponent(
             contactList = list,
-            label = "Selecciona una especie de la mascota",
+            label = "Selecciona un tipo de publicacion",
         ) { selectedItem ->
             selectedText = selectedItem.toString()
         }
-        Spacer (modifier.padding(10.dp))
-        Text
 
         Spacer(modifier = Modifier.weight(1f))
         Row(
@@ -164,6 +177,7 @@ fun FilterScreen(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
