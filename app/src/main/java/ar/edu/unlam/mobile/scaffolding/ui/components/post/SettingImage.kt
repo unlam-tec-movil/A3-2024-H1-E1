@@ -45,7 +45,7 @@ fun SettingImage(
     onUploadPhoto: (() -> Unit)? = null,
     onTakePhoto: (() -> Unit)? = null,
     onDeletePhoto: (() -> Unit)? = null,
-)  {
+) {
     Dialog(
         onDismissRequest = {
             onDissmissButon()

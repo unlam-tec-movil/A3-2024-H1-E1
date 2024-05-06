@@ -19,7 +19,7 @@ fun CoilImage(
     placeHolder: Painter? = null,
     error: Painter? = null,
     modifier: Modifier = Modifier,
-)  {
+) {
     AsyncImage(
         model =
             ImageRequest.Builder(context)
