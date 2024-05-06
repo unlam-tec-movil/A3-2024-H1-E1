@@ -97,7 +97,6 @@ fun FilterScreen(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun FilterScreenPreview() {
