@@ -1,6 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.domain.models
 
-enum class SPECIES {
+enum class Species {
     LORO,
     GATO,
     PERRO,

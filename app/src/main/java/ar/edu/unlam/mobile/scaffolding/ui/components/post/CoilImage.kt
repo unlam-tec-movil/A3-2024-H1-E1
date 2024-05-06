@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.components.Post
+package ar.edu.unlam.mobile.scaffolding.ui.components.post
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -14,22 +14,23 @@ fun CoilImage(
     data: String?,
     context: Context,
     scale: Scale = Scale.FILL,
-    crossFade:Boolean = false,
-    contentDescription:String?,
-    placeHolder:Painter? = null,
-    error : Painter? = null,
-    modifier : Modifier = Modifier
-){
+    crossFade: Boolean = false,
+    contentDescription: String?,
+    placeHolder: Painter? = null,
+    error: Painter? = null,
+    modifier: Modifier = Modifier,
+)  {
     AsyncImage(
-        model = ImageRequest.Builder(context)
-            .data(data)
-            .crossfade(crossFade)
-            .scale(scale)
-            .build(),
+        model =
+            ImageRequest.Builder(context)
+                .data(data)
+                .crossfade(crossFade)
+                .scale(scale)
+                .build(),
         contentDescription = contentDescription,
         placeholder = placeHolder,
         error = error,
         contentScale = ContentScale.Crop,
-        modifier = modifier
+        modifier = modifier,
     )
 }

@@ -1,13 +1,11 @@
-package ar.edu.unlam.mobile.scaffolding.ui.components.Post
+package ar.edu.unlam.mobile.scaffolding.ui.components.post
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -18,33 +16,35 @@ import coil.size.Scale
 
 @Composable
 fun CarrouselItem(
-    item:String?,
+    item: String?,
     pageOffset: Float,
-    onItemClick:(String)->Unit
+    onItemClick: (String) -> Unit,
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        /*animacion de la img , */
-        modifier = Modifier
-            .graphicsLayer {
-                lerp(
-                    start = 0.85f,
-                    stop = 1f,
-                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                )
-                    .also { scale ->
-                        scaleX = scale
-                        scaleY = scale
-                    }
-                alpha = lerp(
-                    start = 0.5f,
-                    stop = 1f,
-                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                )
-            }
-            .clickable {
-                item?.let { onItemClick(it) }
-            }
+        // animacion de la img ,
+        modifier =
+            Modifier
+                .graphicsLayer {
+                    lerp(
+                        start = 0.85f,
+                        stop = 1f,
+                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                    )
+                        .also { scale ->
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                    alpha =
+                        lerp(
+                            start = 0.5f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                        )
+                }
+                .clickable {
+                    item?.let { onItemClick(it) }
+                },
     ) {
         CoilImage(
             data = item,
@@ -54,8 +54,9 @@ fun CarrouselItem(
             contentDescription = null,
             placeHolder = painterResource(id = R.drawable.loading_image),
             error = painterResource(id = R.drawable.images_error),
-            modifier = Modifier
-                .fillMaxSize()
+            modifier =
+                Modifier
+                    .fillMaxSize(),
         )
     }
 }

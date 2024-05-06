@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.components.Post
+package ar.edu.unlam.mobile.scaffolding.ui.components.post
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,45 +40,44 @@ import coil.size.Scale
 
 @Composable
 fun SettingImage(
-    item:String?,
-    onDissmissButon:()->Unit,
-    onUploadPhoto:(()->Unit)? = null,
-    onTakePhoto: (()->Unit)? = null,
-    onDeletePhoto:(()->Unit)? = null
-){
+    item: String?,
+    onDissmissButon: () -> Unit,
+    onUploadPhoto: (() -> Unit)? = null,
+    onTakePhoto: (() -> Unit)? = null,
+    onDeletePhoto: (() -> Unit)? = null,
+)  {
     Dialog(
         onDismissRequest = {
             onDissmissButon()
-        }
+        },
     ) {
-
         Card(
             shape = RoundedCornerShape(10.dp),
-            colors = CardColors(Color.LightGray, Color.Black, Color.Blue, Color.Blue)
+            colors = CardColors(Color.LightGray, Color.Black, Color.Blue, Color.Blue),
         ) {
-            Column(
-            ) {
+            Column {
                 IconButton(
-                    onClick = { onDissmissButon()},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(50.dp)
-                        .wrapContentWidth(Alignment.End)
+                    onClick = { onDissmissButon() },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .size(50.dp)
+                            .wrapContentWidth(Alignment.End),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "cerrar"
+                        contentDescription = "cerrar",
                     )
                 }
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(350.dp)
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .padding(10.dp)
-                    ,
-                    contentAlignment = Alignment.Center
-                ){
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(350.dp)
+                            .clip(shape = RoundedCornerShape(10.dp))
+                            .padding(10.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
                     /*en la parte de data va a ir la funcion del viewModel que traiga un elemento de la lista
                     correspondiente a la page,
                      * esto deberia ser un componente aparte ya que lo reutilizo */
@@ -90,59 +89,60 @@ fun SettingImage(
                         contentDescription = null,
                         placeHolder = painterResource(id = R.drawable.loading_image),
                         error = painterResource(id = R.drawable.images_error),
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     )
                 }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
                     ) {
-                        /*en los onclick pasaremos la funcion del viewModel para el que sea correspondiente*/
+                        // en los onclick pasaremos la funcion del viewModel para el que sea correspondiente
                         ActionButton(
                             text = "Subir",
                             icon = painterResource(id = R.drawable.icon_abrir_galeria),
-                            onClick = { onUploadPhoto }
+                            onClick = { onUploadPhoto },
                         )
                         Spacer(modifier = Modifier.padding(3.dp))
                         ActionButton(
                             text = "Tomar",
                             icon = painterResource(id = R.drawable.icons_tomar_foto),
-                            onClick = {onTakePhoto }
+                            onClick = { onTakePhoto },
                         )
                     }
                     Spacer(modifier = Modifier.padding(3.dp))
                     ActionButton(
                         text = "Eliminar",
                         icon = painterResource(id = R.drawable.icons_eliminar_img),
-                        onClick = { onDeletePhoto }
+                        onClick = { onDeletePhoto },
                     )
                 }
             }
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
-fun DialogImagePreview(){
+fun DialogImagePreview()  {
     var showDialog by remember {
         mutableStateOf(true)
     }
     Surface(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
     ) {
         SettingImage(
             item = null,
             onDissmissButon = { showDialog = false },
             onDeletePhoto = {},
             onTakePhoto = {},
-            onUploadPhoto = {}
+            onUploadPhoto = {},
         )
     }
-
 }

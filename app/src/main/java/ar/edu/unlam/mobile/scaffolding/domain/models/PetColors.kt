@@ -1,6 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.domain.models
 
-enum class COLOR {
+enum class PetColors {
     MARRON,
     BLANCO,
     GRIS,

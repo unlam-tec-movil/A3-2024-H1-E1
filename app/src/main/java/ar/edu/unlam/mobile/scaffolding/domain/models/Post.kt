@@ -6,10 +6,10 @@ class Post(
     val title: String,
     val description:String,
     val dateLost:Date,
-    val species: SPECIES,
-    val sex: SEXO,
+    val species: Species,
+    val sex: Sex,
     val age:Int,
-    val color:COLOR,
+    val color:PetColors,
     val location:String,
     val contact:Int,
     val images:List<String>
