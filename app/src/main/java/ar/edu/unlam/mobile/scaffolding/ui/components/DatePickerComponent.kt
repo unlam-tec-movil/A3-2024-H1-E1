@@ -82,7 +82,7 @@ fun MinimalDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onDateSelected((datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: "") as String)
+                    onDateSelected(datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } as String)
                     onDismissRequest()
                 },
                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 3.dp),
