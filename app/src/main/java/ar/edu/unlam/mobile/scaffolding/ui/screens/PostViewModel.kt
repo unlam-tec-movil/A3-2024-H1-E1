@@ -5,9 +5,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class PostViewModel @Inject constructor(
-    /*TODO:declarar el servicio*/
-):ViewModel(){
+class PostViewModel
+    @Inject
+    constructor() : ViewModel() {
     /*TODO:declarar la lista y las funciones para las imagenes
-    * */
-}
+     * */
+    }
