@@ -4,5 +4,5 @@ enum class Species {
     LORO,
     GATO,
     PERRO,
-    CONEJO
+    CONEJO,
 }
