@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,11 +33,11 @@ fun DatePickerComponent(onDateSelected: (String) -> Unit) {
     val datePickerState =
         rememberDatePickerState(
             selectableDates =
-            object : SelectableDates {
-                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                    return utcTimeMillis <= System.currentTimeMillis()
-                }
-            },
+                object : SelectableDates {
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                        return utcTimeMillis <= System.currentTimeMillis()
+                    }
+                },
         )
     val selectedDate = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) }
     var showDialog by remember { mutableStateOf(false) }
@@ -53,9 +54,9 @@ fun DatePickerComponent(onDateSelected: (String) -> Unit) {
                     imageVector = Icons.Filled.DateRange,
                     contentDescription = null,
                     modifier =
-                    Modifier.clickable {
-                        showDialog = true
-                    },
+                        Modifier.clickable {
+                            showDialog = true
+                        },
                 )
             },
         )
@@ -95,6 +96,7 @@ fun MinimalDialog(
     }
 }
 
+@SuppressLint("SimpleDateFormat")
 fun convertMillisToDate(millis: Long): String {
     val formatter = SimpleDateFormat("dd/MM/yyyy")
     return formatter.format(Date(millis))

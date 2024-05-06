@@ -14,19 +14,17 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FilterScreen(
-    controller: NavHostController,
-) {
-    val list = listOf("","Avistamiento","Busqueda","Dar en adopcion")
+fun FilterScreen(controller: NavHostController) {
+    val list = listOf("", "Avistamiento", "Busqueda", "Dar en adopcion")
     var selectedText by remember {
         mutableStateOf(list[0])
     }
-    val list1 = listOf("","Perro", "Gato", "Pajaro", "Tortuga", "Otros Especies")
+    val list1 = listOf("", "Perro", "Gato", "Pajaro", "Tortuga", "Otros Especies")
     var selectedText1 by remember {
         mutableStateOf(list1[0])
     }
 
-    val distanceSliderState = remember { mutableStateOf(0f) }
+    val distanceSliderState = remember { mutableFloatStateOf(0f) }
     var dateLost by remember { mutableStateOf("") }
 
     Column(
@@ -36,12 +34,12 @@ fun FilterScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(30.dp))
-        Text("Distancia: ${distanceSliderState.value} km")
+        Text("Distancia: ${distanceSliderState.floatValue} km")
         Spacer(modifier = Modifier.height(5.dp))
-        Surface(modifier = Modifier.padding(16.dp)){
+        Surface(modifier = Modifier.padding(16.dp)) {
             Slider(
-                value = distanceSliderState.value,
-                onValueChange = { newValue -> distanceSliderState.value = newValue },
+                value = distanceSliderState.floatValue,
+                onValueChange = { newValue -> distanceSliderState.floatValue = newValue },
                 valueRange = 0f..20f,
                 steps = 20,
             )
@@ -51,10 +49,10 @@ fun FilterScreen(
         Spacer(modifier = Modifier.padding(6.dp))
 
         Row {
-        DatePickerComponent { selectedDate ->
-            dateLost = selectedDate
+            DatePickerComponent { selectedDate ->
+                dateLost = selectedDate
+            }
         }
-     }
         Spacer(modifier = Modifier.padding(10.dp))
 
         ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent(
