@@ -37,7 +37,7 @@ fun SearchBox(
     var text by remember { mutableStateOf(initialText) }
     var active by remember { mutableStateOf(false) }
 
-    val widthFraction = animateFloatAsState(if (active) 1f else 0.98f)
+    val widthFraction = animateFloatAsState(if (active) 1f else 0.96f)
 
     SearchBar(
         modifier =

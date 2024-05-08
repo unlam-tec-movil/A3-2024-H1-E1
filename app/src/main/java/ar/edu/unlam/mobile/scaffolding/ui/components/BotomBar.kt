@@ -3,7 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.components
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,10 +28,10 @@ fun BottomBar(controller: NavHostController) {
             icon = {
                 Icon(
                     imageVector = Icons.Default.LocationOn,
-                    contentDescription = "Map",
+                    contentDescription = NavigationRoutes.MapScreen.route,
                     tint =
                         if (navBackStackEntry?.destination?.hierarchy?.any {
-                                it.route == "Map"
+                                it.route == NavigationRoutes.MapScreen.route
                             } == true
                         ) {
                             MaterialTheme.colorScheme.primary
@@ -47,15 +47,15 @@ fun BottomBar(controller: NavHostController) {
         )
         Spacer(modifier = Modifier.width(16.dp))
         NavigationBarItem(
-            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == NavigationRoutes.Home.route } == true,
-            onClick = { controller.navigate(NavigationRoutes.Home.route) },
+            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == NavigationRoutes.ListScreen.route } == true,
+            onClick = { controller.navigate(NavigationRoutes.ListScreen.route) },
             icon = {
                 Icon(
-                    imageVector = Icons.Filled.List,
-                    contentDescription = "Home",
+                    imageVector = Icons.AutoMirrored.Filled.List,
+                    contentDescription = NavigationRoutes.ListScreen.route,
                     tint =
                         if (navBackStackEntry?.destination?.hierarchy?.any {
-                                it.route == "home"
+                                it.route == NavigationRoutes.ListScreen.route
                             } == true
                         ) {
                             MaterialTheme.colorScheme.primary

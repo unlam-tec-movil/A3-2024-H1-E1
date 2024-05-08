@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ar.edu.unlam.mobile.scaffolding.ui.screens.homeScreen.HomeScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.listScreen.ListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.mapScreen.MapScreen
 
 @Composable
@@ -24,6 +25,10 @@ fun NavigationComponent(
 
         composable(NavigationRoutes.Home.route) {
             HomeScreen()
+        }
+
+        composable(NavigationRoutes.ListScreen.route) {
+            ListScreen()
         }
     }
 }
