@@ -26,12 +26,12 @@ fun MainScreen() {
     print("The currentRoute is: $currentRoute\n")
     Scaffold(
         bottomBar = {
-            if (currentRoute == NavigationRoutes.MapScreen.route || currentRoute == NavigationRoutes.Home.route) {
+            if (currentRoute == NavigationRoutes.MapScreen.route || currentRoute == NavigationRoutes.ListScreen.route) {
                 BottomBar(controller = controller)
             }
         },
         floatingActionButton = {
-            if (currentRoute == NavigationRoutes.MapScreen.route || currentRoute == NavigationRoutes.Home.route) {
+            if (currentRoute == NavigationRoutes.MapScreen.route || currentRoute == NavigationRoutes.ListScreen.route) {
                 FloatingActionButton(onClick = { /*TODO*/ }) {
                     Icon(Icons.Filled.Add, "Floating action button.")
                 }
