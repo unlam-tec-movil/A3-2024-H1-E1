@@ -8,11 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SearchBox
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
 @Composable
-fun MapScreen() {
+fun MapScreen(controller: NavHostController) {
     val viewModel: MapScreenViewModel = hiltViewModel()
     Box(
         modifier =
@@ -26,7 +28,9 @@ fun MapScreen() {
                     .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SearchBox()
+            SearchBox(onLeadingIconClick = {
+                controller.navigate(NavigationRoutes.FilterScreen.route)
+            })
             Spacer(
                 modifier =
                     Modifier
