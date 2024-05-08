@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -36,7 +38,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Pink80
 
 @Composable
-fun PostScreen() {
+fun PublicationEditScreen() {
     var selectedItemForSetting by remember {
         mutableStateOf("")
     }
@@ -58,8 +60,12 @@ fun PostScreen() {
     var location by remember { mutableStateOf("") }
     var contact by remember { mutableStateOf("") }
     val contactList = listOf("1188223322", "1120332222")
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier =
+            Modifier.fillMaxSize()
+                .verticalScroll(scrollState),
     ) {
         Spacer(modifier = Modifier.padding(5.dp))
         Card(
@@ -157,5 +163,5 @@ fun PostScreen() {
 @Preview(showBackground = true)
 @Composable
 fun PostPreview() {
-    PostScreen()
+    PublicationEditScreen()
 }

@@ -45,7 +45,11 @@ fun DatePickerComponent(onDateSelected: (String) -> Unit) {
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = selectedDate ?: "",
+// <<<<<<< HEAD
             label = { Text("Ingrese la fecha") },
+// =======
+//            label = { Text("dd/mm/yyyy") },
+// >>>>>>> develop
             onValueChange = { /* No hacer nada, ya que es de solo lectura */ },
             readOnly = true,
             trailingIcon = {
@@ -82,7 +86,11 @@ fun MinimalDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onDateSelected((datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: "") as String)
+// <<<<<<< HEAD
+//                    onDateSelected((datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: "") as String)
+// =======
+                    onDateSelected(datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } as String)
+// >>>>>>> develop
                     onDismissRequest()
                 },
                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 3.dp),
