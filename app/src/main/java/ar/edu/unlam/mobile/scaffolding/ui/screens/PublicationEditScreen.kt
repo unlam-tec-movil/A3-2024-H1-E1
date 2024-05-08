@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -65,7 +66,9 @@ fun PublicationEditScreen() {
     Column(
         modifier =
             Modifier.fillMaxSize()
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
+                .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Spacer(modifier = Modifier.padding(5.dp))
         Card(

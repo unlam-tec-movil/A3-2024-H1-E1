@@ -34,7 +34,7 @@ fun NavigationComponent(
         }
 
         composable(NavigationRoutes.ListScreen.route) {
-            ListScreen()
+            ListScreen(controller = navigationController)
         }
 
         composable(NavigationRoutes.PublicationEditScreen.route) {
