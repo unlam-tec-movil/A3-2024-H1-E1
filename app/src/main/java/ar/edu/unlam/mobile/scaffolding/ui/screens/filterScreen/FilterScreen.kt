@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
+import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -30,7 +31,8 @@ fun FilterScreen(controller: NavHostController) {
     Column(
         modifier =
             Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(30.dp))
@@ -54,8 +56,7 @@ fun FilterScreen(controller: NavHostController) {
             }
         }
         Spacer(modifier = Modifier.padding(10.dp))
-
-        ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent(
+        SelectComponent(
             list = list1,
             label = "Selecciona la especie del animal",
         ) { selectedItem ->
@@ -63,7 +64,7 @@ fun FilterScreen(controller: NavHostController) {
         }
 
         Spacer(modifier = Modifier.padding(10.dp))
-        ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent(
+        SelectComponent(
             list = list,
             label = "Selecciona un tipo de publicacion",
         ) { selectedItem ->
