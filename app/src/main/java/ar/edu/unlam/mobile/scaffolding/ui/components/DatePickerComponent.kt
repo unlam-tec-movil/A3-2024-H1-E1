@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,7 +45,11 @@ fun DatePickerComponent(onDateSelected: (String) -> Unit) {
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = selectedDate ?: "",
-            label = { Text("dd/mm/yyyy") },
+// <<<<<<< HEAD
+            label = { Text("Ingrese la fecha") },
+// =======
+//            label = { Text("dd/mm/yyyy") },
+// >>>>>>> develop
             onValueChange = { /* No hacer nada, ya que es de solo lectura */ },
             readOnly = true,
             trailingIcon = {
@@ -83,7 +86,11 @@ fun MinimalDialog(
         confirmButton = {
             Button(
                 onClick = {
+// <<<<<<< HEAD
+//                    onDateSelected((datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: "") as String)
+// =======
                     onDateSelected(datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } as String)
+// >>>>>>> develop
                     onDismissRequest()
                 },
                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 3.dp),
@@ -96,7 +103,6 @@ fun MinimalDialog(
     }
 }
 
-@SuppressLint("SimpleDateFormat")
 fun convertMillisToDate(millis: Long): String {
     val formatter = SimpleDateFormat("dd/MM/yyyy")
     return formatter.format(Date(millis))

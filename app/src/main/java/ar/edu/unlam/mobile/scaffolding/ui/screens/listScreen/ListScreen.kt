@@ -7,14 +7,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationCell
 import ar.edu.unlam.mobile.scaffolding.ui.components.SearchBox
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
 @Composable
-fun ListScreen() {
+fun ListScreen(controller: NavHostController) {
     val viewModel: ListViewModel = hiltViewModel()
     val list =
         listOf(
@@ -122,17 +123,13 @@ fun ListScreen() {
                 .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        SearchBox()
+        SearchBox(onLeadingIconClick = {
+            controller.navigate(NavigationRoutes.FilterScreen.route)
+        })
         LazyColumn {
             items(list) { item ->
                 PublicationCell(item, onClick = {})
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewItem() {
-    ListScreen()
 }

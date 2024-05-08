@@ -45,3 +45,4 @@ daggerHiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "dagg
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover"}
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+

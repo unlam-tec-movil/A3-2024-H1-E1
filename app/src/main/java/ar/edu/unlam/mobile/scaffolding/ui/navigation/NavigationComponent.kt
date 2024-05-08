@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import ar.edu.unlam.mobile.scaffolding.ui.screens.PublicationEditScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.filterScreen.FilterScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.homeScreen.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.listScreen.ListScreen
@@ -33,7 +34,11 @@ fun NavigationComponent(
         }
 
         composable(NavigationRoutes.ListScreen.route) {
-            ListScreen()
+            ListScreen(controller = navigationController)
+        }
+
+        composable(NavigationRoutes.PublicationEditScreen.route) {
+            PublicationEditScreen()
         }
     }
 }
