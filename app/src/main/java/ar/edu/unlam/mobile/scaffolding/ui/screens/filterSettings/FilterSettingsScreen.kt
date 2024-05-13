@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.filterScreen
+package ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
@@ -15,12 +16,16 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FilterScreen(controller: NavHostController) {
-    val list = listOf("", "Avistamiento", "Busqueda", "Dar en adopcion")
+fun FilterSettingsScreen(
+    modifier: Modifier = Modifier,
+    controller: NavHostController,
+    viewModel: FilterSettingsViewModel = hiltViewModel(),
+) {
+    val list = listOf("Avistamiento", "Busqueda", "Dar en adopcion")
     var selectedText by remember {
         mutableStateOf(list[0])
     }
-    val list1 = listOf("", "Perro", "Gato", "Pajaro", "Tortuga", "Otros Especies")
+    val list1 = listOf("Perro", "Gato", "Pajaro", "Tortuga", "Otros Especies")
     var selectedText1 by remember {
         mutableStateOf(list1[0])
     }
@@ -32,13 +37,17 @@ fun FilterScreen(controller: NavHostController) {
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Spacer(modifier = Modifier.height(30.dp))
-        Text("Distancia: ${distanceSliderState.floatValue} km")
-        Spacer(modifier = Modifier.height(5.dp))
-        Surface(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp),
+        ) {
+            Text("Distancia: ${distanceSliderState.floatValue} km")
             Slider(
                 value = distanceSliderState.floatValue,
                 onValueChange = { newValue -> distanceSliderState.floatValue = newValue },
@@ -46,29 +55,41 @@ fun FilterScreen(controller: NavHostController) {
                 steps = 20,
             )
         }
-        Spacer(modifier = Modifier.padding(5.dp))
-        Text("Selecciona la fecha")
-        Spacer(modifier = Modifier.padding(6.dp))
-
-        Row {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+        ) {
+            Text("Fecha de perdida: $dateLost")
             DatePickerComponent { selectedDate ->
                 dateLost = selectedDate
             }
         }
-        Spacer(modifier = Modifier.padding(10.dp))
-        SelectComponent(
-            list = list1,
-            label = "Selecciona la especie del animal",
-        ) { selectedItem ->
-            selectedText1 = selectedItem
+
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+        ) {
+            Text("Especie")
+            SelectComponent(
+                list = list1,
+            ) { selectedItem ->
+                selectedText1 = selectedItem
+            }
         }
 
-        Spacer(modifier = Modifier.padding(10.dp))
-        SelectComponent(
-            list = list,
-            label = "Selecciona un tipo de publicacion",
-        ) { selectedItem ->
-            selectedText = selectedItem
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+        ) {
+            Text("Tipo de publicacion")
+            SelectComponent(
+                list = list,
+            ) { selectedItem ->
+                selectedText = selectedItem
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -101,7 +122,7 @@ fun FilterScreen(controller: NavHostController) {
 fun FilterScreenPreview() {
     val controller = rememberNavController()
 
-    FilterScreen(
+    FilterSettingsScreen(
         controller = controller,
     )
 }

@@ -9,7 +9,9 @@ sealed class NavigationRoutes(val route: String) {
 
     object FilterScreen : NavigationRoutes("filterScreen")
 
-    object PublicationScreen : NavigationRoutes("publicationScreen")
+    object PublicationScreen : NavigationRoutes("publicationScreen/{publicationId}") {
+        fun withPublicationId(publicationId: Long) = "publicationScreen/$publicationId"
+    }
 
     object ProfileScreen : NavigationRoutes("profileScreen")
 

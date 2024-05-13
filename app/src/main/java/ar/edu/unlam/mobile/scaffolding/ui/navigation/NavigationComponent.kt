@@ -5,11 +5,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import ar.edu.unlam.mobile.scaffolding.ui.screens.PublicationEditScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.filterScreen.FilterScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.homeScreen.HomeScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.listScreen.ListScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.mapScreen.MapScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings.FilterSettingsScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.home.HomeScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationDetails.PublicationDetailsScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit.PublicationEditScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList.PublicationsListScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap.PublicationsMapScreen
 
 @Composable
 fun NavigationComponent(
@@ -22,23 +23,31 @@ fun NavigationComponent(
         modifier = modifier,
     ) {
         composable(NavigationRoutes.MapScreen.route) {
-            MapScreen(controller = navigationController)
+            PublicationsMapScreen(controller = navigationController)
+        }
+
+        composable(NavigationRoutes.ListScreen.route) {
+            PublicationsListScreen(controller = navigationController)
         }
 
         composable(NavigationRoutes.Home.route) {
             HomeScreen()
         }
 
-        composable(NavigationRoutes.FilterScreen.route) {
-            FilterScreen(controller = navigationController)
-        }
-
-        composable(NavigationRoutes.ListScreen.route) {
-            ListScreen(controller = navigationController)
-        }
-
         composable(NavigationRoutes.PublicationEditScreen.route) {
-            PublicationEditScreen()
+            PublicationEditScreen(controller = navigationController)
+        }
+
+        composable(NavigationRoutes.FilterScreen.route) {
+            FilterSettingsScreen(controller = navigationController)
+        }
+
+        composable(NavigationRoutes.PublicationScreen.route) { navBackStackEntry ->
+            val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
+            PublicationDetailsScreen(
+                controller = navigationController,
+                publicationId = publicationId.toLong(),
+            )
         }
     }
 }

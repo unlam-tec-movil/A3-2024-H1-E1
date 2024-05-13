@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.listScreen
+package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,8 +15,11 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.SearchBox
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
 @Composable
-fun ListScreen(controller: NavHostController) {
-    val viewModel: ListViewModel = hiltViewModel()
+fun PublicationsListScreen(
+    modifier: Modifier = Modifier,
+    controller: NavHostController,
+    viewModel: PublicationsListViewModel = hiltViewModel(),
+) {
     val list =
         listOf(
             PublicationCellModel(

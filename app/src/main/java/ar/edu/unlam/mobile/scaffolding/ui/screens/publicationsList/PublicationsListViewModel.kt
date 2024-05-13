@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.listScreen
+package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList
 
 import android.media.Image
 import androidx.lifecycle.ViewModel
@@ -21,7 +21,7 @@ sealed interface ImageState {
 data class ListUIState(val imageState: ImageState)
 
 @HiltViewModel
-class ListViewModel
+class PublicationsListViewModel
     @Inject
     constructor() : ViewModel() {
         private val imagePet = MutableStateFlow(ImageState.Loading)
