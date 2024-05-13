@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.mapScreen
+package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,8 +14,11 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.SearchBox
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
 @Composable
-fun MapScreen(controller: NavHostController) {
-    val viewModel: MapScreenViewModel = hiltViewModel()
+fun PublicationsMapScreen(
+    modifier: Modifier = Modifier,
+    controller: NavHostController,
+    viewModel: PublicationsMapViewModel = hiltViewModel(),
+) {
     Box(
         modifier =
             Modifier

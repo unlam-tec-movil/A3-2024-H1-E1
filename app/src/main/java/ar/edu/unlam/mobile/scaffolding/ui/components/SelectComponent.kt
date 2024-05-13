@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 @Composable
 inline fun <reified T> SelectComponent(
     list: List<T>,
-    label: String,
+    placeholder: String = "",
     crossinline onItemSelected: (T) -> Unit,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -37,7 +37,7 @@ inline fun <reified T> SelectComponent(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
             },
             modifier = Modifier.menuAnchor().fillMaxWidth(),
-            label = { Text(text = label) },
+            placeholder = { Text(placeholder) },
         )
         ExposedDropdownMenu(
             expanded = isExpanded,

@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.homeScreen
+package ar.edu.unlam.mobile.scaffolding.ui.screens.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
