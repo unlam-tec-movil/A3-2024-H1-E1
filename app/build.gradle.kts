@@ -97,7 +97,11 @@ dependencies {
     testImplementation(libs.google.dagger.hilt.android.testing)
 
     // Carrousel
-    implementation("com.google.accompanist:accompanist-pager:0.20.0")
-    implementation("androidx.compose.ui:ui-util:1.6.6")
-    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation(libs.accompanist.pager)
+    implementation(libs.androidx.compose.ui.util)
+    implementation(libs.coil.compose)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.core)
 }
