@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.daggerHiltAndroid)
     alias(libs.plugins.kover)
     alias(libs.plugins.ktlint)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.google.service)
 }
 
 android {
@@ -108,16 +108,10 @@ dependencies {
     implementation(libs.androidx.datastore.core)
 
     // firebase
-    implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
-    implementation("com.google.android.gms:play-services-auth:21.1.0")
-    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation(libs.firebase.auth)
+    implementation(libs.google.play.service)
+    implementation(libs.firebase.common.ktx)
 
-    // corrutinas
-    // couruutinas
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    // lifeScope
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    // life
+    implementation(libs.lifecycleViewModel)
 }

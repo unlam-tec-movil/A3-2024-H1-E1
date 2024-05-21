@@ -12,7 +12,7 @@ class AuthNetworkImpl
     constructor(
         private val firebaseAuth: FirebaseAuth,
     ) : AuthNetworkInterface {
-        // intentamos googlearnos
+        // intentamos iniciar sesison con la credencial de google
         override suspend fun signInWithGoogleCredential(credential: AuthCredential): AuthRes<FirebaseUser> {
             return try {
                 val firebaseUser = firebaseAuth.signInWithCredential(credential).await()

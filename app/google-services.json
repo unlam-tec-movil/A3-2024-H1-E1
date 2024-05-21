@@ -28,7 +28,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD6Rg34X-_Efk2Zpky29zgSnC47Y2CvqL4"
+          "current_key": "${firebase.apikey}"
         }
       ],
       "services": {

@@ -6,5 +6,5 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.ktlint) apply false
-    id("com.google.gms.google-services") version "4.4.1" apply false
+    alias(libs.plugins.google.service) apply false
 }
