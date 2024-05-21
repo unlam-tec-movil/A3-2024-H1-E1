@@ -104,4 +104,11 @@ dependencies {
     // DataStore
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.core)
+
+    // camerax
+    implementation(libs.android.camera.core)
+    implementation(libs.android.camera.camera2)
+    implementation(libs.android.camera.lifecycle)
+    implementation(libs.android.camera.view)
+    implementation(libs.android.camera.extensions)
 }

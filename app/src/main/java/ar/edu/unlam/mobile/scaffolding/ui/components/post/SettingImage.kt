@@ -36,8 +36,6 @@ import coil.size.Scale
 fun SettingImage(
     item: String?,
     onDissmissButon: () -> Unit,
-    onUploadPhoto: (() -> Unit)? = null,
-    onTakePhoto: (() -> Unit)? = null,
     onDeletePhoto: (() -> Unit)? = null,
 ) {
     Dialog(
@@ -53,10 +51,10 @@ fun SettingImage(
                 IconButton(
                     onClick = { onDissmissButon() },
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .size(50.dp)
-                            .wrapContentWidth(Alignment.End),
+                    Modifier
+                        .fillMaxWidth()
+                        .size(50.dp)
+                        .wrapContentWidth(Alignment.End),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -65,11 +63,11 @@ fun SettingImage(
                 }
                 Box(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(350.dp)
-                            .clip(shape = RoundedCornerShape(10.dp))
-                            .padding(10.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .height(350.dp)
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .padding(10.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     /*en la parte de data va a ir la funcion del viewModel que traiga un elemento de la lista
@@ -91,26 +89,6 @@ fun SettingImage(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        // en los onclick pasaremos la funcion del viewModel para el que sea correspondiente
-                        ActionButton(
-                            text = "Subir",
-                            icon = painterResource(id = R.drawable.icon_abrir_galeria),
-                            onClick = { onUploadPhoto },
-                        )
-                        Spacer(modifier = Modifier.padding(3.dp))
-                        ActionButton(
-                            text = "Tomar",
-                            icon = painterResource(id = R.drawable.icons_tomar_foto),
-                            onClick = { onTakePhoto },
-                        )
-                    }
-                    Spacer(modifier = Modifier.padding(3.dp))
                     ActionButton(
                         text = "Eliminar",
                         icon = painterResource(id = R.drawable.icons_eliminar_img),

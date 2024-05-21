@@ -1,5 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit
 
+import android.Manifest
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,9 +30,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -42,6 +46,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
+import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Pink80
 
@@ -53,6 +58,9 @@ fun PublicationEditScreen(
 ) {
     var selectedItemForSetting by remember {
         mutableStateOf("")
+    }
+    var showDialogSelectedUpadateIamge by remember {
+        mutableStateOf(false)
     }
     var showDialog by remember { mutableStateOf(false) }
     val openDialog: (String) -> Unit = { selectedItem ->
@@ -74,9 +82,12 @@ fun PublicationEditScreen(
     val contactList = listOf("1188223322", "1120332222")
     val scrollState = rememberScrollState()
 
+    val context = LocalContext.current
+    val camerXPermission = arrayOf(Manifest.permission.CAMERA)
     Column(
         modifier =
-            Modifier.fillMaxSize()
+            Modifier
+                .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -97,20 +108,39 @@ fun PublicationEditScreen(
             )
         }
         Button(
-            onClick = { /*logica para agregar foto*/ },
+            onClick = {
+                if (viewModel.hasRequirePermission(camerXPermission, context)) {
+                    // si nos dieron los permisos vamos a elegir photo o
+                    showDialogSelectedUpadateIamge = true
+                } else {
+                    // pedimos permiso
+                    ActivityCompat.requestPermissions(
+                        context as Activity,
+                        camerXPermission,
+                        0,
+                    )
+                }
+            },
             modifier =
-                Modifier.align(Alignment.CenterHorizontally)
+                Modifier
+                    .align(Alignment.CenterHorizontally)
                     .padding(top = 5.dp),
         ) {
             Text(text = "Añadir Foto")
+        }
+        if (showDialogSelectedUpadateIamge) {
+            SelectedFormUpdateImage(
+                onDissmisButton = { showDialogSelectedUpadateIamge = false },
+                onCameraSelected = { /*ir a la camaraScreen*/ },
+            ) {
+                // ir a la galeria
+            }
         }
         if (showDialog) {
             // las acciones se hacen cuando este el viewModel
             SettingImage(
                 item = selectedItemForSetting,
                 onDissmissButon = { showDialog = false },
-                onUploadPhoto = null,
-                onTakePhoto = null,
                 onDeletePhoto = null,
             )
         }
