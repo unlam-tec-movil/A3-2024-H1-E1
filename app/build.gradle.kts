@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.daggerHiltAndroid)
     alias(libs.plugins.kover)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.google.service)
 }
 
 android {
@@ -78,6 +79,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.common.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -104,6 +106,14 @@ dependencies {
     // DataStore
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.core)
+
+    // firebase
+    implementation(libs.firebase.auth)
+    implementation(libs.google.play.service)
+    implementation(libs.firebase.common.ktx)
+
+    // life
+    implementation(libs.lifecycleViewModel)
 
     // camerax
     implementation(libs.android.camera.core)
