@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import ar.edu.unlam.mobile.scaffolding.ui.screens.cameraScreen.CameraScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings.FilterSettingsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.home.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationDetails.PublicationDetailsScreen
@@ -33,7 +34,9 @@ fun NavigationComponent(
         composable(NavigationRoutes.Home.route) {
             HomeScreen()
         }
-
+        composable(NavigationRoutes.CameraScreen.route) {
+            CameraScreen(navHostController = navigationController)
+        }
         composable(NavigationRoutes.PublicationEditScreen.route) {
             PublicationEditScreen(controller = navigationController)
         }

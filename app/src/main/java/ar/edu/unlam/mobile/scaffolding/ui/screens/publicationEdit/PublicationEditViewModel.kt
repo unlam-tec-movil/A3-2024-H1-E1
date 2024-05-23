@@ -11,14 +11,12 @@ import javax.inject.Inject
 class PublicationEditViewModel
     @Inject
     constructor() : ViewModel() {
-
         fun hasRequirePermission(
             camerXPermisssion: Array<String>,
-            context: Context
-            ): Boolean{
+            context: Context,
+        ): Boolean  {
             return camerXPermisssion.all {
-                ContextCompat.checkSelfPermission(context,it) == PackageManager.PERMISSION_GRANTED
+                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
             }
         }
-
     }

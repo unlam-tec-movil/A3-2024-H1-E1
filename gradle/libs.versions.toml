@@ -19,6 +19,7 @@ accompanistPager = "0.20.0"
 androidxComposeUiUtil = "1.6.7"
 coilCompose = "2.4.0"
 cameraX = "1.3.0-rc01"
+storage = "20.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +54,8 @@ android-camera-camera2 = {group = "androidx.camera", name = "camera-camera2",ver
 android-camera-lifecycle = {group = "androidx.camera", name = "camera-lifecycle",version.ref = "cameraX"}
 android-camera-view = {group = "androidx.camera", name = "camera-view",version.ref = "cameraX"}
 android-camera-extensions = {group = "androidx.camera", name = "camera-extensions",version.ref = "cameraX"}
+
+firebase-storage = {group = "com.google.firebase",name = "firebase-storage-ktx",version.ref = "storage"}
 
 
 [plugins]

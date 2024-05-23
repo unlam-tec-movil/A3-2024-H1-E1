@@ -2,6 +2,12 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
+import android.graphics.ImageDecoder
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,8 +54,10 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Pink80
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun PublicationEditScreen(
     modifier: Modifier = Modifier,
@@ -59,7 +67,7 @@ fun PublicationEditScreen(
     var selectedItemForSetting by remember {
         mutableStateOf("")
     }
-    var showDialogSelectedUpadateIamge by remember {
+    var showDialogSelectedUpadateImage by remember {
         mutableStateOf(false)
     }
     var showDialog by remember { mutableStateOf(false) }
@@ -83,7 +91,23 @@ fun PublicationEditScreen(
     val scrollState = rememberScrollState()
 
     val context = LocalContext.current
-    val camerXPermission = arrayOf(Manifest.permission.CAMERA)
+    val permissionRequiere = arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+
+    // el gallery launcher
+    val galleryLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val imageUri = result.data?.data
+                val source =
+                    imageUri?.let { img ->
+                        ImageDecoder.createSource(context.contentResolver, img)
+                    }
+                // aca lo convertimos a bitmap y se lo enviamos al vm
+            }
+        }
+
     Column(
         modifier =
             Modifier
@@ -109,14 +133,14 @@ fun PublicationEditScreen(
         }
         Button(
             onClick = {
-                if (viewModel.hasRequirePermission(camerXPermission, context)) {
+                if (viewModel.hasRequirePermission(permissionRequiere, context)) {
                     // si nos dieron los permisos vamos a elegir photo o
-                    showDialogSelectedUpadateIamge = true
+                    showDialogSelectedUpadateImage = true
                 } else {
                     // pedimos permiso
                     ActivityCompat.requestPermissions(
                         context as Activity,
-                        camerXPermission,
+                        permissionRequiere,
                         0,
                     )
                 }
@@ -128,12 +152,17 @@ fun PublicationEditScreen(
         ) {
             Text(text = "Añadir Foto")
         }
-        if (showDialogSelectedUpadateIamge) {
+        if (showDialogSelectedUpadateImage) {
             SelectedFormUpdateImage(
-                onDissmisButton = { showDialogSelectedUpadateIamge = false },
-                onCameraSelected = { /*ir a la camaraScreen*/ },
+                onDissmisButton = { showDialogSelectedUpadateImage = false },
+                onCameraSelected = { controller.navigate(NavigationRoutes.CameraScreen.route) },
             ) {
                 // ir a la galeria
+                // galeria hacer con un intent
+                val pickImageIntent =
+                    Intent(Intent.ACTION_PICK).apply {
+                        type = "image/*"
+                    }
             }
         }
         if (showDialog) {
@@ -300,6 +329,7 @@ fun PublicationEditScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Preview(showBackground = true)
 @Composable
 fun PublicationEditScreenPreview() {

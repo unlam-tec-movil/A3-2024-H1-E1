@@ -18,6 +18,8 @@ sealed class NavigationRoutes(val route: String) {
     object LoginScreen : NavigationRoutes("loginScreen")
 
     object PublicationEditScreen : NavigationRoutes("publicationEditScreen")
+
+    object CameraScreen : NavigationRoutes("cameraScreen")
 }
 /*
 For futures screens you can add here the new routes
