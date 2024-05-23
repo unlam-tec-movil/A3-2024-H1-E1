@@ -40,10 +40,6 @@ fun LoginScreen(navHostController: NavHostController) {
     val loginViewModel: LoginViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    // tengo que hacer los datos
-    val textoDeBienvenida =
-        "Encontrar a nuestros amigos peludos perdidos es una preocupación que compartimos. " +
-            "Estamos aquí para ayudarte a reunirte con tu mascota o a ayudar a otros a hacer lo mismo."
 
     val googleSignInLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { activityResult ->
@@ -83,27 +79,6 @@ fun LoginScreen(navHostController: NavHostController) {
                 .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        /*
-        Text(
-            text = "Binvenidos a HuellasPerdidas",
-            fontSize = 24.sp,
-            color = Color.Magenta,
-        )
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.icons_pet_woman_login),
-                contentDescription = null,
-                tint = Color.Unspecified,
-            )
-            Text(text = textoDeBienvenida)
-        }
-         */
         Column(
             modifier =
                 Modifier

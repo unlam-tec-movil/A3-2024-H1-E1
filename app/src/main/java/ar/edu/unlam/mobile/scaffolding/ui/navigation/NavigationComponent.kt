@@ -12,6 +12,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationDetails.Publication
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit.PublicationEditScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList.PublicationsListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap.PublicationsMapScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.splashScreen.SplashScreen
 
 @Composable
 fun NavigationComponent(
@@ -20,9 +21,12 @@ fun NavigationComponent(
 ) {
     NavHost(
         navController = navigationController,
-        startDestination = NavigationRoutes.LoginScreen.route,
+        startDestination = NavigationRoutes.Splash.route,
         modifier = modifier,
     ) {
+        composable(NavigationRoutes.Splash.route) {
+            SplashScreen(navHostController = navigationController)
+        }
         composable(NavigationRoutes.LoginScreen.route) {
             LoginScreen(navHostController = navigationController)
         }
