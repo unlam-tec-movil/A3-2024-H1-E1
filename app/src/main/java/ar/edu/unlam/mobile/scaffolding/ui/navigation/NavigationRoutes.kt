@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.ui.navigation
 
 sealed class NavigationRoutes(val route: String) {
+    object Splash : NavigationRoutes("splashScreen")
+
     object Home : NavigationRoutes("home")
 
     object MapScreen : NavigationRoutes("mapScreen")

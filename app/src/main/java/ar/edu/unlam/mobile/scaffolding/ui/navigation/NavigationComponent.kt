@@ -7,10 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings.FilterSettingsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.home.HomeScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.loginScreen.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationDetails.PublicationDetailsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit.PublicationEditScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList.PublicationsListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap.PublicationsMapScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.splashScreen.SplashScreen
 
 @Composable
 fun NavigationComponent(
@@ -19,9 +21,15 @@ fun NavigationComponent(
 ) {
     NavHost(
         navController = navigationController,
-        startDestination = NavigationRoutes.MapScreen.route,
+        startDestination = NavigationRoutes.Splash.route,
         modifier = modifier,
     ) {
+        composable(NavigationRoutes.Splash.route) {
+            SplashScreen(navHostController = navigationController)
+        }
+        composable(NavigationRoutes.LoginScreen.route) {
+            LoginScreen(navHostController = navigationController)
+        }
         composable(NavigationRoutes.MapScreen.route) {
             PublicationsMapScreen(controller = navigationController)
         }
