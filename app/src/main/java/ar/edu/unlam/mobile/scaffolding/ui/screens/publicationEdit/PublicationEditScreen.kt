@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.ImageDecoder
 import android.os.Build
+import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -38,12 +40,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
 import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
@@ -91,7 +91,10 @@ fun PublicationEditScreen(
     val scrollState = rememberScrollState()
 
     val context = LocalContext.current
-    val permissionRequiere = arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+    val cameraXPermission =
+        arrayOf(
+            Manifest.permission.CAMERA,
+        )
 
     // el gallery launcher
     val galleryLauncher =
@@ -105,6 +108,19 @@ fun PublicationEditScreen(
                         ImageDecoder.createSource(context.contentResolver, img)
                     }
                 // aca lo convertimos a bitmap y se lo enviamos al vm
+                Log.d("GooglePhotos", "Image selected: $imageUri")
+                source?.let {
+                    val bitmap =
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            ImageDecoder.decodeBitmap(it)
+                        } else {
+                            // Manejar versiones anteriores si es necesario
+                            null
+                        }
+                    // Enviar el bitmap al ViewModel
+                }
+            } else {
+                Log.d("GoogleFotos", "no image selected")
             }
         }
 
@@ -133,17 +149,7 @@ fun PublicationEditScreen(
         }
         Button(
             onClick = {
-                if (viewModel.hasRequirePermission(permissionRequiere, context)) {
-                    // si nos dieron los permisos vamos a elegir photo o
-                    showDialogSelectedUpadateImage = true
-                } else {
-                    // pedimos permiso
-                    ActivityCompat.requestPermissions(
-                        context as Activity,
-                        permissionRequiere,
-                        0,
-                    )
-                }
+                showDialogSelectedUpadateImage = true
             },
             modifier =
                 Modifier
@@ -152,18 +158,26 @@ fun PublicationEditScreen(
         ) {
             Text(text = "Añadir Foto")
         }
+
         if (showDialogSelectedUpadateImage) {
             SelectedFormUpdateImage(
                 onDissmisButton = { showDialogSelectedUpadateImage = false },
-                onCameraSelected = { controller.navigate(NavigationRoutes.CameraScreen.route) },
-            ) {
-                // ir a la galeria
-                // galeria hacer con un intent
-                val pickImageIntent =
-                    Intent(Intent.ACTION_PICK).apply {
-                        type = "image/*"
+                onCameraSelected = {
+                    if (viewModel.hasRequirePermission(cameraXPermission, context)) {
+                        controller.navigate(NavigationRoutes.CameraScreen.route)
+                    } else {
+                        // aca debo hacer un launcher
+                        ActivityCompat.requestPermissions(context as Activity, cameraXPermission, 0)
                     }
-            }
+                },
+                onGalerrySelected = {
+                    val galleryIntent =
+                        Intent(Intent.ACTION_PICK).apply {
+                            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                        }
+                    galleryLauncher.launch(galleryIntent)
+                },
+            )
         }
         if (showDialog) {
             // las acciones se hacen cuando este el viewModel
@@ -327,13 +341,4 @@ fun PublicationEditScreen(
             }
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.P)
-@Preview(showBackground = true)
-@Composable
-fun PublicationEditScreenPreview() {
-    val controller = rememberNavController()
-
-    PublicationEditScreen(controller = controller)
 }

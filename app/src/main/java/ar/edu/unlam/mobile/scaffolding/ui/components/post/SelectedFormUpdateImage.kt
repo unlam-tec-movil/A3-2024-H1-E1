@@ -31,13 +31,16 @@ fun SelectedFormUpdateImage(
     onGalerrySelected: () -> Unit,
 ) {
     Dialog(
-        onDismissRequest = { onDissmisButton },
+        onDismissRequest = { onDissmisButton() },
     ) {
         Column(
             modifier =
                 Modifier
-                    .height(120.dp)
-                    .width(200.dp),
+                    .height(130.dp)
+                    .width(200.dp)
+                    .background(
+                        MaterialTheme.colorScheme.background,
+                    ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -46,12 +49,12 @@ fun SelectedFormUpdateImage(
                 fontWeight = FontWeight.Bold,
             )
             Row(
-                modifier = Modifier.padding( 15.dp),
+                modifier = Modifier.padding(15.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.padding(end = 10.dp)) {
-                    IconButton(onClick = { onCameraSelected }) {
+                    IconButton(onClick = { onCameraSelected() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.icon_camara),
                             contentDescription = null,
@@ -61,7 +64,7 @@ fun SelectedFormUpdateImage(
                     Text(text = "Camara")
                 }
                 Column(modifier = Modifier.padding(start = 10.dp)) {
-                    IconButton(onClick = { onGalerrySelected }) {
+                    IconButton(onClick = { onGalerrySelected() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.icon_abrir_galeria),
                             contentDescription = null,
@@ -79,10 +82,9 @@ fun SelectedFormUpdateImage(
 @Composable
 fun AlerDialogPreview() {
     Surface(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
     ) {
         SelectedFormUpdateImage(onDissmisButton = { /*TODO*/ }, onCameraSelected = { /*TODO*/ }) {
         }
     }
-
 }

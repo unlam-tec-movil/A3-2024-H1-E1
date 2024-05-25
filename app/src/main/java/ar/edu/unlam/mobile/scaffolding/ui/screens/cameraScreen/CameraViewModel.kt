@@ -28,39 +28,44 @@ class CameraViewModel
         fun addPhotoList(photoTake: Bitmap) {
             listPhotoBitmap.value += photoTake
         }
+
         fun takePhoto(
-           cameraController: LifecycleCameraController,
-           context: Context,
-           onPhotoTake: (Bitmap)->Unit
-        ){
+            cameraController: LifecycleCameraController,
+            context: Context,
+            onPhotoTake: (Bitmap) -> Unit,
+        )  {
             cameraController.takePicture(
                 ContextCompat.getMainExecutor(context),
-                object : OnImageCapturedCallback(){
+                object : OnImageCapturedCallback() {
                     override fun onCaptureSuccess(image: ImageProxy) {
                         super.onCaptureSuccess(image)
 
-                        val matrix  = Matrix().apply {
-                            postRotate(image.imageInfo.rotationDegrees.toFloat())
-                        }
+                        val matrix =
+                            Matrix().apply {
+                                postRotate(image.imageInfo.rotationDegrees.toFloat())
+                            }
 
-                        val rotatedBitmap = Bitmap.createBitmap(
-                            image.toBitmap(),
-                            0,
-                            0,
-                            image.width,
-                            image.height,
-                            matrix,
-                            true
-                        )
+                        val rotatedBitmap =
+                            Bitmap.createBitmap(
+                                image.toBitmap(),
+                                0,
+                                0,
+                                image.width,
+                                image.height,
+                                matrix,
+                                true,
+                            )
+                        Toast.makeText(context, "foto tomada", Toast.LENGTH_SHORT).show()
+
                         onPhotoTake(rotatedBitmap)
                     }
 
                     override fun onError(exception: ImageCaptureException) {
                         super.onError(exception)
-                        Toast.makeText(context,"no se pudo tomar la foto",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "no se pudo tomar la foto", Toast.LENGTH_SHORT).show()
                     }
-                }
+                },
             )
         }
-        /*agregar la funcion para subir una foto a firebase*/
+        // agregar la funcion para subir una foto a firebase
     }
