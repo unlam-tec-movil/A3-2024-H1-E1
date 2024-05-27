@@ -3,6 +3,8 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
@@ -24,12 +26,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,13 +39,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
 import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
 import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
@@ -51,11 +53,10 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.CheckboxComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
-import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
+import ar.edu.unlam.mobile.scaffolding.ui.components.post.ImageCard
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
-import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
-import ar.edu.unlam.mobile.scaffolding.ui.theme.Pink80
+import java.io.File
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -65,19 +66,12 @@ fun PublicationEditScreen(
     viewModel: PublicationEditViewModel = hiltViewModel(),
 ) {
     var selectedItemForSetting by remember {
-        mutableStateOf("")
+        mutableStateOf<ImageData?>(null)
     }
-    var showDialogSelectedUpadateImage by remember {
+    var showDialogSelectedUpdateImage by remember {
         mutableStateOf(false)
     }
-    var showDialog by remember { mutableStateOf(false) }
-    val openDialog: (String) -> Unit = { selectedItem ->
-        // Aquí colocas la lógica para abrir el diálogo
-        selectedItemForSetting = selectedItem
-        showDialog = true
-    }
-    val lista: MutableList<String> = mutableListOf()
-
+    var showDialogForSettingImage by remember { mutableStateOf(false) }
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var species by remember { mutableStateOf("") }
@@ -96,7 +90,11 @@ fun PublicationEditScreen(
             Manifest.permission.CAMERA,
         )
 
-    // el gallery launcher
+    val photoSelected =
+        remember {
+            mutableStateOf<Bitmap?>(null)
+        }
+    val listaDeImagenes by viewModel.listImagesUser.collectAsState()
     val galleryLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult(),
@@ -107,8 +105,6 @@ fun PublicationEditScreen(
                     imageUri?.let { img ->
                         ImageDecoder.createSource(context.contentResolver, img)
                     }
-                // aca lo convertimos a bitmap y se lo enviamos al vm
-                Log.d("GooglePhotos", "Image selected: $imageUri")
                 source?.let {
                     val bitmap =
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -117,13 +113,29 @@ fun PublicationEditScreen(
                             // Manejar versiones anteriores si es necesario
                             null
                         }
-                    // Enviar el bitmap al ViewModel
+                    if (bitmap != null) {
+                        photoSelected.value = bitmap
+                    }
                 }
             } else {
                 Log.d("GoogleFotos", "no image selected")
             }
         }
 
+    val currentPhotoPath = viewModel.createFile(context)
+    val file = File(currentPhotoPath)
+    val cameraLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                photoSelected.value = bitmap
+            }
+        }
+    LaunchedEffect(photoSelected.value) {
+        viewModel.getAllImages()
+    }
     Column(
         modifier =
             Modifier
@@ -132,24 +144,22 @@ fun PublicationEditScreen(
                 .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Card(
+        ImageCard(
+            imageList = listaDeImagenes,
             modifier =
                 Modifier
                     .height(350.dp)
                     .width(300.dp)
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 5.dp),
-            shape = RoundedCornerShape(10.dp),
-            colors = CardColors(Pink80, Color.White, Color.White, Color.White),
         ) {
-            Carrousel(
-                listOfImage = lista,
-                openDialog,
-            )
+                imageSelected ->
+            selectedItemForSetting = imageSelected
+            showDialogForSettingImage = true
         }
         Button(
             onClick = {
-                showDialogSelectedUpadateImage = true
+                showDialogSelectedUpdateImage = true
             },
             modifier =
                 Modifier
@@ -159,14 +169,16 @@ fun PublicationEditScreen(
             Text(text = "Añadir Foto")
         }
 
-        if (showDialogSelectedUpadateImage) {
+        if (showDialogSelectedUpdateImage) {
             SelectedFormUpdateImage(
-                onDissmisButton = { showDialogSelectedUpadateImage = false },
+                onDissmisButton = { showDialogSelectedUpdateImage = false },
                 onCameraSelected = {
                     if (viewModel.hasRequirePermission(cameraXPermission, context)) {
-                        controller.navigate(NavigationRoutes.CameraScreen.route)
+                        viewModel.captureImage(context, cameraLauncher, file)
+                        photoSelected.value.let {
+                            photoSelected.value?.let { it1 -> viewModel.uploadImage(it1) }
+                        }
                     } else {
-                        // aca debo hacer un launcher
                         ActivityCompat.requestPermissions(context as Activity, cameraXPermission, 0)
                     }
                 },
@@ -176,16 +188,21 @@ fun PublicationEditScreen(
                             setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
                         }
                     galleryLauncher.launch(galleryIntent)
+                    photoSelected.value.let {
+                        photoSelected.value?.let { it1 -> viewModel.uploadImage(it1) }
+                    }
                 },
             )
         }
-        if (showDialog) {
+        if (showDialogForSettingImage) {
             // las acciones se hacen cuando este el viewModel
             SettingImage(
-                item = selectedItemForSetting,
-                onDissmissButon = { showDialog = false },
-                onDeletePhoto = null,
-            )
+                item = selectedItemForSetting!!,
+                onDissmissButon = { showDialogForSettingImage = false },
+            ) {
+                viewModel.deleteImage(selectedItemForSetting!!.imagePath)
+                photoSelected.value = selectedItemForSetting!!.image
+            }
         }
         // RADIO GROUPS
         CheckboxComponent(

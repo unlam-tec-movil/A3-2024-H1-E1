@@ -7,22 +7,18 @@ import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import ar.edu.unlam.mobile.scaffolding.R
-import coil.size.Scale
+import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
 
 @Composable
 fun CarrouselItem(
-    item: String?,
+    item: ImageData,
     pageOffset: Float,
-    onItemClick: (String) -> Unit,
+    onItemClick: (ImageData) -> Unit,
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        // animacion de la img ,
         modifier =
             Modifier
                 .graphicsLayer {
@@ -43,17 +39,12 @@ fun CarrouselItem(
                         )
                 }
                 .clickable {
-                    item?.let { onItemClick(it) }
+                    onItemClick(item)
                 },
     ) {
-        CoilImage(
-            data = item,
-            context = LocalContext.current,
-            scale = Scale.FILL,
-            crossFade = true,
+        DisplayImageBitmap(
+            data = item.image,
             contentDescription = null,
-            placeHolder = painterResource(id = R.drawable.loading_image),
-            error = painterResource(id = R.drawable.images_error),
             modifier =
                 Modifier
                     .fillMaxSize(),

@@ -2,6 +2,8 @@ package ar.edu.unlam.mobile.scaffolding.data.network
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
+import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.flow.Flow
@@ -19,16 +21,26 @@ class StorageNetworkImpl
             return storage.getReference(userId)
         }
 
-        override suspend fun getAllImages(userId: String): Flow<List<Bitmap>> =
+        override suspend fun getStorageReferenceFromUrl(url: String): StorageReference {
+            return storage.getReferenceFromUrl(url)
+        }
+
+        override suspend fun getAllImages(userId: String): Flow<List<ImageData>> =
             flow {
                 val storageRef = getStorageReference(userId = userId)
-                val imageList = mutableListOf<Bitmap>()
+                val imageList = mutableListOf<ImageData>()
                 try {
                     val allImageRef = storageRef.listAll().await().items
                     for (img in allImageRef) {
-                        val imageData = img.getBytes(Long.MAX_VALUE).await()
-                        val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
-                        imageList.add(bitmap)
+                        val imageByte = img.getBytes(Long.MAX_VALUE).await()
+                        val imagePath = img.path
+                        val bitmap = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.size)
+                        val imageData =
+                            ImageData(
+                                imagePath = imagePath,
+                                image = bitmap,
+                            )
+                        imageList.add(imageData)
                     }
                     emit(imageList)
                 } catch (e: Exception) {
@@ -42,20 +54,25 @@ class StorageNetworkImpl
             userId: String,
         ) {
             val storageRef = getStorageReference(userId)
-            val imgRe = storageRef.child("$image")
-
+            val imaRef = storageRef.child("$image")
             val baos = ByteArrayOutputStream()
             image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val imageData = baos.toByteArray()
             try {
-                imgRe.putBytes(imageData)
+                imaRef.putBytes(imageData)
             } catch (e: Exception) {
                 // /que hacemos si no pudo subir la img , x alguna razon
                 throw e
             }
         }
 
-        override suspend fun deleteImage(imageUrl: String) {
-            TODO("Not yet implemented")
+        override suspend fun deleteImage(imagePath: String) {
+            try {
+                val imageRef = getStorageReference(imagePath)
+                imageRef.delete().await()
+                Log.e("", "delete image successfully")
+            } catch (e: Exception) {
+                Log.e("", "image delete failed imagePaht: $imagePath")
+            }
         }
     }

@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.data.repository
 
 import android.graphics.Bitmap
 import ar.edu.unlam.mobile.scaffolding.data.network.StorageNetworkInterface
+import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -15,7 +16,7 @@ class StorageRepository
             return storageNetwork.getStorageReference(userId)
         }
 
-        override suspend fun getAllImages(userId: String): Flow<List<Bitmap>> {
+        override suspend fun getAllImages(userId: String): Flow<List<ImageData>> {
             return storageNetwork.getAllImages(userId)
         }
 
@@ -26,7 +27,7 @@ class StorageRepository
             storageNetwork.uploadImage(image, userId)
         }
 
-        override suspend fun deleteImage(imageUrl: String) {
-            TODO("Not yet implemented")
+        override suspend fun deleteImage(imagePath: String) {
+            storageNetwork.deleteImage(imagePath)
         }
     }

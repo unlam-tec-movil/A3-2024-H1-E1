@@ -3,8 +3,6 @@ package ar.edu.unlam.mobile.scaffolding.ui.components.post
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,24 +17,21 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ar.edu.unlam.mobile.scaffolding.R
-import coil.size.Scale
+import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
 
 @Composable
 fun SettingImage(
-    item: String?,
+    item: ImageData,
     onDissmissButon: () -> Unit,
-    onDeletePhoto: (() -> Unit)? = null,
+    onDeletePhoto: () -> Unit,
 ) {
     Dialog(
         onDismissRequest = {
@@ -51,10 +46,10 @@ fun SettingImage(
                 IconButton(
                     onClick = { onDissmissButon() },
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .size(50.dp)
-                        .wrapContentWidth(Alignment.End),
+                        Modifier
+                            .fillMaxWidth()
+                            .size(50.dp)
+                            .wrapContentWidth(Alignment.End),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -63,24 +58,16 @@ fun SettingImage(
                 }
                 Box(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(350.dp)
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .padding(10.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .height(350.dp)
+                            .clip(shape = RoundedCornerShape(10.dp))
+                            .padding(10.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    /*en la parte de data va a ir la funcion del viewModel que traiga un elemento de la lista
-                    correspondiente a la page,
-                     * esto deberia ser un componente aparte ya que lo reutilizo */
-                    CoilImage(
-                        data = item,
-                        context = LocalContext.current,
-                        scale = Scale.FILL,
-                        crossFade = true,
+                    DisplayImageBitmap(
+                        data = item.image,
                         contentDescription = null,
-                        placeHolder = painterResource(id = R.drawable.loading_image),
-                        error = painterResource(id = R.drawable.images_error),
                         modifier = Modifier.fillMaxSize(),
                     )
                 }
@@ -92,7 +79,7 @@ fun SettingImage(
                     ActionButton(
                         text = "Eliminar",
                         icon = painterResource(id = R.drawable.icons_eliminar_img),
-                        onClick = { onDeletePhoto },
+                        onClick = { onDeletePhoto() },
                     )
                 }
             }
