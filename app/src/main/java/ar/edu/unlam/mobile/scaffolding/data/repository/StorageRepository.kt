@@ -16,8 +16,15 @@ class StorageRepository
             return storageNetwork.getStorageReference(userId)
         }
 
-        override suspend fun getAllImages(userId: String): Flow<List<ImageData>> {
-            return storageNetwork.getAllImages(userId)
+        override suspend fun getImagesForPublication(
+            userId: String,
+            publicationId: String,
+        ): Flow<List<ImageData>> {
+            return storageNetwork.getImagesForPublication(userId, publicationId)
+        }
+
+        override suspend fun getImagesForUser(userId: String): Flow<Map<String, List<ImageData>>> {
+            return storageNetwork.getAllImagesForUser(userId)
         }
 
         override suspend fun uploadImage(

@@ -8,7 +8,12 @@ import kotlinx.coroutines.flow.Flow
 interface StorageRepositoryInterface {
     suspend fun getStorageReference(userId: String): StorageReference
 
-    suspend fun getAllImages(userId: String): Flow<List<ImageData>>
+    suspend fun getImagesForPublication(
+        userId: String,
+        publicationId: String,
+    ): Flow<List<ImageData>>
+
+    suspend fun getImagesForUser(userId: String): Flow<Map<String, List<ImageData>>>
 
     suspend fun uploadImage(
         image: Bitmap,
