@@ -3,12 +3,12 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -30,8 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,16 +83,9 @@ fun PublicationEditScreen(
     val scrollState = rememberScrollState()
 
     val context = LocalContext.current
-    val cameraXPermission =
-        arrayOf(
-            Manifest.permission.CAMERA,
-        )
+    val cameraXPermission = arrayOf(Manifest.permission.CAMERA)
 
-    val photoSelected =
-        remember {
-            mutableStateOf<Bitmap?>(null)
-        }
-    val listaDeImagenes by viewModel.listImagesUser.collectAsState()
+    val imageDataList by viewModel.listImageForPublication
     val galleryLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult(),
@@ -110,11 +101,15 @@ fun PublicationEditScreen(
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             ImageDecoder.decodeBitmap(it)
                         } else {
-                            // Manejar versiones anteriores si es necesario
                             null
                         }
                     if (bitmap != null) {
-                        photoSelected.value = bitmap
+                        if (imageDataList.size == 3) {
+                            // /solo vamos a dejar que suba 3 imagenes
+                            Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
+                        } else {
+                            viewModel.addImage(bitmap)
+                        }
                     }
                 }
             } else {
@@ -130,12 +125,21 @@ fun PublicationEditScreen(
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                photoSelected.value = bitmap
+                if (bitmap != null) {
+                    if (imageDataList.size == 3)
+                        {
+                            Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
+                        } else {
+                        viewModel.addImage(bitmap)
+                    }
+                } else {
+                    Log.e("", "failed upload image to list")
+                }
+            } else {
+                Toast.makeText(context, "failed take Photo ${result.resultCode}", Toast.LENGTH_SHORT).show()
             }
         }
-    LaunchedEffect(photoSelected.value) {
-        viewModel.getAllImages()
-    }
+
     Column(
         modifier =
             Modifier
@@ -145,15 +149,15 @@ fun PublicationEditScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         ImageCard(
-            imageList = listaDeImagenes,
+            imageList = imageDataList,
             modifier =
                 Modifier
                     .height(350.dp)
                     .width(300.dp)
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 5.dp),
-        ) {
-                imageSelected ->
+        ) { imageSelected ->
+
             selectedItemForSetting = imageSelected
             showDialogForSettingImage = true
         }
@@ -175,9 +179,6 @@ fun PublicationEditScreen(
                 onCameraSelected = {
                     if (viewModel.hasRequirePermission(cameraXPermission, context)) {
                         viewModel.captureImage(context, cameraLauncher, file)
-                        photoSelected.value.let {
-                            photoSelected.value?.let { it1 -> viewModel.uploadImage(it1) }
-                        }
                     } else {
                         ActivityCompat.requestPermissions(context as Activity, cameraXPermission, 0)
                     }
@@ -188,9 +189,6 @@ fun PublicationEditScreen(
                             setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
                         }
                     galleryLauncher.launch(galleryIntent)
-                    photoSelected.value.let {
-                        photoSelected.value?.let { it1 -> viewModel.uploadImage(it1) }
-                    }
                 },
             )
         }
@@ -200,8 +198,7 @@ fun PublicationEditScreen(
                 item = selectedItemForSetting!!,
                 onDissmissButon = { showDialogForSettingImage = false },
             ) {
-                viewModel.deleteImage(selectedItemForSetting!!.imagePath)
-                photoSelected.value = selectedItemForSetting!!.image
+                viewModel.deleteImage(selectedItemForSetting!!.image)
             }
         }
         // RADIO GROUPS
@@ -344,13 +341,19 @@ fun PublicationEditScreen(
             horizontalArrangement = Arrangement.End,
         ) {
             TextButton(
-                onClick = { controller.popBackStack() },
+                onClick = {
+                    // en caso de cancelar la publicacion entonces reseteamos las imagenes
+                    viewModel.resetListOfImages()
+                    // en el mismo caso debe ser para los textos
+                    controller.popBackStack()
+                },
             ) {
                 Text("Cancelar")
             }
             Button(
                 onClick = {
                     controller.popBackStack()
+                    // aca llamamos a la funcion createPublication -> donde mandamos la Lista de bitmap
                 },
                 modifier = Modifier,
             ) {

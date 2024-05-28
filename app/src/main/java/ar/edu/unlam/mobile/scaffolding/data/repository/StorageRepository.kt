@@ -23,8 +23,9 @@ class StorageRepository
         override suspend fun uploadImage(
             image: Bitmap,
             userId: String,
+            publicationId: String,
         ) {
-            storageNetwork.uploadImage(image, userId)
+            storageNetwork.uploadImage(image, userId, publicationId)
         }
 
         override suspend fun deleteImage(imagePath: String) {

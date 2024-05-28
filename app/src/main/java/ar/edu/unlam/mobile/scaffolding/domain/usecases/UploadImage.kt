@@ -6,5 +6,6 @@ interface UploadImage {
     suspend fun uploadImage(
         image: Bitmap,
         userId: String,
+        publicationId: String,
     )
 }

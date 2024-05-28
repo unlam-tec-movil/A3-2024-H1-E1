@@ -10,12 +10,18 @@ interface StorageNetworkInterface {
 
     suspend fun getStorageReferenceFromUrl(url: String): StorageReference
 
-    suspend fun getAllImages(userId: String): Flow<List<ImageData>>
+    suspend fun getAllImagesForUser(userId: String): Flow<Map<String, List<ImageData>>>
+
+    suspend fun getImagesForPublication(
+        userId: String,
+        publicationId: String,
+    ): Flow<List<ImageData>>
+
+    suspend fun deleteImage(imagePath: String)
 
     suspend fun uploadImage(
         image: Bitmap,
         userId: String,
+        publicationId: String,
     )
-
-    suspend fun deleteImage(imagePath: String)
 }

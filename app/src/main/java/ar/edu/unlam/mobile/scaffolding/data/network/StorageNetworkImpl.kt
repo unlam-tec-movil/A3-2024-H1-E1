@@ -25,13 +25,54 @@ class StorageNetworkImpl
             return storage.getReferenceFromUrl(url)
         }
 
-        override suspend fun getAllImages(userId: String): Flow<List<ImageData>> =
+        override suspend fun getAllImagesForUser(userId: String): Flow<Map<String, List<ImageData>>> =
             flow {
-                val storageRef = getStorageReference(userId = userId)
+                val userRef = getStorageReference(userId = userId)
+                val publicationsMap = mutableMapOf<String, List<ImageData>>()
+
+                try {
+                    val allPublicationsRef =
+                        userRef.listAll()
+                            .await().prefixes // Obtener todas las carpetas de publicaciones
+                    for (publicationRef in allPublicationsRef) {
+                        val publicationId = publicationRef.name
+                        val allImageRefs =
+                            publicationRef.listAll()
+                                .await().items // Obtener todas las imágenes dentro de cada publicación
+                        val imageList = mutableListOf<ImageData>()
+
+                        for (img in allImageRefs) {
+                            val imageByte = img.getBytes(Long.MAX_VALUE).await()
+                            val imagePath = img.path
+                            val bitmap = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.size)
+                            val imageData =
+                                ImageData(
+                                    imagePath = imagePath,
+                                    image = bitmap,
+                                )
+                            imageList.add(imageData)
+                        }
+                        publicationsMap[publicationId] = imageList
+                    }
+                    emit(publicationsMap)
+                } catch (e: Exception) {
+                    throw e
+                }
+            }
+
+        override suspend fun getImagesForPublication(
+            userId: String,
+            publicationId: String,
+        ): Flow<List<ImageData>> =
+            flow {
+                val userRef = storage.getReference(userId)
+                val publicationRef =
+                    userRef.child(publicationId) // Obtener todas las carpetas de publicaciones
+                val allImageRefs = publicationRef.listAll().await().items
                 val imageList = mutableListOf<ImageData>()
                 try {
-                    val allImageRef = storageRef.listAll().await().items
-                    for (img in allImageRef) {
+                    // Obtener todas las imágenes dentro de cada publicación
+                    for (img in allImageRefs) {
                         val imageByte = img.getBytes(Long.MAX_VALUE).await()
                         val imagePath = img.path
                         val bitmap = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.size)
@@ -44,7 +85,6 @@ class StorageNetworkImpl
                     }
                     emit(imageList)
                 } catch (e: Exception) {
-                    // en caso de que no pueda traer la lista tengo que mostrar una exception
                     throw e
                 }
             }
@@ -52,16 +92,21 @@ class StorageNetworkImpl
         override suspend fun uploadImage(
             image: Bitmap,
             userId: String,
+            publicationId: String,
         ) {
+            // userId//publicationId//image , esa es la ruta
             val storageRef = getStorageReference(userId)
-            val imaRef = storageRef.child("$image")
+            val publicationRef = storageRef.child(publicationId)
+            val imgReference = publicationRef.child("$image")
             val baos = ByteArrayOutputStream()
             image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val imageData = baos.toByteArray()
             try {
-                imaRef.putBytes(imageData)
+                imgReference.putBytes(imageData)
+                Log.d("StorageService", "Image uploaded successfully:")
             } catch (e: Exception) {
                 // /que hacemos si no pudo subir la img , x alguna razon
+                Log.d("StorageService", "Image failed upload to firebase Storage")
                 throw e
             }
         }
@@ -72,7 +117,7 @@ class StorageNetworkImpl
                 imageRef.delete().await()
                 Log.e("", "delete image successfully")
             } catch (e: Exception) {
-                Log.e("", "image delete failed imagePaht: $imagePath")
+                Log.e("", "image delete failed imagePath: $imagePath")
             }
         }
     }

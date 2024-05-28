@@ -7,6 +7,8 @@ import android.graphics.Bitmap
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.ActivityResultLauncher
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
@@ -15,10 +17,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
 import ar.edu.unlam.mobile.scaffolding.domain.models.UserInfoGoogle
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetCurrentUser
-import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -32,33 +31,47 @@ class PublicationEditViewModel
     constructor(
         private val storageService: StorageService,
         private val getUser: GetCurrentUser,
-        context: Context,
     ) : ViewModel() {
-        private val signInClient = Identity.getSignInClient(context)
         private var currentUserId: UserInfoGoogle? = null
 
         @Suppress("ktlint:standard:backing-property-naming")
-        private val _listImagesForUser: MutableStateFlow<List<ImageData>> = MutableStateFlow(emptyList())
-        val listImagesUser: StateFlow<List<ImageData>> = _listImagesForUser
+        private val _listImagesForUser = mutableStateOf<List<ImageData>>(emptyList())
+
+        // Exponemos _listImagesForUser como State
+        val listImageForPublication: State<List<ImageData>> = _listImagesForUser
 
         init {
             viewModelScope.launch {
                 currentUserId = getCurrentUser()
             }
-            getAllImages()
+        }
+
+        fun addImage(imageBitmap: Bitmap) {
+            // en esta funcion agregamos las imagenes a la lista de imagenes
+            val image =
+                ImageData(
+                    imagePath = "",
+                    image = imageBitmap,
+                )
+            _listImagesForUser.value += image
+        }
+
+        // elimina una imagen
+        fun deleteImage(imageBitmap: Bitmap) {
+            _listImagesForUser.value = _listImagesForUser.value.filterNot { it.image == imageBitmap }
         }
 
         private suspend fun getCurrentUser(): UserInfoGoogle? {
             val firebaseUser = getUser.getCurrentUser()
-            if (firebaseUser != null) {
-                return UserInfoGoogle(
+            return if (firebaseUser != null) {
+                UserInfoGoogle(
                     userId = firebaseUser.uid,
                     displayName = firebaseUser.displayName,
                     email = firebaseUser.email,
                     photoUrl = firebaseUser.photoUrl.toString(),
                 )
             } else {
-                return null
+                null
             }
         }
 
@@ -71,24 +84,14 @@ class PublicationEditViewModel
             }
         }
 
-        fun uploadImage(image: Bitmap) {
-            // llamamos al service
+        fun uploadImages(
+            images: List<ImageData>,
+            publicationId: String,
+        ) {
             viewModelScope.launch {
-                storageService.uploadImage(image, currentUserId?.userId.toString())
-            }
-        }
-
-        fun getAllImages() {
-            viewModelScope.launch {
-                storageService.getAllImages(currentUserId?.userId.toString()).collect { images ->
-                    _listImagesForUser.value = images
+                for (img in images) {
+                    storageService.uploadImage(img.image, currentUserId?.userId.toString(), publicationId)
                 }
-            }
-        }
-
-        fun deleteImage(imagePath: String) {
-            viewModelScope.launch {
-                storageService.deleteImage(imagePath)
             }
         }
 
@@ -110,5 +113,9 @@ class PublicationEditViewModel
                     putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                 }
             cameraLauncher.launch(cameraIntent)
+        }
+
+        fun resetListOfImages()  {
+            _listImagesForUser.value = emptyList()
         }
     }

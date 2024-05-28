@@ -1,11 +1,12 @@
 package ar.edu.unlam.mobile.scaffolding.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import ar.edu.unlam.mobile.scaffolding.ui.screens.cameraScreen.CameraScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings.FilterSettingsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.home.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.loginScreen.LoginScreen
@@ -15,6 +16,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList.PublicationsL
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap.PublicationsMapScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splashScreen.SplashScreen
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun NavigationComponent(
     navigationController: NavHostController,
@@ -42,9 +44,7 @@ fun NavigationComponent(
         composable(NavigationRoutes.Home.route) {
             HomeScreen()
         }
-        composable(NavigationRoutes.CameraScreen.route) {
-            CameraScreen(navHostController = navigationController)
-        }
+
         composable(NavigationRoutes.PublicationEditScreen.route) {
             PublicationEditScreen(controller = navigationController)
         }
