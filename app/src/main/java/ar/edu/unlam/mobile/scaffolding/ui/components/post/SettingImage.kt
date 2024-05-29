@@ -67,14 +67,13 @@ fun <T> SettingImage(
                             .padding(10.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    if (item is Bitmap)
-                        {
-                            DisplayImageBitmap(
-                                data = item,
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(),
-                            )
-                        } else {
+                    if (item is Bitmap) {
+                        DisplayImageBitmap(
+                            data = item,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    } else {
                         AsyncImage(
                             model = item,
                             contentDescription = null,
