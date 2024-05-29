@@ -1,5 +1,5 @@
 [versions]
-agp = "8.3.2"
+agp = "8.4.1"
 kotlin = "1.9.23"
 coreKtx = "1.12.0"
 junit = "4.13.2"
@@ -24,6 +24,7 @@ serviceAuth = "21.1.0"
 firebase = "33.0.0"
 coroutineAndroid= "1.7.3"
 googleService= "4.4.1"
+runtimeLivedata = "1.6.7"
 
 
 [libraries]
@@ -59,6 +60,7 @@ google-play-service = {group = "com.google.android.gms",name = "play-services-au
 firebase = {group = "com.google.firebase",name = "firebase-bom",version.ref = "firebase"}
 coroutine-android = {group  = "org.jetbrains.kotlin",name = "kotlinx-coroutines-android",version.ref = "coroutineAndroid" }
 lifecycleViewModel = {group = "androidx.lifecycle",name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 
 [plugins]

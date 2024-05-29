@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings.FilterSettingsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.home.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.loginScreen.LoginScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.profileScreen.ProfileScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationDetails.PublicationDetailsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit.PublicationEditScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList.PublicationsListScreen
@@ -49,6 +50,9 @@ fun NavigationComponent(
         composable(NavigationRoutes.FilterScreen.route) {
             FilterSettingsScreen(controller = navigationController)
         }
+        composable(NavigationRoutes.ProfileScreen.route) {
+            ProfileScreen(controller = navigationController)
+        }
 
         composable(NavigationRoutes.PublicationScreen.route) { navBackStackEntry ->
             val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
@@ -59,6 +63,7 @@ fun NavigationComponent(
         }
     }
 }
+
 /*
 For futures implementation you can add here the composable functions for each screen
 Here is an example of how to add a new screen

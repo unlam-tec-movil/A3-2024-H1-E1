@@ -31,9 +31,14 @@ fun PublicationsMapScreen(
                     .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SearchBox(onLeadingIconClick = {
-                controller.navigate(NavigationRoutes.FilterScreen.route)
-            })
+            SearchBox(
+                onLeadingIconClick = {
+                    controller.navigate(NavigationRoutes.FilterScreen.route)
+                },
+                onTrailingIconClick = {
+                    controller.navigate(NavigationRoutes.ProfileScreen.route)
+                },
+            )
             Spacer(
                 modifier =
                     Modifier

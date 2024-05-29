@@ -96,12 +96,7 @@ fun SearchBox(
                 )
             } else {
                 Icon(
-                    modifier =
-                        Modifier
-                            .clickable {
-                                text = ""
-                                onTrailingIconClick()
-                            },
+                    modifier = Modifier.clickable(onClick = onTrailingIconClick),
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = "Profile Icon",
                 )
