@@ -39,7 +39,7 @@ class LoginViewModel
         fun handleSignInResult(task: Task<GoogleSignInAccount>): AuthRes<GoogleSignInAccount>? {
             return try {
                 val account = task.getResult(ApiException::class.java)
-                AuthRes.Succes(account)
+                AuthRes.Success(account)
             } catch (e: ApiException) {
                 AuthRes.Error(e.message ?: "Google sign-in ")
             }

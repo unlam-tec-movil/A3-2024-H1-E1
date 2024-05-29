@@ -54,7 +54,7 @@ fun LoginScreen(navHostController: NavHostController) {
                         .show()
                 }
 
-                is AuthRes.Succes -> {
+                is AuthRes.Success -> {
                     val credential = GoogleAuthProvider.getCredential(account?.data?.idToken, null)
                     scope.launch {
                         val user = loginViewModel.signInWithGoogleCredential(credential)
