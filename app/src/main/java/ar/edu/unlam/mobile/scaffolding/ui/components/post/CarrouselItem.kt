@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components.post
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,15 +8,16 @@ import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
+import coil.compose.AsyncImage
 
 @Composable
-fun CarrouselItem(
-    item: ImageData,
+fun <T> CarrouselItem(
+    item: T,
     pageOffset: Float,
-    onItemClick: (ImageData) -> Unit,
+    onItemClick: (T) -> Unit,
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
@@ -42,12 +44,21 @@ fun CarrouselItem(
                     onItemClick(item)
                 },
     ) {
-        DisplayImageBitmap(
-            data = item.image,
-            contentDescription = null,
-            modifier =
-                Modifier
-                    .fillMaxSize(),
-        )
+        if (item is Bitmap) {
+            DisplayImageBitmap(
+                data = item,
+                contentDescription = null,
+                modifier =
+                    Modifier
+                        .fillMaxSize(),
+            )
+        } else {
+            AsyncImage(
+                model = item,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+        }
     }
 }

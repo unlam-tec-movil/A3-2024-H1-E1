@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components.post
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,15 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
+import coil.compose.AsyncImage
 
 @Composable
-fun SettingImage(
-    item: ImageData,
+fun <T> SettingImage(
+    item: T,
     onDissmissButon: () -> Unit,
     onDeletePhoto: () -> Unit,
 ) {
@@ -65,11 +67,21 @@ fun SettingImage(
                             .padding(10.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    DisplayImageBitmap(
-                        data = item.image,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                    )
+                    if (item is Bitmap)
+                        {
+                            DisplayImageBitmap(
+                                data = item,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        } else {
+                        AsyncImage(
+                            model = item,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
                 }
                 Column(
                     modifier = Modifier.fillMaxWidth(),

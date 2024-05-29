@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
 import ar.edu.unlam.mobile.scaffolding.domain.models.UserInfoGoogle
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetCurrentUser
@@ -35,10 +34,10 @@ class PublicationEditViewModel
         private var currentUserId: UserInfoGoogle? = null
 
         @Suppress("ktlint:standard:backing-property-naming")
-        private val _listImagesForUser = mutableStateOf<List<ImageData>>(emptyList())
+        private val _listImagesForUser = mutableStateOf<List<Bitmap>>(emptyList())
 
         // Exponemos _listImagesForUser como State
-        val listImageForPublication: State<List<ImageData>> = _listImagesForUser
+        val listImageForPublication: State<List<Bitmap>> = _listImagesForUser
 
         init {
             viewModelScope.launch {
@@ -48,17 +47,12 @@ class PublicationEditViewModel
 
         fun addImage(imageBitmap: Bitmap) {
             // en esta funcion agregamos las imagenes a la lista de imagenes
-            val image =
-                ImageData(
-                    imagePath = "",
-                    image = imageBitmap,
-                )
-            _listImagesForUser.value += image
+            _listImagesForUser.value += imageBitmap
         }
 
         // elimina una imagen
         fun deleteImage(imageBitmap: Bitmap) {
-            _listImagesForUser.value = _listImagesForUser.value.filterNot { it.image == imageBitmap }
+            _listImagesForUser.value = _listImagesForUser.value.filterNot { it == imageBitmap }
         }
 
         private suspend fun getCurrentUser(): UserInfoGoogle? {
@@ -76,10 +70,10 @@ class PublicationEditViewModel
         }
 
         fun hasRequirePermission(
-            camerXPermisssion: Array<String>,
+            permisssion: Array<String>,
             context: Context,
         ): Boolean {
-            return camerXPermisssion.all {
+            return permisssion.all {
                 ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
             }
         }

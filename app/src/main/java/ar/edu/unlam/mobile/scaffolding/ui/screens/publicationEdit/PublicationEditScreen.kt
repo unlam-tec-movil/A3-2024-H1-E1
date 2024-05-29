@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.os.Build
@@ -43,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
 import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
 import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
@@ -64,7 +64,7 @@ fun PublicationEditScreen(
     viewModel: PublicationEditViewModel = hiltViewModel(),
 ) {
     var selectedItemForSetting by remember {
-        mutableStateOf<ImageData?>(null)
+        mutableStateOf<Bitmap?>(null)
     }
     var showDialogSelectedUpdateImage by remember {
         mutableStateOf(false)
@@ -126,10 +126,9 @@ fun PublicationEditScreen(
             if (result.resultCode == Activity.RESULT_OK) {
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                 if (bitmap != null) {
-                    if (imageDataList.size == 3)
-                        {
-                            Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
-                        } else {
+                    if (imageDataList.size == 3) {
+                        Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
+                    } else {
                         viewModel.addImage(bitmap)
                     }
                 } else {
@@ -193,12 +192,11 @@ fun PublicationEditScreen(
             )
         }
         if (showDialogForSettingImage) {
-            // las acciones se hacen cuando este el viewModel
             SettingImage(
                 item = selectedItemForSetting!!,
                 onDissmissButon = { showDialogForSettingImage = false },
             ) {
-                viewModel.deleteImage(selectedItemForSetting!!.image)
+                viewModel.deleteImage(selectedItemForSetting!!)
             }
         }
         // RADIO GROUPS
@@ -353,7 +351,7 @@ fun PublicationEditScreen(
             Button(
                 onClick = {
                     controller.popBackStack()
-                    // aca llamamos a la funcion createPublication -> donde mandamos la Lista de bitmap
+                    // aca llamamos a la funcion createPublication
                 },
                 modifier = Modifier,
             ) {

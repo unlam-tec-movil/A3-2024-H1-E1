@@ -9,16 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Pink80
 
 @Composable
-fun ImageCard(
-    imageList: List<ImageData>,
+fun <T> ImageCard(
+    imageList: List<T>,
     modifier: Modifier,
-    onImageSelected: (ImageData) -> Unit,
+    onImageSelected: (T) -> Unit,
 ) {
-    // /tengo que modificar esto porque no me gusta como esta quedando
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp),

@@ -2,9 +2,6 @@ package ar.edu.unlam.mobile.scaffolding.data.repository
 
 import android.graphics.Bitmap
 import ar.edu.unlam.mobile.scaffolding.data.network.StorageNetworkInterface
-import ar.edu.unlam.mobile.scaffolding.domain.models.ImageData
-import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class StorageRepository
@@ -12,21 +9,6 @@ class StorageRepository
     constructor(
         private val storageNetwork: StorageNetworkInterface,
     ) : StorageRepositoryInterface {
-        override suspend fun getStorageReference(userId: String): StorageReference {
-            return storageNetwork.getStorageReference(userId)
-        }
-
-        override suspend fun getImagesForPublication(
-            userId: String,
-            publicationId: String,
-        ): Flow<List<ImageData>> {
-            return storageNetwork.getImagesForPublication(userId, publicationId)
-        }
-
-        override suspend fun getImagesForUser(userId: String): Flow<Map<String, List<ImageData>>> {
-            return storageNetwork.getAllImagesForUser(userId)
-        }
-
         override suspend fun uploadImage(
             image: Bitmap,
             userId: String,
@@ -36,6 +18,6 @@ class StorageRepository
         }
 
         override suspend fun deleteImage(imagePath: String) {
-            storageNetwork.deleteImage(imagePath)
+            storageNetwork.deleteImageToStorage(imagePath)
         }
     }
