@@ -32,7 +32,7 @@ fun SearchBox(
     onSearch: () -> Unit = {},
     onActiveChange: (Boolean) -> Unit = {},
     onLeadingIconClick: () -> Unit = {},
-    ontrailingIconClick: () -> Unit = {},
+    onTrailingIconClick: () -> Unit = {},
 ) {
     var text by remember { mutableStateOf(initialText) }
     var active by remember { mutableStateOf(false) }
@@ -96,7 +96,7 @@ fun SearchBox(
                 )
             } else {
                 Icon(
-                    modifier = Modifier.clickable(onClick = ontrailingIconClick),
+                    modifier = Modifier.clickable(onClick = onTrailingIconClick),
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = "Profile Icon",
                 )
