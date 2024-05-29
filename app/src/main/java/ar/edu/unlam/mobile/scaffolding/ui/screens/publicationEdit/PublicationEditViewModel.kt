@@ -84,17 +84,6 @@ class PublicationEditViewModel
             }
         }
 
-        fun uploadImages(
-            images: List<ImageData>,
-            publicationId: String,
-        ) {
-            viewModelScope.launch {
-                for (img in images) {
-                    storageService.uploadImage(img.image, currentUserId?.userId.toString(), publicationId)
-                }
-            }
-        }
-
         fun createFile(context: Context): String? {
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
             val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -115,7 +104,7 @@ class PublicationEditViewModel
             cameraLauncher.launch(cameraIntent)
         }
 
-        fun resetListOfImages()  {
+        fun resetListOfImages() {
             _listImagesForUser.value = emptyList()
         }
     }
