@@ -7,4 +7,10 @@ import javax.inject.Inject
 @HiltViewModel
 class PublicationsMapViewModel
     @Inject
-    constructor() : ViewModel()
+    constructor() : ViewModel() {
+        fun centerMapOnUserLocation() {
+        }
+
+        fun getPublicationsMarkers() {
+        }
+    }
