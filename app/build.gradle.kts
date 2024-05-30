@@ -112,7 +112,15 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.google.play.service)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.storage)
 
     // life
     implementation(libs.lifecycleViewModel)
+
+    // camerax
+    implementation(libs.android.camera.core)
+    implementation(libs.android.camera.camera2)
+    implementation(libs.android.camera.lifecycle)
+    implementation(libs.android.camera.view)
+    implementation(libs.android.camera.extensions)
 }

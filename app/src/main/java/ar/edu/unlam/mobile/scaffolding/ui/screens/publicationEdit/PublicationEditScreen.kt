@@ -1,5 +1,18 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,14 +21,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -27,10 +37,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -42,9 +53,11 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
+import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
-import ar.edu.unlam.mobile.scaffolding.ui.theme.Pink80
+import java.io.File
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun PublicationEditScreen(
     modifier: Modifier = Modifier,
@@ -52,16 +65,12 @@ fun PublicationEditScreen(
     viewModel: PublicationEditViewModel = hiltViewModel(),
 ) {
     var selectedItemForSetting by remember {
-        mutableStateOf("")
+        mutableStateOf<Bitmap?>(null)
     }
-    var showDialog by remember { mutableStateOf(false) }
-    val openDialog: (String) -> Unit = { selectedItem ->
-        // Aquí colocas la lógica para abrir el diálogo
-        selectedItemForSetting = selectedItem
-        showDialog = true
+    var showDialogSelectedUpdateImage by remember {
+        mutableStateOf(false)
     }
-    val lista: MutableList<String> = mutableListOf()
-
+    var showDialogForSettingImage by remember { mutableStateOf(false) }
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var species by remember { mutableStateOf("") }
@@ -74,45 +83,114 @@ fun PublicationEditScreen(
     val contactList = listOf("1188223322", "1120332222")
     val scrollState = rememberScrollState()
 
+    val context = LocalContext.current
+    val cameraXPermission = arrayOf(Manifest.permission.CAMERA)
+
+    val imageDataList by viewModel.listImageForPublication
+    val galleryLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val imageUri = result.data?.data
+                val source =
+                    imageUri?.let { img ->
+                        ImageDecoder.createSource(context.contentResolver, img)
+                    }
+                source?.let {
+                    val bitmap =
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            ImageDecoder.decodeBitmap(it)
+                        } else {
+                            null
+                        }
+                    if (bitmap != null) {
+                        if (imageDataList.size == 3) {
+                            // /solo vamos a dejar que suba 3 imagenes
+                            Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
+                        } else {
+                            viewModel.addImage(bitmap)
+                        }
+                    }
+                }
+            } else {
+                Log.d("GoogleFotos", "no image selected")
+            }
+        }
+
+    val currentPhotoPath = viewModel.createFile(context)
+    val file = File(currentPhotoPath)
+    val cameraLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                if (bitmap != null) {
+                    if (imageDataList.size == 3) {
+                        Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
+                    } else {
+                        viewModel.addImage(bitmap)
+                    }
+                } else {
+                    Log.e("", "failed upload image to list")
+                }
+            } else {
+                Toast.makeText(context, "failed take Photo ${result.resultCode}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     Column(
         modifier =
-            Modifier.fillMaxSize()
+            Modifier
+                .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Card(
-            modifier =
-                Modifier
-                    .height(350.dp)
-                    .width(300.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 5.dp),
-            shape = RoundedCornerShape(10.dp),
-            colors = CardColors(Pink80, Color.White, Color.White, Color.White),
-        ) {
-            Carrousel(
-                listOfImage = lista,
-                openDialog,
-            )
+        Carrousel(listOfImage = imageDataList) {
+                imageSelected ->
+            selectedItemForSetting = imageSelected
+            showDialogForSettingImage = true
         }
         Button(
-            onClick = { /*logica para agregar foto*/ },
+            onClick = {
+                showDialogSelectedUpdateImage = true
+            },
             modifier =
-                Modifier.align(Alignment.CenterHorizontally)
+                Modifier
+                    .align(Alignment.CenterHorizontally)
                     .padding(top = 5.dp),
         ) {
             Text(text = "Añadir Foto")
         }
-        if (showDialog) {
-            // las acciones se hacen cuando este el viewModel
-            SettingImage(
-                item = selectedItemForSetting,
-                onDissmissButon = { showDialog = false },
-                onUploadPhoto = null,
-                onTakePhoto = null,
-                onDeletePhoto = null,
+
+        if (showDialogSelectedUpdateImage) {
+            SelectedFormUpdateImage(
+                onDissmisButton = { showDialogSelectedUpdateImage = false },
+                onCameraSelected = {
+                    if (viewModel.hasRequirePermission(cameraXPermission, context)) {
+                        viewModel.captureImage(context, cameraLauncher, file)
+                    } else {
+                        ActivityCompat.requestPermissions(context as Activity, cameraXPermission, 0)
+                    }
+                },
+                onGalerrySelected = {
+                    val galleryIntent =
+                        Intent(Intent.ACTION_PICK).apply {
+                            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                        }
+                    galleryLauncher.launch(galleryIntent)
+                },
             )
+        }
+        if (showDialogForSettingImage) {
+            SettingImage(
+                item = selectedItemForSetting!!,
+                onDissmissButon = { showDialogForSettingImage = false },
+            ) {
+                viewModel.deleteImage(selectedItemForSetting!!)
+            }
         }
         // RADIO GROUPS
         CheckboxComponent(
@@ -254,13 +332,19 @@ fun PublicationEditScreen(
             horizontalArrangement = Arrangement.End,
         ) {
             TextButton(
-                onClick = { controller.popBackStack() },
+                onClick = {
+                    // en caso de cancelar la publicacion entonces reseteamos las imagenes
+                    viewModel.resetListOfImages()
+                    // en el mismo caso debe ser para los textos
+                    controller.popBackStack()
+                },
             ) {
                 Text("Cancelar")
             }
             Button(
                 onClick = {
                     controller.popBackStack()
+                    // aca llamamos a la funcion createPublication
                 },
                 modifier = Modifier,
             ) {
@@ -270,10 +354,10 @@ fun PublicationEditScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Preview(showBackground = true)
 @Composable
-fun PublicationEditScreenPreview() {
-    val controller = rememberNavController()
-
-    PublicationEditScreen(controller = controller)
+fun PublicationEditPreview() {
+    val navHostController = rememberNavController()
+    PublicationEditScreen(controller = navHostController)
 }

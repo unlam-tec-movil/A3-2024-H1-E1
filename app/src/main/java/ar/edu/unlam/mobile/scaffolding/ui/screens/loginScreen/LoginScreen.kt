@@ -58,16 +58,16 @@ fun LoginScreen(navHostController: NavHostController) {
                     val credential = GoogleAuthProvider.getCredential(account?.data?.idToken, null)
                     scope.launch {
                         val user = loginViewModel.signInWithGoogleCredential(credential)
-                        if (user != null) {
-                            Toast.makeText(context, "Bienvenido $user", Toast.LENGTH_SHORT).show()
-                            navHostController.navigate(NavigationRoutes.MapScreen.route) {
-                                popUpTo(NavigationRoutes.MapScreen.route) {
-                                    inclusive = true
-                                }
+
+                        Toast.makeText(context, "Bienvenido $user", Toast.LENGTH_SHORT).show()
+                        navHostController.navigate(NavigationRoutes.MapScreen.route) {
+                            popUpTo(NavigationRoutes.MapScreen.route) {
+                                inclusive = true
                             }
                         }
                     }
                 }
+
                 null -> {
                     Toast.makeText(context, "Error Desconocido", Toast.LENGTH_SHORT).show()
                 }

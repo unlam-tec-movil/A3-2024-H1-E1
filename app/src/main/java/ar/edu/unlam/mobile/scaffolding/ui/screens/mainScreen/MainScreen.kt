@@ -1,5 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.mainScreen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -15,6 +17,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationComponent
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun MainScreen() {
     // Controller es el elemento que nos permite navegar entre pantallas. Tiene las acciones
