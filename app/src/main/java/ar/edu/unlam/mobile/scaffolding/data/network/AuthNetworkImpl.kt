@@ -17,7 +17,7 @@ class AuthNetworkImpl
             return try {
                 val firebaseUser = firebaseAuth.signInWithCredential(credential).await()
                 firebaseUser.user?.let {
-                    AuthRes.Succes(it)
+                    AuthRes.Success(it)
                 } ?: throw Exception("Sign in with Google failed")
             } catch (e: Exception) {
                 AuthRes.Error(e.message ?: "Sign in with Google failed")
