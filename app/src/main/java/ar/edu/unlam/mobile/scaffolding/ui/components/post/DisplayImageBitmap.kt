@@ -16,7 +16,7 @@ fun DisplayImageBitmap(
     Image(
         bitmap = data.asImageBitmap(),
         contentDescription = contentDescription,
-        contentScale = ContentScale.Crop,
+        contentScale = ContentScale.Fit,
         modifier = modifier,
     )
 }

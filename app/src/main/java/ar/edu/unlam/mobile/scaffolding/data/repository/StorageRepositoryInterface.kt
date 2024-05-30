@@ -7,7 +7,7 @@ interface StorageRepositoryInterface {
         image: Bitmap,
         userId: String,
         publicationId: String,
-    )
+    ): String
 
     suspend fun deleteImage(imagePath: String)
 }

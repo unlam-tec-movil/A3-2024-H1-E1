@@ -30,11 +30,13 @@ class PublicationEditViewModel
     constructor(
         private val storageService: StorageService,
         private val getUser: GetCurrentUser,
+        context: Context,
     ) : ViewModel() {
         private var currentUserId: UserInfoGoogle? = null
 
         @Suppress("ktlint:standard:backing-property-naming")
-        private val _listImagesForUser = mutableStateOf<List<Bitmap>>(emptyList())
+        private val _listImagesForUser =
+            mutableStateOf<List<Bitmap>>(emptyList())
 
         // Exponemos _listImagesForUser como State
         val listImageForPublication: State<List<Bitmap>> = _listImagesForUser

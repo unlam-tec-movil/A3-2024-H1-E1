@@ -90,7 +90,10 @@ fun <T> SettingImage(
                     ActionButton(
                         text = "Eliminar",
                         icon = painterResource(id = R.drawable.icons_eliminar_img),
-                        onClick = { onDeletePhoto() },
+                        onClick = {
+                            onDeletePhoto()
+                            onDissmissButon()
+                        },
                     )
                 }
             }

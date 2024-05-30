@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +39,7 @@ fun SelectedFormUpdateImage(
             modifier =
                 Modifier
                     .height(130.dp)
+                    .clip(RoundedCornerShape(5.dp))
                     .width(200.dp)
                     .background(
                         MaterialTheme.colorScheme.background,
@@ -54,7 +57,10 @@ fun SelectedFormUpdateImage(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.padding(end = 10.dp)) {
-                    IconButton(onClick = { onCameraSelected() }) {
+                    IconButton(onClick = {
+                        onCameraSelected()
+                        onDissmisButton()
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.icon_camara),
                             contentDescription = null,
@@ -64,7 +70,10 @@ fun SelectedFormUpdateImage(
                     Text(text = "Camara")
                 }
                 Column(modifier = Modifier.padding(start = 10.dp)) {
-                    IconButton(onClick = { onGalerrySelected() }) {
+                    IconButton(onClick = {
+                        onGalerrySelected()
+                        onDissmisButton()
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.icon_abrir_galeria),
                             contentDescription = null,

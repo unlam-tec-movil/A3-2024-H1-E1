@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,10 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
 import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
@@ -51,7 +52,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.CheckboxComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
-import ar.edu.unlam.mobile.scaffolding.ui.components.post.ImageCard
+import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
 import java.io.File
@@ -147,16 +148,8 @@ fun PublicationEditScreen(
                 .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        ImageCard(
-            imageList = imageDataList,
-            modifier =
-                Modifier
-                    .height(350.dp)
-                    .width(300.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 5.dp),
-        ) { imageSelected ->
-
+        Carrousel(listOfImage = imageDataList) {
+                imageSelected ->
             selectedItemForSetting = imageSelected
             showDialogForSettingImage = true
         }
@@ -359,4 +352,12 @@ fun PublicationEditScreen(
             }
         }
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.P)
+@Preview(showBackground = true)
+@Composable
+fun PublicationEditPreview() {
+    val navHostController = rememberNavController()
+    PublicationEditScreen(controller = navHostController)
 }

@@ -13,8 +13,8 @@ class StorageRepository
             image: Bitmap,
             userId: String,
             publicationId: String,
-        ) {
-            storageNetwork.uploadImage(image, userId, publicationId)
+        ): String {
+            return storageNetwork.uploadImage(image, userId, publicationId)
         }
 
         override suspend fun deleteImage(imagePath: String) {

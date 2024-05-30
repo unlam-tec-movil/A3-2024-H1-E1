@@ -14,5 +14,5 @@ interface StorageNetworkInterface {
         image: Bitmap,
         userId: String,
         publicationId: String,
-    )
+    ): String
 }

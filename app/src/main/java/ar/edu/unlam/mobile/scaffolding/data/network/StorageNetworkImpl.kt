@@ -25,7 +25,7 @@ class StorageNetworkImpl
             image: Bitmap,
             userId: String,
             publicationId: String,
-        ) {
+        ): String {
             // userId//publicationId//image , esa es la ruta
             val storageRef = getStorageReference(userId)
             val publicationRef = storageRef.child(publicationId)
@@ -33,9 +33,10 @@ class StorageNetworkImpl
             val baos = ByteArrayOutputStream()
             image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val imageData = baos.toByteArray()
-            try {
+            return try {
                 imgReference.putBytes(imageData)
                 Log.d("StorageService", "Image uploaded successfully:")
+                imgReference.downloadUrl.await().toString()
             } catch (e: Exception) {
                 // /que hacemos si no pudo subir la img , x alguna razon
                 Log.d("StorageService", "Image failed upload to firebase Storage")
