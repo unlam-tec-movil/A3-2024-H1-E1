@@ -2,7 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.domain.models
 
 import java.util.Date
 
-class Post(
+class PostWithImages(
     val id: String,
     val type: String,
     val title: String,
@@ -14,4 +14,5 @@ class Post(
     val color: String,
     val location: String,
     val contact: Int,
+    val images: List<String>
 )

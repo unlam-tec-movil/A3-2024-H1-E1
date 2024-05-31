@@ -30,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
+import ar.edu.unlam.mobile.scaffolding.domain.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
 import ar.edu.unlam.mobile.scaffolding.ui.components.CheckboxComponent
@@ -56,6 +59,10 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
 import java.io.File
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -80,8 +87,9 @@ fun PublicationEditScreen(
     var color by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
     var contact by remember { mutableStateOf("") }
-    val contactList = listOf("1188223322", "1120332222")
     val scrollState = rememberScrollState()
+    var type by remember { mutableStateOf("") }
+    val selectedOption = remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
     val cameraXPermission = arrayOf(Manifest.permission.CAMERA)
@@ -140,6 +148,24 @@ fun PublicationEditScreen(
             }
         }
 
+    // Resultado de la creacion de la PUBLICACION
+    val publicationState by viewModel.publicationState.collectAsState()
+
+    LaunchedEffect(selectedOption.value, publicationState) {
+        selectedOption.value?.let {
+            type = it
+        }
+        publicationState?.let {
+            if (it.isSuccess) {
+                controller.popBackStack()
+            } else if (it.isFailure) {
+                val exception = it.exceptionOrNull()
+                // Manejar el error, por ejemplo, mostrar un mensaje de error
+                println("Error al crear la publicación: ${exception?.message}")
+            }
+        }
+    }
+
     Column(
         modifier =
             Modifier
@@ -195,7 +221,7 @@ fun PublicationEditScreen(
         // RADIO GROUPS
         CheckboxComponent(
             options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
-            selectedOption = remember { mutableStateOf<String?>(null) },
+            selectedOption = selectedOption,
             optionToString = { it },
         )
         // DATE PICKER COMPONENT
@@ -343,8 +369,43 @@ fun PublicationEditScreen(
             }
             Button(
                 onClick = {
-                    controller.popBackStack()
+                    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
                     // aca llamamos a la funcion createPublication
+                    val newPost =
+                        Post(
+                            id = UUID.randomUUID().toString(),
+                            type = type,
+                            title = title,
+                            description = description,
+                            dateLost =
+                                dateLost.let { input ->
+                                    if (input.isEmpty()) {
+                                        dateFormat.format(Date()) // Devuelve la fecha actual como una cadena
+                                    } else {
+                                        try {
+                                            dateFormat.parse(input)?.let { dateFormat.format(it) } ?: dateFormat.format(Date())
+                                        } catch (e: ParseException) {
+                                            dateFormat.format(Date()) // Si hay un error al analizar, devuelve la fecha actual como una cadena
+                                        }
+                                    }
+                                },
+                            species = (if (species == "") Species.LORO else species).toString(),
+                            sex = (if (sex == "") Sex.MACHO else sex).toString(),
+                            age = age.toIntOrNull() ?: 0,
+                            color = (if (color == "") PetColors.MARRON else color).toString(),
+                            location = location,
+                            contact = contact.toIntOrNull() ?: 0,
+                        )
+                    if (newPost.title.isNotBlank() &&
+                        newPost.description.isNotBlank() &&
+                        newPost.location.isNotBlank() &&
+                        newPost.contact != 0 &&
+                        newPost.type.isNotBlank()
+                    ) {
+                        viewModel.newPublication(newPost)
+                    } else {
+                        // Manejar error: mostrar mensaje o indicación de que faltan datos
+                    }
                 },
                 modifier = Modifier,
             ) {

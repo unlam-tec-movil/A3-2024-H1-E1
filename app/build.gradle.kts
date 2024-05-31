@@ -113,6 +113,7 @@ dependencies {
     implementation(libs.google.play.service)
     implementation(libs.firebase.common.ktx)
     implementation(libs.firebase.storage)
+    implementation (libs.firebase.firestore)
 
     // life
     implementation(libs.lifecycleViewModel)

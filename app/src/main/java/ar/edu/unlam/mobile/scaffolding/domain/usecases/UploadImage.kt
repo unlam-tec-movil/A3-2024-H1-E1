@@ -7,5 +7,5 @@ interface UploadImage {
         image: Bitmap,
         userId: String,
         publicationId: String,
-    )
+    ): String
 }
