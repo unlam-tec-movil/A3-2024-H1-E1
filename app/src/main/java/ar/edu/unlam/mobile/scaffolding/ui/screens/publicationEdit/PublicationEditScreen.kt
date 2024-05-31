@@ -380,12 +380,14 @@ fun PublicationEditScreen(
                             dateLost =
                                 dateLost.let { input ->
                                     if (input.isEmpty()) {
-                                        dateFormat.format(Date()) // Devuelve la fecha actual como una cadena
+                                        dateFormat.format(Date())
+                                    // Devuelve la fecha actual como una cadena
                                     } else {
                                         try {
                                             dateFormat.parse(input)?.let { dateFormat.format(it) } ?: dateFormat.format(Date())
                                         } catch (e: ParseException) {
-                                            dateFormat.format(Date()) // Si hay un error al analizar, devuelve la fecha actual como una cadena
+                                            dateFormat.format(Date())
+                                        // Si hay un error al analizar, devuelve la fecha actual como una cadena
                                         }
                                     }
                                 },
