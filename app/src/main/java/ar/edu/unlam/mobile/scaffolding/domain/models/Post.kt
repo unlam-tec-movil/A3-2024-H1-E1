@@ -1,7 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.domain.models
 
-import java.util.Date
-
 class Post(
     val id: String,
     val type: String,
