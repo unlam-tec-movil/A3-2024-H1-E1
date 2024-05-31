@@ -21,30 +21,29 @@ class StorageNetworkImpl
             return storage.getReferenceFromUrl(url)
         }
 
-    override suspend fun uploadImage(
-        image: Bitmap,
-        userId: String,
-        publicationId: String,
-    ): String {
-        // userId/publicationId/image.jpg , esa es la ruta
-        val storageRef = getStorageReference(userId)
-        val publicationRef = storageRef.child(publicationId)
-        val imgReference = publicationRef.child("image_${System.currentTimeMillis()}.jpg")
-        val baos = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val imageData = baos.toByteArray()
-        return try {
-            val uploadTask = imgReference.putBytes(imageData).await()
-            val downloadUrl = imgReference.downloadUrl.await().toString()
-            Log.d("StorageService", "Image uploaded successfully: $downloadUrl")
-            downloadUrl
-        } catch (e: Exception) {
-            // Qué hacemos si no pudo subir la imagen, por alguna razón
-            Log.d("StorageService", "Image failed upload to firebase Storage", e)
-            throw e
+        override suspend fun uploadImage(
+            image: Bitmap,
+            userId: String,
+            publicationId: String,
+        ): String {
+            // userId/publicationId/image.jpg , esa es la ruta
+            val storageRef = getStorageReference(userId)
+            val publicationRef = storageRef.child(publicationId)
+            val imgReference = publicationRef.child("image_${System.currentTimeMillis()}.jpg")
+            val baos = ByteArrayOutputStream()
+            image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            val imageData = baos.toByteArray()
+            return try {
+                val uploadTask = imgReference.putBytes(imageData).await()
+                val downloadUrl = imgReference.downloadUrl.await().toString()
+                Log.d("StorageService", "Image uploaded successfully: $downloadUrl")
+                downloadUrl
+            } catch (e: Exception) {
+                // Qué hacemos si no pudo subir la imagen, por alguna razón
+                Log.d("StorageService", "Image failed upload to firebase Storage", e)
+                throw e
+            }
         }
-    }
-
 
         override suspend fun deleteImageToStorage(imageUrl: String) {
             try {

@@ -1,7 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.data.network
 
-import android.graphics.Bitmap
-import ar.edu.unlam.mobile.scaffolding.domain.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import kotlinx.coroutines.flow.Flow
 
@@ -20,7 +18,5 @@ interface FirestoreNetworkInterface {
         publication: PostWithImages,
     ): Flow<PostWithImages>
 
-    suspend fun addPublicationToPublicationCollection(
-        publication: PostWithImages,
-    ): Flow<PostWithImages>
+    suspend fun addPublicationToPublicationCollection(publication: PostWithImages): Flow<PostWithImages>
 }

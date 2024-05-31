@@ -1,7 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.domain.models
 
-import java.util.Date
-
 class PostWithImages(
     val id: String,
     val type: String,
@@ -14,5 +12,5 @@ class PostWithImages(
     val color: String,
     val location: String,
     val contact: Int,
-    val images: List<String>
+    val images: List<String>,
 )
