@@ -15,7 +15,6 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
-import ar.edu.unlam.mobile.scaffolding.domain.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
@@ -117,73 +116,141 @@ class PublicationEditViewModel
         private val _publicationState = MutableStateFlow<Result<PostWithImages>?>(null)
         val publicationState: StateFlow<Result<PostWithImages>?> get() = _publicationState
 
-        fun newPublication(
-            type: String,
-            title: String,
-            description: String,
-            dateLost: String,
-            species: String,
-            sex: String,
-            age: Int,
-            color: String,
-            location: String,
-            contact: Int,
-        ) {
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-            // Aca formateamos y autocompletamos si el usuario no lleno datos
-            val newPost =
-                Post(
-                    id = UUID.randomUUID().toString(),
-                    type = type,
-                    title = title,
-                    description = description,
-                    dateLost =
-                        dateLost.let { input ->
-                            if (input.isEmpty()) {
-                                dateFormat.format(Date()) // Devuelve la fecha actual como una cadena
-                            } else {
-                                try {
-                                    dateFormat.parse(input)?.let { dateFormat.format(it) } ?: dateFormat.format(Date())
-                                } catch (e: ParseException) {
-                                    dateFormat.format(Date()) // Si hay un error al analizar, devuelve la fecha actual como una cadena
-                                }
-                            }
-                        },
-                    species = (if (species == "") Species.LORO else species).toString(),
-                    sex = (if (sex == "") Sex.MACHO else sex).toString(),
-                    age = age,
-                    color = (if (color == "") PetColors.MARRON else color).toString(),
-                    location = location,
-                    contact = contact,
-                )
-            currentUserId?.let { addPublication(it.userId, newPost) }
+        private val _id = mutableStateOf("")
+        val id: State<String> = _id
+
+        private val _type = mutableStateOf("")
+        private val type: State<String> = _type
+
+        private val _title = mutableStateOf("")
+        val title: State<String> = _title
+
+        private val _description = mutableStateOf("")
+        val description: State<String> = _description
+
+        private val _dateLost = mutableStateOf("")
+        private val dateLost: State<String> = _dateLost
+
+        private val _species = mutableStateOf("")
+        private val species: State<String> = _species
+
+        private val _sex = mutableStateOf("")
+        private val sex: State<String> = _sex
+
+        private val _age = mutableStateOf("")
+        val age: State<String> = _age
+
+        private val _color = mutableStateOf("")
+        val color: State<String> = _color
+
+        private val _location = mutableStateOf("")
+        val location: State<String> = _location
+
+        private val _contact = mutableStateOf("")
+        val contact: State<String> = _contact
+
+        private val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+
+        private fun setId(value: String) {
+            _id.value = value
         }
 
-        private fun addPublication(
-            idUser: String,
-            publication: Post,
-        ) {
+        fun setType(value: String) {
+            _type.value = value
+        }
+
+        fun setTitle(value: String) {
+            _title.value = value
+        }
+
+        fun setDescription(value: String) {
+            _description.value = value
+        }
+
+        fun setDateLost(value: String) {
+            val formattedDate: String =
+                try {
+                    dateFormat.parse(value)?.let { dateFormat.format(it) } ?: dateFormat.format(Date())
+                } catch (e: ParseException) {
+                    dateFormat.format(Date()) // Si hay un error al analizar, devuelve la fecha actual como una cadena
+                }
+            _dateLost.value = formattedDate
+        }
+
+        fun setSpecies(value: String) {
+            _species.value = value
+        }
+
+        fun setSex(value: String) {
+            _sex.value = value
+        }
+
+        fun setAge(value: String) {
+            _age.value = value
+        }
+
+        fun setColor(value: String) {
+            _color.value = value
+        }
+
+        fun setLocation(value: String) {
+            _location.value = value
+        }
+
+        fun setContact(value: String) {
+            _contact.value = value
+        }
+
+        fun newPublication() {
+            if (title.value !== "" &&
+                description.value !== "" &&
+                location.value !== "" &&
+                type.value !== "" &&
+                age.value !== "" &&
+                contact.value !== ""
+            ) {
+                setId(UUID.randomUUID().toString())
+
+                if (dateLost.value.isEmpty()) {
+                    setDateLost(dateFormat.format(Date())) // Devuelve la fecha actual como una cadena
+                }
+                if (species.value.isEmpty()) {
+                    setSpecies(Species.LORO.toString())
+                }
+                if (sex.value.isEmpty()) {
+                    setSex(Sex.MACHO.toString())
+                }
+                if (color.value.isEmpty()) {
+                    setColor(PetColors.MARRON.toString())
+                }
+                currentUserId?.let { addPublication(it.userId) }
+            } else {
+                // Realizar Componente para avisar de posibles faltantes datos
+            }
+        }
+
+        private fun addPublication(idUser: String) {
             viewModelScope.launch {
                 try {
                     val bitmapList: List<Bitmap> = listImageForPublication.value
                     val imageUrls =
                         bitmapList.map { bitmap ->
-                            async { storageService.uploadImage(bitmap, idUser, publication.id) }
+                            async { storageService.uploadImage(bitmap, idUser, id.value) }
                         }
                     val urls = imageUrls.awaitAll() // Asegura que esperemos a todas las subidas de imágenes
                     val postWithImages =
                         PostWithImages(
-                            id = publication.id,
-                            type = publication.type,
-                            title = publication.title,
-                            description = publication.description,
-                            dateLost = publication.dateLost,
-                            species = publication.species,
-                            sex = publication.sex,
-                            age = publication.age,
-                            color = publication.color,
-                            location = publication.location,
-                            contact = publication.contact,
+                            id = id.value,
+                            type = type.value,
+                            title = title.value,
+                            description = description.value,
+                            dateLost = dateLost.value,
+                            species = species.value,
+                            sex = sex.value,
+                            age = age.value.toInt(),
+                            color = color.value,
+                            location = location.value,
+                            contact = contact.value.toInt(),
                             images = urls, // Lista de URLs
                         )
                     firestoreService.addPublicationToPublicationCollection(postWithImages).collect { result ->

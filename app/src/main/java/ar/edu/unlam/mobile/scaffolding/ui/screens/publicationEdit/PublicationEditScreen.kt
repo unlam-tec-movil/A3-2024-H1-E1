@@ -73,22 +73,10 @@ fun PublicationEditScreen(
         mutableStateOf(false)
     }
     var showDialogForSettingImage by remember { mutableStateOf(false) }
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var species by remember { mutableStateOf("") }
-    var sex by remember { mutableStateOf("") }
-    var dateLost by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
-    var color by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf("") }
-    var contact by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
-    var type by remember { mutableStateOf("") }
     val selectedOption = remember { mutableStateOf<String?>(null) }
-
     val context = LocalContext.current
     val cameraXPermission = arrayOf(Manifest.permission.CAMERA)
-
     val imageDataList by viewModel.listImageForPublication
     val galleryLauncher =
         rememberLauncherForActivityResult(
@@ -148,7 +136,7 @@ fun PublicationEditScreen(
 
     LaunchedEffect(selectedOption.value, publicationState) {
         selectedOption.value?.let {
-            type = it
+            viewModel.setType(it)
         }
         publicationState?.let {
             if (it.isSuccess) {
@@ -227,7 +215,7 @@ fun PublicationEditScreen(
         ) {
             Text("Fecha de perdida:")
             DatePickerComponent { selectedDate ->
-                dateLost = selectedDate
+                viewModel.setDateLost(selectedDate)
             }
         }
 
@@ -239,8 +227,8 @@ fun PublicationEditScreen(
             Text("Titulo de Publicacion")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = title,
-                onValueChange = { title = it },
+                value = viewModel.title.value,
+                onValueChange = { viewModel.setTitle(it) },
                 placeholder = { Text("Ingrese el titulo") },
                 singleLine = true,
             )
@@ -254,8 +242,8 @@ fun PublicationEditScreen(
             Text("Descripcion")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = description,
-                onValueChange = { description = it },
+                value = viewModel.description.value,
+                onValueChange = { viewModel.setDescription(it) },
                 placeholder = { Text("Ingrese la descripcion") },
                 maxLines = 4,
             )
@@ -268,7 +256,7 @@ fun PublicationEditScreen(
         ) {
             Text("Especie")
             SelectComponent(Species.values().toList()) { selectedSpecies ->
-                species = selectedSpecies.toString()
+                viewModel.setSpecies(selectedSpecies.toString())
             }
         }
 
@@ -279,7 +267,7 @@ fun PublicationEditScreen(
         ) {
             Text("Sexo")
             SelectComponent(Sex.values().toList()) { selectedSex ->
-                sex = selectedSex.toString()
+                viewModel.setSex(selectedSex.toString())
             }
         }
         Column(
@@ -290,8 +278,8 @@ fun PublicationEditScreen(
             Text("Edad")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = age,
-                onValueChange = { age = it },
+                value = viewModel.age.value,
+                onValueChange = { viewModel.setAge(it) },
                 placeholder = { Text("Ingrese la edad") },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             )
@@ -304,7 +292,7 @@ fun PublicationEditScreen(
         ) {
             Text("Color")
             SelectComponent(PetColors.values().toList()) { selectedColor ->
-                color = selectedColor.toString()
+                viewModel.setColor(selectedColor.toString())
             }
         }
         Column(
@@ -315,8 +303,8 @@ fun PublicationEditScreen(
             Text("Numero de contacto")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = contact,
-                onValueChange = { contact = it },
+                value = viewModel.contact.value,
+                onValueChange = { viewModel.setContact(it) },
                 placeholder = { Text("Ingrese el numero de contacto") },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             )
@@ -329,8 +317,8 @@ fun PublicationEditScreen(
             Text("Ubicacion")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = location,
-                onValueChange = { location = it },
+                value = viewModel.location.value,
+                onValueChange = { viewModel.setLocation(it) },
                 placeholder = { Text("Ingrese la ubicacion") },
             )
             MapsComponent(
@@ -364,28 +352,7 @@ fun PublicationEditScreen(
             }
             Button(
                 onClick = {
-                    if (title.isNotBlank() &&
-                        description.isNotBlank() &&
-                        location.isNotBlank() &&
-                        type.isNotBlank() &&
-                        age.isNotBlank() &&
-                        contact.isNotBlank()
-                    ) {
-                        viewModel.newPublication(
-                            type,
-                            title,
-                            description,
-                            dateLost,
-                            species,
-                            sex,
-                            age.toInt(),
-                            color,
-                            location,
-                            contact.toInt(),
-                        )
-                    } else {
-                        // Manejar error: mostrar mensaje o indicación de que faltan datos
-                    }
+                    viewModel.newPublication()
                 },
                 modifier = Modifier,
             ) {
