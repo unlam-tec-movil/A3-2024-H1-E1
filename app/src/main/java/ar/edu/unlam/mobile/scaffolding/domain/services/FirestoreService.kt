@@ -26,6 +26,13 @@ class FirestoreService
             return firestoreRepository.getPublicationsForUser(idUser)
         }
 
+        override suspend fun getPublicationForUserById(
+            idUser: String,
+            idPublication: String,
+        ): Flow<PostWithImages> {
+            return firestoreRepository.getPublicationForUserById(idUser, idPublication)
+        }
+
         override suspend fun getAllPublications(): Flow<List<PostWithImages>> {
             return firestoreRepository.getAllPublications()
         }

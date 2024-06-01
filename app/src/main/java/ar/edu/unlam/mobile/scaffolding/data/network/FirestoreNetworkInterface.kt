@@ -8,9 +8,9 @@ interface FirestoreNetworkInterface {
 
     suspend fun getPublicationsForUser(idUser: String): Flow<List<PostWithImages>>
 
-    suspend fun editPublication(
+    suspend fun getPublicationForUserById(
         idUser: String,
-        idPubli: Int,
+        idPublication: String,
     ): Flow<PostWithImages>
 
     suspend fun addPublication(
@@ -19,4 +19,22 @@ interface FirestoreNetworkInterface {
     ): Flow<PostWithImages>
 
     suspend fun addPublicationToPublicationCollection(publication: PostWithImages): Flow<PostWithImages>
+
+    suspend fun editPublicationForUser(
+        idUser: String,
+        idPublication: String,
+        updatedPublication: PostWithImages,
+    ): Flow<PostWithImages>
+
+    suspend fun editPublicationInAllPublications(
+        idPublication: String,
+        updatedPublication: PostWithImages,
+    ): Flow<PostWithImages>
+
+    suspend fun deletePublicationForUser(
+        idUser: String,
+        idPublication: String,
+    ): Flow<Boolean>
+
+    suspend fun deletePublicationInAllPublications(idPublication: String): Flow<Boolean>
 }

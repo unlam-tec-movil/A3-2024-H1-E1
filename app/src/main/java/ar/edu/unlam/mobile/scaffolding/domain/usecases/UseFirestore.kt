@@ -13,5 +13,10 @@ interface UseFirestore {
 
     suspend fun getPublicationsForUser(idUser: String): Flow<List<PostWithImages>>
 
+    suspend fun getPublicationForUserById(
+        idUser: String,
+        idPublication: String,
+    ): Flow<PostWithImages>
+
     suspend fun getAllPublications(): Flow<List<PostWithImages>>
 }
