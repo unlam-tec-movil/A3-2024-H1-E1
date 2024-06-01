@@ -49,7 +49,7 @@ class FirestoreNetworkImpl
                 }
             }
 
-        override suspend fun getPublicationsForUser(idUser: String): Flow<List<PostWithImages>> =
+        override suspend fun getPublicationsByUserId(idUser: String): Flow<List<PostWithImages>> =
             flow {
                 try {
                     val documentSnapshot =
@@ -84,23 +84,22 @@ class FirestoreNetworkImpl
                 }
             }
 
-        override suspend fun getPublicationForUserById(
-            idUser: String,
-            idPublication: String,
-        ): Flow<PostWithImages> =
+        override suspend fun getPublicationById(idPublication: String): Flow<PostWithImages> =
             flow {
                 try {
-                    // Obtiene el documento del usuario
+                    // Obtiene el documento de todas las publicaciones
                     val documentSnapshot =
-                        firebaseFirestore.collection("users")
-                            .document(idUser)
+                        firebaseFirestore.collection("publications")
+                            .document("AllPublications")
                             .get()
                             .await()
 
                     // Obtiene el array de publicaciones
-                    val publications = documentSnapshot["publications"] as? List<Map<String, Any>>
+                    val publications = documentSnapshot["AllPublications"] as? List<Map<String, Any>>
+
                     // Busca la publicación específica por id
                     val publication = publications?.find { it["id"] == idPublication }
+
                     // Mapea la publicación a PostWithImages si existe
                     val postWithImages =
                         publication?.let {
@@ -119,6 +118,7 @@ class FirestoreNetworkImpl
                                 images = (it["images"] as? List<String>) ?: emptyList(),
                             )
                         }
+
                     // Emite la publicación si se encuentra
                     if (postWithImages != null) {
                         emit(postWithImages)

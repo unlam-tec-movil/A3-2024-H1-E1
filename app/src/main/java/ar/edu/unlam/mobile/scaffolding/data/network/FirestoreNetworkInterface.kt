@@ -6,12 +6,9 @@ import kotlinx.coroutines.flow.Flow
 interface FirestoreNetworkInterface {
     suspend fun getAllPublications(): Flow<List<PostWithImages>>
 
-    suspend fun getPublicationsForUser(idUser: String): Flow<List<PostWithImages>>
+    suspend fun getPublicationsByUserId(idUser: String): Flow<List<PostWithImages>>
 
-    suspend fun getPublicationForUserById(
-        idUser: String,
-        idPublication: String,
-    ): Flow<PostWithImages>
+    suspend fun getPublicationById(idPublication: String): Flow<PostWithImages>
 
     suspend fun addPublication(
         idUser: String,

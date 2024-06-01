@@ -22,15 +22,12 @@ class FirestoreService
             return firestoreRepository.addPublicationToPublicationCollection(publication)
         }
 
-        override suspend fun getPublicationsForUser(idUser: String): Flow<List<PostWithImages>> {
-            return firestoreRepository.getPublicationsForUser(idUser)
+        override suspend fun getPublicationsByUserId(idUser: String): Flow<List<PostWithImages>> {
+            return firestoreRepository.getPublicationsByUserId(idUser)
         }
 
-        override suspend fun getPublicationForUserById(
-            idUser: String,
-            idPublication: String,
-        ): Flow<PostWithImages> {
-            return firestoreRepository.getPublicationForUserById(idUser, idPublication)
+        override suspend fun getPublicationById(idPublication: String): Flow<PostWithImages> {
+            return firestoreRepository.getPublicationById(idPublication)
         }
 
         override suspend fun getAllPublications(): Flow<List<PostWithImages>> {
