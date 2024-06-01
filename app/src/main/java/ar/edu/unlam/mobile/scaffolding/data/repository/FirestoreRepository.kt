@@ -21,13 +21,11 @@ class FirestoreRepository
             return firestoreNetworkInterface.addPublicationToPublicationCollection(publication)
         }
 
-        suspend fun getPublicationsForUser(idUser: String): Flow<List<PostWithImages>> {
+        suspend fun getPublicationsByUserId(idUser: String): Flow<List<PostWithImages>> {
             return firestoreNetworkInterface.getPublicationsByUserId(idUser)
         }
 
-        suspend fun getPublicationById(
-            idPublication: String,
-        ): Flow<PostWithImages> {
+        suspend fun getPublicationById(idPublication: String): Flow<PostWithImages> {
             return firestoreNetworkInterface.getPublicationById(idPublication)
         }
 
