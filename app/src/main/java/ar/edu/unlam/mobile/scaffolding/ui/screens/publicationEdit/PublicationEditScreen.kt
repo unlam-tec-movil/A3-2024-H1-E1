@@ -48,7 +48,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
-import ar.edu.unlam.mobile.scaffolding.domain.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
 import ar.edu.unlam.mobile.scaffolding.ui.components.CheckboxComponent
@@ -59,10 +58,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
 import java.io.File
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -369,40 +364,25 @@ fun PublicationEditScreen(
             }
             Button(
                 onClick = {
-                    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-                    // aca llamamos a la funcion createPublication
-                    val newPost =
-                        Post(
-                            id = UUID.randomUUID().toString(),
-                            type = type,
-                            title = title,
-                            description = description,
-                            dateLost =
-                                dateLost.let { input ->
-                                    if (input.isEmpty()) {
-                                        dateFormat.format(Date()) // Devuelve la fecha actual como una cadena
-                                    } else {
-                                        try {
-                                            dateFormat.parse(input)?.let { dateFormat.format(it) } ?: dateFormat.format(Date())
-                                        } catch (e: ParseException) {
-                                            dateFormat.format(Date()) // Si hay un error al analizar, devuelve la fecha actual como una cadena
-                                        }
-                                    }
-                                },
-                            species = (if (species == "") Species.LORO else species).toString(),
-                            sex = (if (sex == "") Sex.MACHO else sex).toString(),
-                            age = age.toIntOrNull() ?: 0,
-                            color = (if (color == "") PetColors.MARRON else color).toString(),
-                            location = location,
-                            contact = contact.toIntOrNull() ?: 0,
-                        )
-                    if (newPost.title.isNotBlank() &&
-                        newPost.description.isNotBlank() &&
-                        newPost.location.isNotBlank() &&
-                        newPost.contact != 0 &&
-                        newPost.type.isNotBlank()
+                    if (title.isNotBlank() &&
+                        description.isNotBlank() &&
+                        location.isNotBlank() &&
+                        type.isNotBlank() &&
+                        age.isNotBlank() &&
+                        contact.isNotBlank()
                     ) {
-                        viewModel.newPublication(newPost)
+                        viewModel.newPublication(
+                            type,
+                            title,
+                            description,
+                            dateLost,
+                            species,
+                            sex,
+                            age.toInt(),
+                            color,
+                            location,
+                            contact.toInt(),
+                        )
                     } else {
                         // Manejar error: mostrar mensaje o indicación de que faltan datos
                     }

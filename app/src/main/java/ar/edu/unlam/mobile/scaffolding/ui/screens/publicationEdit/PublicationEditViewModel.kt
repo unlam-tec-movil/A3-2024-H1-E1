@@ -14,8 +14,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
 import ar.edu.unlam.mobile.scaffolding.domain.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
+import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
+import ar.edu.unlam.mobile.scaffolding.domain.models.Species
 import ar.edu.unlam.mobile.scaffolding.domain.models.UserInfoGoogle
 import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
@@ -27,9 +30,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -112,8 +117,46 @@ class PublicationEditViewModel
         private val _publicationState = MutableStateFlow<Result<PostWithImages>?>(null)
         val publicationState: StateFlow<Result<PostWithImages>?> get() = _publicationState
 
-        fun newPublication(post: Post) {
-            currentUserId?.let { addPublication(it.userId, post) }
+        fun newPublication(
+            type: String,
+            title: String,
+            description: String,
+            dateLost: String,
+            species: String,
+            sex: String,
+            age: Int,
+            color: String,
+            location: String,
+            contact: Int,
+        ) {
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+            // Aca formateamos y autocompletamos si el usuario no lleno datos
+            val newPost =
+                Post(
+                    id = UUID.randomUUID().toString(),
+                    type = type,
+                    title = title,
+                    description = description,
+                    dateLost =
+                        dateLost.let { input ->
+                            if (input.isEmpty()) {
+                                dateFormat.format(Date()) // Devuelve la fecha actual como una cadena
+                            } else {
+                                try {
+                                    dateFormat.parse(input)?.let { dateFormat.format(it) } ?: dateFormat.format(Date())
+                                } catch (e: ParseException) {
+                                    dateFormat.format(Date()) // Si hay un error al analizar, devuelve la fecha actual como una cadena
+                                }
+                            }
+                        },
+                    species = (if (species == "") Species.LORO else species).toString(),
+                    sex = (if (sex == "") Sex.MACHO else sex).toString(),
+                    age = age,
+                    color = (if (color == "") PetColors.MARRON else color).toString(),
+                    location = location,
+                    contact = contact,
+                )
+            currentUserId?.let { addPublication(it.userId, newPost) }
         }
 
         private fun addPublication(
@@ -128,7 +171,6 @@ class PublicationEditViewModel
                             async { storageService.uploadImage(bitmap, idUser, publication.id) }
                         }
                     val urls = imageUrls.awaitAll() // Asegura que esperemos a todas las subidas de imágenes
-                    Log.d("PublicationEditViewModel", "Images: $urls")
                     val postWithImages =
                         PostWithImages(
                             id = publication.id,
