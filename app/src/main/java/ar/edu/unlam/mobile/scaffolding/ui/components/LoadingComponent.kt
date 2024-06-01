@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.components.post
+package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
