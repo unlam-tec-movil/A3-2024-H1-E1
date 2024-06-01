@@ -123,4 +123,7 @@ dependencies {
     implementation(libs.android.camera.lifecycle)
     implementation(libs.android.camera.view)
     implementation(libs.android.camera.extensions)
+
+    // lottie
+    implementation(libs.lottie.compose)
 }
