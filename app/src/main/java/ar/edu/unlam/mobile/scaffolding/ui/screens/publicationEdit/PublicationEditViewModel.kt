@@ -120,7 +120,7 @@ class PublicationEditViewModel
         val id: State<String> = _id
 
         private val _type = mutableStateOf("")
-        private val type: State<String> = _type
+        val type: State<String> = _type
 
         private val _title = mutableStateOf("")
         val title: State<String> = _title
@@ -129,13 +129,13 @@ class PublicationEditViewModel
         val description: State<String> = _description
 
         private val _dateLost = mutableStateOf("")
-        private val dateLost: State<String> = _dateLost
+        val dateLost: State<String> = _dateLost
 
         private val _species = mutableStateOf("")
-        private val species: State<String> = _species
+        val species: State<String> = _species
 
         private val _sex = mutableStateOf("")
-        private val sex: State<String> = _sex
+        val sex: State<String> = _sex
 
         private val _age = mutableStateOf("")
         val age: State<String> = _age
