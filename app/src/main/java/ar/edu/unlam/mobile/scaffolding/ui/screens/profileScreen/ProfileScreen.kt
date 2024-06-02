@@ -19,8 +19,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationCell
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 import coil.compose.AsyncImage
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -79,9 +79,8 @@ fun ProfileScreen(
                 onClick = {
                     viewModel.viewModelScope.launch {
                         viewModel.signOut()
-                        delay(2000)
-                        android.os.Process.killProcess(android.os.Process.myPid())
                     }
+                    controller.navigate(NavigationRoutes.LoginScreen.route)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             ) {
