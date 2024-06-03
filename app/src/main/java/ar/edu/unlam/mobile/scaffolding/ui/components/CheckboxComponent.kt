@@ -25,7 +25,8 @@ fun <T> CheckboxComponent(
         options.forEach { option ->
             Row(
                 modifier =
-                    Modifier.fillMaxWidth()
+                    Modifier
+                        .fillMaxWidth()
                         .height(56.dp)
                         .clickable {
                             selectedOption.value = option

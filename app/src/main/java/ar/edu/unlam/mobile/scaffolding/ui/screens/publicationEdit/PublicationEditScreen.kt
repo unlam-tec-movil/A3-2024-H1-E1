@@ -30,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,21 +73,10 @@ fun PublicationEditScreen(
         mutableStateOf(false)
     }
     var showDialogForSettingImage by remember { mutableStateOf(false) }
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var species by remember { mutableStateOf("") }
-    var sex by remember { mutableStateOf("") }
-    var dateLost by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
-    var color by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf("") }
-    var contact by remember { mutableStateOf("") }
-    val contactList = listOf("1188223322", "1120332222")
     val scrollState = rememberScrollState()
-
+    val selectedOption = remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
     val cameraXPermission = arrayOf(Manifest.permission.CAMERA)
-
     val imageDataList by viewModel.listImageForPublication
     val galleryLauncher =
         rememberLauncherForActivityResult(
@@ -139,6 +130,24 @@ fun PublicationEditScreen(
                 Toast.makeText(context, "failed take Photo ${result.resultCode}", Toast.LENGTH_SHORT).show()
             }
         }
+
+    // Resultado de la creacion de la PUBLICACION
+    val publicationState by viewModel.publicationState.collectAsState()
+
+    LaunchedEffect(selectedOption.value, publicationState) {
+        selectedOption.value?.let {
+            viewModel.setType(it)
+        }
+        publicationState?.let {
+            if (it.isSuccess) {
+                controller.popBackStack()
+            } else if (it.isFailure) {
+                val exception = it.exceptionOrNull()
+                // Manejar el error, por ejemplo, mostrar un mensaje de error
+                println("Error al crear la publicación: ${exception?.message}")
+            }
+        }
+    }
 
     Column(
         modifier =
@@ -195,7 +204,7 @@ fun PublicationEditScreen(
         // RADIO GROUPS
         CheckboxComponent(
             options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
-            selectedOption = remember { mutableStateOf<String?>(null) },
+            selectedOption = selectedOption,
             optionToString = { it },
         )
         // DATE PICKER COMPONENT
@@ -206,7 +215,7 @@ fun PublicationEditScreen(
         ) {
             Text("Fecha de perdida:")
             DatePickerComponent { selectedDate ->
-                dateLost = selectedDate
+                viewModel.setDateLost(selectedDate)
             }
         }
 
@@ -218,8 +227,8 @@ fun PublicationEditScreen(
             Text("Titulo de Publicacion")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = title,
-                onValueChange = { title = it },
+                value = viewModel.title.value,
+                onValueChange = { viewModel.setTitle(it) },
                 placeholder = { Text("Ingrese el titulo") },
                 singleLine = true,
             )
@@ -233,8 +242,8 @@ fun PublicationEditScreen(
             Text("Descripcion")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = description,
-                onValueChange = { description = it },
+                value = viewModel.description.value,
+                onValueChange = { viewModel.setDescription(it) },
                 placeholder = { Text("Ingrese la descripcion") },
                 maxLines = 4,
             )
@@ -247,7 +256,7 @@ fun PublicationEditScreen(
         ) {
             Text("Especie")
             SelectComponent(Species.values().toList()) { selectedSpecies ->
-                species = selectedSpecies.toString()
+                viewModel.setSpecies(selectedSpecies.toString())
             }
         }
 
@@ -258,7 +267,7 @@ fun PublicationEditScreen(
         ) {
             Text("Sexo")
             SelectComponent(Sex.values().toList()) { selectedSex ->
-                sex = selectedSex.toString()
+                viewModel.setSex(selectedSex.toString())
             }
         }
         Column(
@@ -269,8 +278,8 @@ fun PublicationEditScreen(
             Text("Edad")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = age,
-                onValueChange = { age = it },
+                value = viewModel.age.value,
+                onValueChange = { viewModel.setAge(it) },
                 placeholder = { Text("Ingrese la edad") },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             )
@@ -283,7 +292,7 @@ fun PublicationEditScreen(
         ) {
             Text("Color")
             SelectComponent(PetColors.values().toList()) { selectedColor ->
-                color = selectedColor.toString()
+                viewModel.setColor(selectedColor.toString())
             }
         }
         Column(
@@ -294,8 +303,8 @@ fun PublicationEditScreen(
             Text("Numero de contacto")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = contact,
-                onValueChange = { contact = it },
+                value = viewModel.contact.value,
+                onValueChange = { viewModel.setContact(it) },
                 placeholder = { Text("Ingrese el numero de contacto") },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             )
@@ -308,8 +317,8 @@ fun PublicationEditScreen(
             Text("Ubicacion")
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = location,
-                onValueChange = { location = it },
+                value = viewModel.location.value,
+                onValueChange = { viewModel.setLocation(it) },
                 placeholder = { Text("Ingrese la ubicacion") },
             )
             MapsComponent(
@@ -343,8 +352,7 @@ fun PublicationEditScreen(
             }
             Button(
                 onClick = {
-                    controller.popBackStack()
-                    // aca llamamos a la funcion createPublication
+                    viewModel.newPublication()
                 },
                 modifier = Modifier,
             ) {

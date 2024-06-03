@@ -1,15 +1,15 @@
 package ar.edu.unlam.mobile.scaffolding.domain.models
 
-import java.util.Date
-
-class Post(
+class PostWithImages(
+    val id: String,
+    val type: String,
     val title: String,
     val description: String,
-    val dateLost: Date,
-    val species: Species,
-    val sex: Sex,
+    val dateLost: String,
+    val species: String,
+    val sex: String,
     val age: Int,
-    val color: PetColors,
+    val color: String,
     val location: String,
     val contact: Int,
     val images: List<String>,
