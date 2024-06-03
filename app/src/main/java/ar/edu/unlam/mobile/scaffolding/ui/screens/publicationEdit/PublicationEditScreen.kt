@@ -65,7 +65,15 @@ fun PublicationEditScreen(
     modifier: Modifier = Modifier,
     controller: NavHostController,
     viewModel: PublicationEditViewModel = hiltViewModel(),
+    idPublication: String?,
 ) {
+    val textButton = remember { mutableStateOf("") }
+    if (idPublication !== null) {
+        textButton.value = "Editar publicacion"
+    } else {
+        textButton.value = "Crear publicacion"
+    }
+
     var selectedItemForSetting by remember {
         mutableStateOf<Bitmap?>(null)
     }
@@ -352,11 +360,11 @@ fun PublicationEditScreen(
             }
             Button(
                 onClick = {
-                    viewModel.newPublication()
+                    viewModel.validateForm()
                 },
                 modifier = Modifier,
             ) {
-                Text("Crear Publicacion")
+                Text(textButton.value)
             }
         }
     }
@@ -367,5 +375,5 @@ fun PublicationEditScreen(
 @Composable
 fun PublicationEditPreview() {
     val navHostController = rememberNavController()
-    PublicationEditScreen(controller = navHostController)
+    PublicationEditScreen(idPublication = null, controller = navHostController)
 }

@@ -116,6 +116,12 @@ class PublicationEditViewModel
         private val _publicationState = MutableStateFlow<Result<PostWithImages>?>(null)
         val publicationState: StateFlow<Result<PostWithImages>?> get() = _publicationState
 
+        private var isEditing = mutableStateOf(false)
+
+        // Mantiene el resultado de la publicación que estás editando
+        private val _setterPublication = MutableStateFlow<Result<PostWithImages>?>(null)
+        val setterPublication: StateFlow<Result<PostWithImages>?> get() = _setterPublication
+
         private val _id = mutableStateOf("")
         val id: State<String> = _id
 
@@ -201,16 +207,21 @@ class PublicationEditViewModel
             _contact.value = value
         }
 
-        fun newPublication() {
-            if (title.value !== "" &&
-                description.value !== "" &&
-                location.value !== "" &&
-                type.value !== "" &&
-                age.value !== "" &&
-                contact.value !== ""
+        fun validateForm() {
+            // Comprueba si todos los campos obligatorios están llenos
+            if (title.value.isNotEmpty() &&
+                description.value.isNotEmpty() &&
+                location.value.isNotEmpty() &&
+                type.value.isNotEmpty() &&
+                age.value.isNotEmpty() &&
+                contact.value.isNotEmpty()
             ) {
-                setId(UUID.randomUUID().toString())
+                // Establece un ID único para la publicación si no existe
+                if (id.value.isEmpty()) {
+                    setId(UUID.randomUUID().toString())
+                }
 
+                // Establece valores predeterminados para ciertos campos si están vacíos
                 if (dateLost.value.isEmpty()) {
                     setDateLost(dateFormat.format(Date())) // Devuelve la fecha actual como una cadena
                 }
@@ -223,9 +234,15 @@ class PublicationEditViewModel
                 if (color.value.isEmpty()) {
                     setColor(PetColors.MARRON.toString())
                 }
-                currentUserId?.let { addPublication(it.userId) }
+
+                // Comprueba si se está editando o agregando una publicación
+                if (isEditing.value) {
+                    // editPublication()
+                } else {
+                    currentUserId?.let { addPublication(it.userId) }
+                }
             } else {
-                // Realizar Componente para avisar de posibles faltantes datos
+                // Realizar componente para avisar de posibles faltantes datos
             }
         }
 
@@ -261,6 +278,17 @@ class PublicationEditViewModel
                 } catch (e: Exception) {
                     Log.e("PublicationEditViewModel", "Failed to add publication", e)
                     _publicationState.value = Result.failure(e)
+                }
+            }
+        }
+
+        suspend fun setPublication(idPublication: String) {
+            firestoreService.getPublicationById(idPublication).collect { result ->
+                if (result != null) {
+                    _setterPublication.value = Result.success(result)
+                    isEditing.value = true // Actualiza la variable isEditing
+                } else {
+                    isEditing.value = false
                 }
             }
         }
