@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.data.repository
 
 import android.graphics.Bitmap
+import kotlinx.coroutines.flow.Flow
 
 interface StorageRepositoryInterface {
     suspend fun uploadImage(
@@ -9,5 +10,13 @@ interface StorageRepositoryInterface {
         publicationId: String,
     ): String
 
-    suspend fun deleteImage(imagePath: String)
+    suspend fun deletePublicationImages(
+        idUser: String,
+        idPublication: String,
+    )
+
+    suspend fun getAllImagesForPublication(
+        idUser: String,
+        idPublication: String,
+    ): Flow<List<Bitmap>>
 }

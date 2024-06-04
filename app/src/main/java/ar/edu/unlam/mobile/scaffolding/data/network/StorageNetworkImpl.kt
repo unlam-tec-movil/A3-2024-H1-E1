@@ -1,9 +1,12 @@
 package ar.edu.unlam.mobile.scaffolding.data.network
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -45,13 +48,38 @@ class StorageNetworkImpl
             }
         }
 
-        override suspend fun deleteImageToStorage(imageUrl: String) {
+        override suspend fun getAllImagesForPublication(
+            idUser: String,
+            idPublication: String,
+        ): Flow<List<Bitmap>> =
+            flow {
+                try {
+                    val userRef = getStorageReference(userId = idUser)
+                    val publicationRef = userRef.child(idPublication)
+                    val listImages = mutableListOf<Bitmap>()
+                    val listItem = publicationRef.listAll().await().items
+                    for (item in listItem) {
+                        val imageByte = item.getBytes(Long.MAX_VALUE).await()
+                        val bitmap = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.size)
+                        listImages.add(bitmap)
+                    }
+                    emit(listImages)
+                } catch (e: Exception) {
+                    Log.e("Storage", "Failed get images for publication")
+                    throw e
+                }
+            }
+
+        override suspend fun deletePublicationImages(
+            idUser: String,
+            idPublication: String,
+        ) {
             try {
-                val imageRef = getStorageReferenceFromUrl(imageUrl)
-                imageRef.delete().await()
+                val publicationRef = getStorageReference("$idUser/$idPublication")
+                publicationRef.delete().await()
                 Log.e("", "delete image successfully")
             } catch (e: Exception) {
-                Log.e("", "image delete failed imagePath: $imageUrl")
+                Log.e("", "image delete failed")
             }
         }
     }

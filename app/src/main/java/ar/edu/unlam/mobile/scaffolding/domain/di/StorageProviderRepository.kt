@@ -1,6 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.domain.di
 
-import ar.edu.unlam.mobile.scaffolding.data.repository.StorageRepository
+import ar.edu.unlam.mobile.scaffolding.data.repository.StorageRepositoryInterface
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.DeleteImage
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.UploadImage
@@ -13,7 +13,7 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object StorageProviderRepository {
     @Provides
-    fun StorageProviderRepository(storageRepository: StorageRepository): StorageService {
+    fun StorageProviderRepository(storageRepository: StorageRepositoryInterface): StorageService {
         return StorageService(storageRepository)
     }
 

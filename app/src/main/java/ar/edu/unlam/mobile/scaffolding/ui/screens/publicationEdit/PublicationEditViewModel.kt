@@ -282,13 +282,71 @@ class PublicationEditViewModel
             }
         }
 
+        // manejar en caso de que traiga un null o que no pueda
         suspend fun setPublication(idPublication: String) {
             firestoreService.getPublicationById(idPublication).collect { result ->
-                if (result != null) {
-                    _setterPublication.value = Result.success(result)
-                    isEditing.value = true // Actualiza la variable isEditing
-                } else {
-                    isEditing.value = false
+
+                setId(result.id)
+                setTitle(result.title)
+                setColor(result.color)
+                setContact(result.contact.toString())
+                setAge(result.age.toString())
+                setDescription(result.description)
+                setDateLost(result.dateLost)
+                setLocation(result.location)
+                setSex(result.sex)
+                setSpecies(result.species)
+                // /nos traemos las imagenes del storage y la seteamos
+                storageService.getAllImagesForPublication(currentUserId!!.userId, idPublication).collect { result ->
+                    _listImagesForUser.value = result
+                }
+                // esto no es necesario
+                _setterPublication.value = Result.success(result)
+                isEditing.value = true // Actualiza la variable isEditing
+            }
+        }
+
+        private suspend fun uploadImagesToStorage(
+            images: List<Bitmap>,
+            idUser: String,
+            idPublication: String,
+        ): List<String> {
+            return images.map { imageBitmap ->
+                storageService.uploadImage(image = imageBitmap, userId = idUser, publicationId = idPublication)
+            }
+        }
+
+        private fun createPostWithImage(urls: List<String>): PostWithImages {
+            return PostWithImages(
+                id = id.value,
+                type = type.value,
+                title = title.value,
+                description = description.value,
+                dateLost = dateLost.value,
+                species = species.value,
+                sex = sex.value,
+                age = age.value.toInt(),
+                color = color.value,
+                location = location.value,
+                contact = contact.value.toInt(),
+                images = urls, // Lista de URLs
+            )
+        }
+
+        private suspend fun addEditPublicationToFirestore() {
+            viewModelScope.launch {
+                try {
+                    // tenemos que eliminar primero las imagenes que esta
+                    storageService.deletePublicationImages(currentUserId!!.userId, id.value)
+                    val urls = uploadImagesToStorage(listImageForPublication.value, currentUserId!!.userId, id.value)
+                    val newPostWithImages = createPostWithImage(urls)
+                    firestoreService.addPublicationToPublicationCollection(newPostWithImages).collect { result ->
+                        firestoreService.addPublication(currentUserId!!.userId, newPostWithImages).collect { result ->
+                            _publicationState.value = Result.success(result)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("Edit Publication", "Failed upload to Firestore edit Publication")
                 }
             }
         }

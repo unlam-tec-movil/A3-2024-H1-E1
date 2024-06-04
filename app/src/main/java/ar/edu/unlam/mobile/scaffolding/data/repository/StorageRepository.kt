@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.data.repository
 
 import android.graphics.Bitmap
 import ar.edu.unlam.mobile.scaffolding.data.network.StorageNetworkInterface
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class StorageRepository
@@ -17,7 +18,17 @@ class StorageRepository
             return storageNetwork.uploadImage(image, userId, publicationId)
         }
 
-        override suspend fun deleteImage(imagePath: String) {
-            storageNetwork.deleteImageToStorage(imagePath)
+        override suspend fun deletePublicationImages(
+            idUser: String,
+            idPublication: String,
+        ) {
+            storageNetwork.deletePublicationImages(idUser, idPublication)
+        }
+
+        override suspend fun getAllImagesForPublication(
+            idUser: String,
+            idPublication: String,
+        ): Flow<List<Bitmap>> {
+            return storageNetwork.getAllImagesForPublication(idUser, idPublication)
         }
     }
