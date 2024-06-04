@@ -116,14 +116,14 @@ fun PublicationEditScreen(
                 Log.d("GoogleFotos", "no image selected")
             }
         }
-
-    val currentPhotoPath = viewModel.createFile(context)
-    val file = File(currentPhotoPath)
+    // si antes teniamos un val currentPathFile = viewModel y lo poniamos en el File(currentPathFile)
+    val file = File(viewModel.createFile(context))
     val cameraLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult(),
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
+                // /aca tengo un problema
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                 if (bitmap != null) {
                     if (imageDataList.size == 3) {

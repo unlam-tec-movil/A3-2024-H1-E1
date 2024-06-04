@@ -89,7 +89,7 @@ class PublicationEditViewModel
             }
         }
 
-        fun createFile(context: Context): String? {
+        fun createFile(context: Context): String {
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
             val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             val file = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
@@ -101,7 +101,7 @@ class PublicationEditViewModel
             cameraLauncher: ActivityResultLauncher<Intent>,
             file: File,
         ) {
-            val photoUri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+            val photoUri = FileProvider.getUriForFile(context, "ar.edu.unlam.mobile.scaffolding.fileprovider", file)
             val cameraIntent =
                 Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
                     putExtra(MediaStore.EXTRA_OUTPUT, photoUri)

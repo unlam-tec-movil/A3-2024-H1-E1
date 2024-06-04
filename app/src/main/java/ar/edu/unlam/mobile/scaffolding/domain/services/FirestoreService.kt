@@ -6,6 +6,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.usecases.UseFirestore
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+// /deberia ir a buscar los datos al repositorio
 class FirestoreService
     @Inject
     constructor(

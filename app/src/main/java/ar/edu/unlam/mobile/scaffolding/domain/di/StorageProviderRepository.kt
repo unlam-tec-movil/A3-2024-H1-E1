@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.domain.di
 import ar.edu.unlam.mobile.scaffolding.data.repository.StorageRepositoryInterface
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.DeleteImage
+import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetAllImagesForPublication
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.UploadImage
 import dagger.Module
 import dagger.Provides
@@ -19,6 +20,11 @@ object StorageProviderRepository {
 
     @Provides
     fun provideUploadImage(storageService: StorageService): UploadImage {
+        return storageService
+    }
+
+    @Provides
+    fun provideGetAllImagesForPublication(storageService: StorageService): GetAllImagesForPublication  {
         return storageService
     }
 
