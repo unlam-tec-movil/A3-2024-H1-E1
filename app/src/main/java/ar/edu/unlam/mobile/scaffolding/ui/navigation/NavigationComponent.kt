@@ -47,7 +47,7 @@ fun NavigationComponent(
         }
 
         composable(NavigationRoutes.PublicationEditScreen.route) {
-            PublicationEditScreen(controller = navigationController)
+            PublicationEditScreen(idPublication = null, controller = navigationController)
         }
 
         composable(NavigationRoutes.FilterScreen.route) {
