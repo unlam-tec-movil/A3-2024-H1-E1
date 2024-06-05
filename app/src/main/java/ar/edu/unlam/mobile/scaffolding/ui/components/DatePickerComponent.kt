@@ -23,14 +23,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerComponent(onDateSelected: (String) -> Unit) {
+fun DatePickerComponent(
+    initialDate: String? = null,
+    onDateSelected: (String) -> Unit,
+) {
+    val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val initialDateMillis =
+        initialDate?.let { date ->
+            try {
+                dateFormatter.parse(date)?.time
+            } catch (e: ParseException) {
+                e.printStackTrace()
+                null
+            }
+        }
+
     val datePickerState =
         rememberDatePickerState(
+            initialSelectedDateMillis = initialDateMillis,
             selectableDates =
                 object : SelectableDates {
                     override fun isSelectableDate(utcTimeMillis: Long): Boolean {
@@ -38,13 +55,14 @@ fun DatePickerComponent(onDateSelected: (String) -> Unit) {
                     }
                 },
         )
-    val selectedDate = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) }
+
+    val selectedDate = datePickerState.selectedDateMillis?.let { dateFormatter.format(Date(it)) }
     var showDialog by remember { mutableStateOf(false) }
 
     Column {
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = selectedDate ?: "",
+            value = selectedDate ?: initialDate ?: "",
             placeholder = { Text("Ingrese la fecha") },
             onValueChange = { /* No hacer nada, ya que es de solo lectura */ },
             readOnly = true,
@@ -82,7 +100,11 @@ fun MinimalDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onDateSelected((datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: "") as String)
+                    val selectedDate =
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
+                        } ?: ""
+                    onDateSelected(selectedDate)
                     onDismissRequest()
                 },
                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 3.dp),
@@ -93,9 +115,4 @@ fun MinimalDialog(
     ) {
         DatePicker(state = datePickerState)
     }
-}
-
-fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("dd/MM/yyyy")
-    return formatter.format(Date(millis))
 }

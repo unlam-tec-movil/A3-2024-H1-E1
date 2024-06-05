@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -68,8 +69,12 @@ fun PublicationEditScreen(
     idPublication: String?,
 ) {
     val textButton = remember { mutableStateOf("") }
+
     if (idPublication !== null) {
         textButton.value = "Editar publicacion"
+        LaunchedEffect(Unit) {
+            viewModel.setPublication(idPublication)
+        }
     } else {
         textButton.value = "Crear publicacion"
     }
@@ -82,10 +87,12 @@ fun PublicationEditScreen(
     }
     var showDialogForSettingImage by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
-    val selectedOption = remember { mutableStateOf<String?>(null) }
+
     val context = LocalContext.current
     val cameraXPermission = arrayOf(Manifest.permission.CAMERA)
+
     val imageDataList by viewModel.listImageForPublication
+
     val galleryLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult(),
@@ -124,6 +131,7 @@ fun PublicationEditScreen(
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // /aca tengo un problema
+
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                 if (bitmap != null) {
                     if (imageDataList.size == 3) {
@@ -142,10 +150,14 @@ fun PublicationEditScreen(
     // Resultado de la creacion de la PUBLICACION
     val publicationState by viewModel.publicationState.collectAsState()
 
-    LaunchedEffect(selectedOption.value, publicationState) {
-        selectedOption.value?.let {
-            viewModel.setType(it)
+    LaunchedEffect(idPublication, publicationState) {
+        if (idPublication != null) {
+            textButton.value = "Editar publicacion"
+            viewModel.setPublication(idPublication)
+        } else {
+            textButton.value = "Crear publicacion"
         }
+
         publicationState?.let {
             if (it.isSuccess) {
                 controller.popBackStack()
@@ -210,21 +222,29 @@ fun PublicationEditScreen(
             }
         }
         // RADIO GROUPS
-        CheckboxComponent(
-            options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
-            selectedOption = selectedOption,
-            optionToString = { it },
-        )
+        Column {
+            Text("Selecciona una opción:")
+            CheckboxComponent(
+                options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
+                initialSelectedOption = viewModel.type.value,
+                onOptionSelected = { selectedOption ->
+                    viewModel.setType(selectedOption)
+                },
+                optionToString = { it },
+            )
+        }
         // DATE PICKER COMPONENT
+        val dateLost by viewModel.dateLost.observeAsState("")
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Text("Fecha de perdida:")
-            DatePickerComponent { selectedDate ->
-                viewModel.setDateLost(selectedDate)
-            }
+            DatePickerComponent(
+                initialDate = dateLost,
+                onDateSelected = { selectedDate ->
+                    viewModel.setDateLost(selectedDate)
+                },
+            )
         }
 
         Column(
@@ -263,7 +283,10 @@ fun PublicationEditScreen(
                     .fillMaxWidth(),
         ) {
             Text("Especie")
-            SelectComponent(Species.values().toList()) { selectedSpecies ->
+            SelectComponent(
+                list = Species.values().toList(),
+                initialSelectedItem = viewModel.species.value,
+            ) { selectedSpecies ->
                 viewModel.setSpecies(selectedSpecies.toString())
             }
         }
@@ -274,7 +297,7 @@ fun PublicationEditScreen(
                     .fillMaxWidth(),
         ) {
             Text("Sexo")
-            SelectComponent(Sex.values().toList()) { selectedSex ->
+            SelectComponent(Sex.values().toList(), initialSelectedItem = viewModel.sex.value) { selectedSex ->
                 viewModel.setSex(selectedSex.toString())
             }
         }
@@ -292,14 +315,13 @@ fun PublicationEditScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             )
         }
-
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth(),
         ) {
             Text("Color")
-            SelectComponent(PetColors.values().toList()) { selectedColor ->
+            SelectComponent(PetColors.values().toList(), initialSelectedItem = viewModel.color.value) { selectedColor ->
                 viewModel.setColor(selectedColor.toString())
             }
         }

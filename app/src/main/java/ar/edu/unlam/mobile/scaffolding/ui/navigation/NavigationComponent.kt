@@ -45,9 +45,9 @@ fun NavigationComponent(
         composable(NavigationRoutes.Home.route) {
             HomeScreen()
         }
-
+        // idPublicatipon mockeado
         composable(NavigationRoutes.PublicationEditScreen.route) {
-            PublicationEditScreen(idPublication = null, controller = navigationController)
+            PublicationEditScreen(idPublication = "f2efa5d1-b0d6-4ef9-a847-12c6475404cb", controller = navigationController)
         }
 
         composable(NavigationRoutes.FilterScreen.route) {

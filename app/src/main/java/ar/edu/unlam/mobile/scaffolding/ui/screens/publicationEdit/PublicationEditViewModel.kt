@@ -12,19 +12,16 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
-import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
-import ar.edu.unlam.mobile.scaffolding.domain.models.Species
 import ar.edu.unlam.mobile.scaffolding.domain.models.UserInfoGoogle
 import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetCurrentUser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -43,7 +40,6 @@ class PublicationEditViewModel
         private val storageService: StorageService,
         private val getUser: GetCurrentUser,
         private val firestoreService: FirestoreService,
-        context: Context,
     ) : ViewModel() {
         private var currentUserId: UserInfoGoogle? = null
 
@@ -118,10 +114,6 @@ class PublicationEditViewModel
 
         private var isEditing = mutableStateOf(false)
 
-        // Mantiene el resultado de la publicación que estás editando
-        private val _setterPublication = MutableStateFlow<Result<PostWithImages>?>(null)
-        val setterPublication: StateFlow<Result<PostWithImages>?> get() = _setterPublication
-
         private val _id = mutableStateOf("")
         val id: State<String> = _id
 
@@ -134,9 +126,8 @@ class PublicationEditViewModel
         private val _description = mutableStateOf("")
         val description: State<String> = _description
 
-        private val _dateLost = mutableStateOf("")
-        val dateLost: State<String> = _dateLost
-
+        private val _dateLost = MutableLiveData<String>()
+        val dateLost: LiveData<String> get() = _dateLost
         private val _species = mutableStateOf("")
         val species: State<String> = _species
 
@@ -180,6 +171,7 @@ class PublicationEditViewModel
                 } catch (e: ParseException) {
                     dateFormat.format(Date()) // Si hay un error al analizar, devuelve la fecha actual como una cadena
                 }
+            Log.d("PublicationViewModel", "Setting date lost to: $formattedDate")
             _dateLost.value = formattedDate
         }
 
@@ -214,30 +206,22 @@ class PublicationEditViewModel
                 location.value.isNotEmpty() &&
                 type.value.isNotEmpty() &&
                 age.value.isNotEmpty() &&
-                contact.value.isNotEmpty()
+                contact.value.isNotEmpty() &&
+                (dateLost.value?.isNotEmpty() == true) &&
+                species.value.isNotEmpty() &&
+                sex.value.isNotEmpty() &&
+                color.value.isNotEmpty()
             ) {
                 // Establece un ID único para la publicación si no existe
                 if (id.value.isEmpty()) {
                     setId(UUID.randomUUID().toString())
                 }
-
-                // Establece valores predeterminados para ciertos campos si están vacíos
-                if (dateLost.value.isEmpty()) {
-                    setDateLost(dateFormat.format(Date())) // Devuelve la fecha actual como una cadena
-                }
-                if (species.value.isEmpty()) {
-                    setSpecies(Species.LORO.toString())
-                }
-                if (sex.value.isEmpty()) {
-                    setSex(Sex.MACHO.toString())
-                }
-                if (color.value.isEmpty()) {
-                    setColor(PetColors.MARRON.toString())
-                }
-
                 // Comprueba si se está editando o agregando una publicación
                 if (isEditing.value) {
                     // editPublication()
+                    viewModelScope.launch {
+                        addEditPublicationToFirestore()
+                    }
                 } else {
                     currentUserId?.let { addPublication(it.userId) }
                 }
@@ -249,27 +233,10 @@ class PublicationEditViewModel
         private fun addPublication(idUser: String) {
             viewModelScope.launch {
                 try {
-                    val bitmapList: List<Bitmap> = listImageForPublication.value
                     val imageUrls =
-                        bitmapList.map { bitmap ->
-                            async { storageService.uploadImage(bitmap, idUser, id.value) }
-                        }
-                    val urls = imageUrls.awaitAll() // Asegura que esperemos a todas las subidas de imágenes
-                    val postWithImages =
-                        PostWithImages(
-                            id = id.value,
-                            type = type.value,
-                            title = title.value,
-                            description = description.value,
-                            dateLost = dateLost.value,
-                            species = species.value,
-                            sex = sex.value,
-                            age = age.value.toInt(),
-                            color = color.value,
-                            location = location.value,
-                            contact = contact.value.toInt(),
-                            images = urls, // Lista de URLs
-                        )
+                        uploadImagesToStorage(listImageForPublication.value, idUser, id.value)
+
+                    val postWithImages = createPostWithImage(imageUrls)
                     firestoreService.addPublicationToPublicationCollection(postWithImages).collect { result ->
                         firestoreService.addPublication(idUser, postWithImages).collect { result ->
                             _publicationState.value = Result.success(result)
@@ -285,24 +252,44 @@ class PublicationEditViewModel
         // manejar en caso de que traiga un null o que no pueda
         suspend fun setPublication(idPublication: String) {
             firestoreService.getPublicationById(idPublication).collect { result ->
-
+                isEditing.value = true
                 setId(result.id)
+                setType(result.type)
                 setTitle(result.title)
-                setColor(result.color)
-                setContact(result.contact.toString())
-                setAge(result.age.toString())
                 setDescription(result.description)
-                setDateLost(result.dateLost)
-                setLocation(result.location)
-                setSex(result.sex)
+                val dateLostString =
+                    when (val dateLost = result.dateLost) {
+                        is String -> {
+                            // Parsear la cadena de texto a un objeto Date
+                            val date =
+                                try {
+                                    dateFormat.parse(dateLost)
+                                } catch (e: ParseException) {
+                                    Date() // Si hay un error al analizar, devuelve la fecha actual
+                                }
+                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date) // Formatear Date como una cadena de texto
+                        }
+                        else -> dateFormat.format(Date()) // Valor predeterminado si no es una cadena de texto
+                    }
+                setDateLost(dateLostString)
+                setDateLost(dateLostString)
                 setSpecies(result.species)
-                // /nos traemos las imagenes del storage y la seteamos
-                storageService.getAllImagesForPublication(currentUserId!!.userId, idPublication).collect { result ->
-                    _listImagesForUser.value = result
+                setSex(result.sex)
+                setAge((result.age).toString())
+                setColor(result.color)
+                setLocation(result.location)
+                setContact(result.contact.toString())
+                // urlImages
+                viewModelScope.launch {
+                    storageService.getAllImagesForPublication(currentUserId!!.userId, idPublication)
+                        .collect { result ->
+                            if (result.isEmpty()) {
+                                Log.e("Storage", "la lista esta vacia ")
+                            } else {
+                                _listImagesForUser.value = result
+                            }
+                        }
                 }
-                // esto no es necesario
-                _setterPublication.value = Result.success(result)
-                isEditing.value = true // Actualiza la variable isEditing
             }
         }
 
@@ -322,7 +309,7 @@ class PublicationEditViewModel
                 type = type.value,
                 title = title.value,
                 description = description.value,
-                dateLost = dateLost.value,
+                dateLost = dateLost.value ?: "",
                 species = species.value,
                 sex = sex.value,
                 age = age.value.toInt(),
