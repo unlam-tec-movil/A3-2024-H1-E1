@@ -32,4 +32,30 @@ class FirestoreRepository
         override suspend fun getAllPublications(): Flow<List<PostWithImages>> {
             return firestoreNetworkInterface.getAllPublications()
         }
+
+        override suspend fun deletePublicationForUser(
+            idUser: String,
+            idPublication: String,
+        ): Flow<Boolean> {
+            return firestoreNetworkInterface.deletePublicationForUser(idUser, idPublication)
+        }
+
+        override suspend fun deletePublicationInAllPublications(idPublication: String): Flow<Boolean> {
+            return firestoreNetworkInterface.deletePublicationInAllPublications(idPublication)
+        }
+
+        override suspend fun editPublicationForUser(
+            idUser: String,
+            idPublication: String,
+            updatedPublication: PostWithImages,
+        ): Flow<PostWithImages> {
+            return firestoreNetworkInterface.editPublicationForUser(idUser, idPublication, updatedPublication)
+        }
+
+        override suspend fun editPublicationInAllPublications(
+            idPublication: String,
+            updatedPublication: PostWithImages,
+        ): Flow<PostWithImages> {
+            return firestoreNetworkInterface.editPublicationInAllPublications(idPublication, updatedPublication)
+        }
     }

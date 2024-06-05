@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
@@ -13,6 +12,8 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.camera.view.CameraController
+import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,10 +56,10 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.CheckboxComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
+import ar.edu.unlam.mobile.scaffolding.ui.components.post.CameraXComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
-import java.io.File
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -72,13 +73,13 @@ fun PublicationEditScreen(
 
     if (idPublication !== null) {
         textButton.value = "Editar publicacion"
-        LaunchedEffect(Unit) {
-            viewModel.setPublication(idPublication)
-        }
     } else {
         textButton.value = "Crear publicacion"
     }
-
+    val openCameraX =
+        remember {
+            mutableStateOf(false)
+        }
     var selectedItemForSetting by remember {
         mutableStateOf<Bitmap?>(null)
     }
@@ -91,7 +92,16 @@ fun PublicationEditScreen(
     val context = LocalContext.current
     val cameraXPermission = arrayOf(Manifest.permission.CAMERA)
 
-    val imageDataList by viewModel.listImageForPublication
+    val cameraController =
+        remember {
+            LifecycleCameraController(context).apply {
+                setEnabledUseCases(
+                    CameraController.IMAGE_CAPTURE,
+                )
+            }
+        }
+
+    val imageBitmapList by viewModel.listImageForPublication
 
     val galleryLauncher =
         rememberLauncherForActivityResult(
@@ -111,7 +121,7 @@ fun PublicationEditScreen(
                             null
                         }
                     if (bitmap != null) {
-                        if (imageDataList.size == 3) {
+                        if (imageBitmapList.size == 3) {
                             // /solo vamos a dejar que suba 3 imagenes
                             Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
                         } else {
@@ -123,33 +133,11 @@ fun PublicationEditScreen(
                 Log.d("GoogleFotos", "no image selected")
             }
         }
-    // si antes teniamos un val currentPathFile = viewModel y lo poniamos en el File(currentPathFile)
-    val file = File(viewModel.createFile(context))
-    val cameraLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartActivityForResult(),
-        ) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                // /aca tengo un problema
-
-                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                if (bitmap != null) {
-                    if (imageDataList.size == 3) {
-                        Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
-                    } else {
-                        viewModel.addImage(bitmap)
-                    }
-                } else {
-                    Log.e("", "failed upload image to list")
-                }
-            } else {
-                Toast.makeText(context, "failed take Photo ${result.resultCode}", Toast.LENGTH_SHORT).show()
-            }
-        }
 
     // Resultado de la creacion de la PUBLICACION
     val publicationState by viewModel.publicationState.collectAsState()
 
+    // /porque aca ha dos veces
     LaunchedEffect(idPublication, publicationState) {
         if (idPublication != null) {
             textButton.value = "Editar publicacion"
@@ -162,9 +150,8 @@ fun PublicationEditScreen(
             if (it.isSuccess) {
                 controller.popBackStack()
             } else if (it.isFailure) {
-                val exception = it.exceptionOrNull()
                 // Manejar el error, por ejemplo, mostrar un mensaje de error
-                println("Error al crear la publicación: ${exception?.message}")
+                Toast.makeText(context, "Error al crear la publicación", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -177,8 +164,7 @@ fun PublicationEditScreen(
                 .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Carrousel(listOfImage = imageDataList) {
-                imageSelected ->
+        Carrousel(listOfImage = imageBitmapList) { imageSelected ->
             selectedItemForSetting = imageSelected
             showDialogForSettingImage = true
         }
@@ -194,33 +180,6 @@ fun PublicationEditScreen(
             Text(text = "Añadir Foto")
         }
 
-        if (showDialogSelectedUpdateImage) {
-            SelectedFormUpdateImage(
-                onDissmisButton = { showDialogSelectedUpdateImage = false },
-                onCameraSelected = {
-                    if (viewModel.hasRequirePermission(cameraXPermission, context)) {
-                        viewModel.captureImage(context, cameraLauncher, file)
-                    } else {
-                        ActivityCompat.requestPermissions(context as Activity, cameraXPermission, 0)
-                    }
-                },
-                onGalerrySelected = {
-                    val galleryIntent =
-                        Intent(Intent.ACTION_PICK).apply {
-                            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-                        }
-                    galleryLauncher.launch(galleryIntent)
-                },
-            )
-        }
-        if (showDialogForSettingImage) {
-            SettingImage(
-                item = selectedItemForSetting!!,
-                onDissmissButon = { showDialogForSettingImage = false },
-            ) {
-                viewModel.deleteImage(selectedItemForSetting!!)
-            }
-        }
         // RADIO GROUPS
         Column {
             Text("Selecciona una opción:")
@@ -297,7 +256,10 @@ fun PublicationEditScreen(
                     .fillMaxWidth(),
         ) {
             Text("Sexo")
-            SelectComponent(Sex.values().toList(), initialSelectedItem = viewModel.sex.value) { selectedSex ->
+            SelectComponent(
+                Sex.values().toList(),
+                initialSelectedItem = viewModel.sex.value,
+            ) { selectedSex ->
                 viewModel.setSex(selectedSex.toString())
             }
         }
@@ -321,7 +283,10 @@ fun PublicationEditScreen(
                     .fillMaxWidth(),
         ) {
             Text("Color")
-            SelectComponent(PetColors.values().toList(), initialSelectedItem = viewModel.color.value) { selectedColor ->
+            SelectComponent(
+                PetColors.values().toList(),
+                initialSelectedItem = viewModel.color.value,
+            ) { selectedColor ->
                 viewModel.setColor(selectedColor.toString())
             }
         }
@@ -383,11 +348,58 @@ fun PublicationEditScreen(
             Button(
                 onClick = {
                     viewModel.validateForm()
+                    // /reseteamos las listas de imagenes
+                    viewModel.resetListOfImages()
+                    viewModel.resetListBitmapToCamareX()
+                    // deberiamos ir a la pantalla de publicationScreen la de ro
                 },
                 modifier = Modifier,
             ) {
                 Text(textButton.value)
             }
+        }
+    }
+
+    // /manejamos aca los otros componentes
+    if (openCameraX.value) {
+        CameraXComponent(
+            list = viewModel.listBitmap,
+            cameraController = cameraController,
+            modifier = Modifier.fillMaxSize(),
+            onDissmissButton = { openCameraX.value = false },
+            takePicture = { viewModel.takePhoto(cameraController, context) },
+        ) { photoSelected ->
+            viewModel.addImage(photoSelected)
+            // /reseteamos las camaras
+            viewModel.resetListBitmapToCamareX()
+        }
+    }
+
+    if (showDialogSelectedUpdateImage) {
+        SelectedFormUpdateImage(
+            onDissmisButton = { showDialogSelectedUpdateImage = false },
+            onCameraSelected = {
+                if (viewModel.hasRequirePermission(cameraXPermission, context)) {
+                    openCameraX.value = true
+                } else {
+                    ActivityCompat.requestPermissions(context as Activity, cameraXPermission, 0)
+                }
+            },
+            onGalerrySelected = {
+                val galleryIntent =
+                    Intent(Intent.ACTION_PICK).apply {
+                        setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                    }
+                galleryLauncher.launch(galleryIntent)
+            },
+        )
+    }
+    if (showDialogForSettingImage) {
+        SettingImage(
+            item = selectedItemForSetting!!,
+            onDissmissButon = { showDialogForSettingImage = false },
+        ) {
+            viewModel.deleteImage(selectedItemForSetting!!)
         }
     }
 }

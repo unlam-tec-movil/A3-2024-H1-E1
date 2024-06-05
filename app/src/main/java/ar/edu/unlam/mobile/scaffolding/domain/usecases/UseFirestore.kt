@@ -16,4 +16,15 @@ interface UseFirestore {
     suspend fun getPublicationById(idPublication: String): Flow<PostWithImages>
 
     suspend fun getAllPublications(): Flow<List<PostWithImages>>
+
+    suspend fun editPublicationForUser(
+        idUser: String,
+        idPublication: String,
+        updatedPublication: PostWithImages,
+    ): Flow<PostWithImages>
+
+    suspend fun editPublicationInAllPublications(
+        idPublication: String,
+        updatedPublication: PostWithImages,
+    ): Flow<PostWithImages>
 }

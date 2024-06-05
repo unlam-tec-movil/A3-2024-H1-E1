@@ -1,17 +1,18 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.Environment
-import android.provider.MediaStore
+import android.graphics.Matrix
 import android.util.Log
-import androidx.activity.result.ActivityResultLauncher
+import android.widget.Toast
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
+import androidx.camera.view.LifecycleCameraController
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +26,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -33,6 +33,7 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
+// /problema con las imagenes , no las elimina
 @HiltViewModel
 class PublicationEditViewModel
     @Inject
@@ -48,10 +49,57 @@ class PublicationEditViewModel
 
         val listImageForPublication: State<List<Bitmap>> = _listImagesForUser
 
+        private val _listBitmap = mutableStateOf<List<Bitmap>>(emptyList())
+        val listBitmap: State<List<Bitmap>> = _listBitmap
+
         init {
             viewModelScope.launch {
                 currentUserId = getCurrentUser()
             }
+        }
+
+        fun addBitmapToList(bitmap: Bitmap) {
+            _listBitmap.value += bitmap
+        }
+
+        fun resetListBitmapToCamareX() {
+            _listBitmap.value = emptyList()
+        }
+
+        fun takePhoto(
+            cameraController: LifecycleCameraController,
+            context: Context,
+        ) {
+            cameraController.takePicture(
+                ContextCompat.getMainExecutor(context),
+                object : ImageCapture.OnImageCapturedCallback() {
+                    override fun onCaptureSuccess(image: ImageProxy) {
+                        super.onCaptureSuccess(image)
+
+                        val matrix =
+                            Matrix().apply {
+                                postRotate(image.imageInfo.rotationDegrees.toFloat())
+                            }
+                        val rotatedBitmap =
+                            Bitmap.createBitmap(
+                                image.toBitmap(),
+                                0,
+                                0,
+                                image.width,
+                                image.height,
+                                matrix,
+                                true,
+                            )
+                        Toast.makeText(context, "Foto tomada", Toast.LENGTH_SHORT).show()
+                        addBitmapToList(rotatedBitmap)
+                    }
+
+                    override fun onError(exception: ImageCaptureException) {
+                        super.onError(exception)
+                        Log.e("Camera", "Couldn't take photo: ", exception)
+                    }
+                },
+            )
         }
 
         fun addImage(imageBitmap: Bitmap) {
@@ -83,26 +131,6 @@ class PublicationEditViewModel
             return permisssion.all {
                 ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
             }
-        }
-
-        fun createFile(context: Context): String {
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-            val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            val file = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
-            return file.absolutePath
-        }
-
-        fun captureImage(
-            context: Context,
-            cameraLauncher: ActivityResultLauncher<Intent>,
-            file: File,
-        ) {
-            val photoUri = FileProvider.getUriForFile(context, "ar.edu.unlam.mobile.scaffolding.fileprovider", file)
-            val cameraIntent =
-                Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-                    putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                }
-            cameraLauncher.launch(cameraIntent)
         }
 
         fun resetListOfImages() {
@@ -320,15 +348,20 @@ class PublicationEditViewModel
             )
         }
 
+        // /aca lo debemos eliminar la publicacion xq no se pisa , y luego añadir
         private suspend fun addEditPublicationToFirestore() {
             viewModelScope.launch {
                 try {
+                    // /eliminar publicaciones del Publication y del user
                     // tenemos que eliminar primero las imagenes que esta
                     storageService.deletePublicationImages(currentUserId!!.userId, id.value)
                     val urls = uploadImagesToStorage(listImageForPublication.value, currentUserId!!.userId, id.value)
+                    resetListOfImages() // reseteamos devuelta las lista de imagenes para que luego
                     val newPostWithImages = createPostWithImage(urls)
-                    firestoreService.addPublicationToPublicationCollection(newPostWithImages).collect { result ->
-                        firestoreService.addPublication(currentUserId!!.userId, newPostWithImages).collect { result ->
+                    firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect {
+                            result ->
+                        firestoreService.editPublicationForUser(currentUserId!!.userId, id.value, newPostWithImages).collect {
+                                result ->
                             _publicationState.value = Result.success(result)
                         }
                     }

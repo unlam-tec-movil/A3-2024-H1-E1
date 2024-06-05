@@ -32,12 +32,13 @@ class StorageNetworkImpl
             // userId/publicationId/image.jpg , esa es la ruta
             val storageRef = getStorageReference(userId)
             val publicationRef = storageRef.child(publicationId)
+            // /es necesario hacer un nuevo nombre
             val imgReference = publicationRef.child("image_${System.currentTimeMillis()}.jpg")
             val baos = ByteArrayOutputStream()
             image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val imageData = baos.toByteArray()
             return try {
-                val uploadTask = imgReference.putBytes(imageData).await()
+                imgReference.putBytes(imageData).await()
                 val downloadUrl = imgReference.downloadUrl.await().toString()
                 Log.d("StorageService", "Image uploaded successfully: $downloadUrl")
                 downloadUrl
@@ -74,9 +75,23 @@ class StorageNetworkImpl
             idUser: String,
             idPublication: String,
         ) {
+            val storageRe = getStorageReference(userId = idUser)
             try {
-                val publicationRef = getStorageReference("$idUser/$idPublication")
-                publicationRef.delete().await()
+                val publicationRef = storageRe.child(idPublication)
+                val list = publicationRef.listAll().await() // obtenemos todas las listas
+                for (item in list.items) {
+                    try {
+                        item.delete().await()
+                        Log.e("deleteImage", "se elimino exitosamente las imagenes")
+                    } catch (e: Exception) {
+                        Log.e("deleteImage", "algo fallo al eliminar la imagen")
+                    }
+                }
+                // /elimina todas las subcarpetas
+                for (subFolder in list.prefixes) {
+                    deletePublicationImages(idUser, "$idPublication/${subFolder.name}")
+                }
+
                 Log.e("", "delete image successfully")
             } catch (e: Exception) {
                 Log.e("", "image delete failed")
