@@ -24,7 +24,7 @@ object StorageProviderRepository {
     }
 
     @Provides
-    fun provideGetAllImagesForPublication(storageService: StorageService): GetAllImagesForPublication  {
+    fun provideGetAllImagesForPublication(storageService: StorageService): GetAllImagesForPublication {
         return storageService
     }
 

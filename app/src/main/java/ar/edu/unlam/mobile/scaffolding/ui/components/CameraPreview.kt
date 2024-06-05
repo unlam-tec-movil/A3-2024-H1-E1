@@ -11,7 +11,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 fun CameraPreview(
     controller: LifecycleCameraController,
     modifier: Modifier,
-)  {
+) {
     val lifecicleOwner = LocalLifecycleOwner.current
     AndroidView(
         factory = {

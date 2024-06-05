@@ -118,24 +118,14 @@ dependencies {
     // life
     implementation(libs.lifecycleViewModel)
 
-    // camerax
-    implementation(libs.android.camera.core)
-    implementation(libs.android.camera.camera2)
-    implementation(libs.android.camera.lifecycle)
-    implementation(libs.android.camera.view)
-    implementation(libs.android.camera.extensions)
-
     // lottie
     implementation(libs.lottie.compose)
 
     // /camerax
-    val cameraxVersion = "1.3.0-rc01"
-
-    implementation("androidx.camera:camera-core:$cameraxVersion")
-    implementation("androidx.camera:camera-camera2:$cameraxVersion")
-    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
-    implementation("androidx.camera:camera-video:$cameraxVersion")
-
-    implementation("androidx.camera:camera-view:$cameraxVersion")
-    implementation("androidx.camera:camera-extensions:$cameraxVersion")
+    implementation(libs.cameraCore)
+    implementation(libs.cameraCamera2)
+    implementation(libs.cameraLifecycle)
+    implementation(libs.cameraVideo)
+    implementation(libs.cameraView)
+    implementation(libs.cameraExtensions)
 }

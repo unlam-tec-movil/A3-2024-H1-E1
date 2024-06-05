@@ -66,15 +66,18 @@ lifecycleViewModel = {group = "androidx.lifecycle",name = "lifecycle-viewmodel-k
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 
-android-camera-core = {group = "androidx.camera", name = "camera-core",version.ref = "cameraX"}
-android-camera-camera2 = {group = "androidx.camera", name = "camera-camera2",version.ref = "cameraX"}
-android-camera-lifecycle = {group = "androidx.camera", name = "camera-lifecycle",version.ref = "cameraX"}
-android-camera-view = {group = "androidx.camera", name = "camera-view",version.ref = "cameraX"}
-android-camera-extensions = {group = "androidx.camera", name = "camera-extensions",version.ref = "cameraX"}
 
 firebase-storage = {group = "com.google.firebase",name = "firebase-storage-ktx",version.ref = "storage"}
 firebase-firestore = {group = "com.google.firebase",name = "firebase-firestore",version.ref = "firestore"}
 lottie-compose = {group = "com.airbnb.android",name = "lottie-compose",version.ref = "lottieVer"}
+
+cameraCore = { group = "androidx.camera", name = "camera-core", version.ref = "cameraX" }
+cameraCamera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraX" }
+cameraLifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraX" }
+cameraVideo = { group = "androidx.camera", name = "camera-video", version.ref = "cameraX" }
+cameraView = { group = "androidx.camera", name = "camera-view", version.ref = "cameraX" }
+cameraExtensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "cameraX" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
