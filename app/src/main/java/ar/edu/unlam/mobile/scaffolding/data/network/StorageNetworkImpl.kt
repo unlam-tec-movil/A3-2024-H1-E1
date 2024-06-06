@@ -1,9 +1,12 @@
 package ar.edu.unlam.mobile.scaffolding.data.network
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -29,12 +32,13 @@ class StorageNetworkImpl
             // userId/publicationId/image.jpg , esa es la ruta
             val storageRef = getStorageReference(userId)
             val publicationRef = storageRef.child(publicationId)
+            // /es necesario hacer un nuevo nombre
             val imgReference = publicationRef.child("image_${System.currentTimeMillis()}.jpg")
             val baos = ByteArrayOutputStream()
             image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val imageData = baos.toByteArray()
             return try {
-                val uploadTask = imgReference.putBytes(imageData).await()
+                imgReference.putBytes(imageData).await()
                 val downloadUrl = imgReference.downloadUrl.await().toString()
                 Log.d("StorageService", "Image uploaded successfully: $downloadUrl")
                 downloadUrl
@@ -45,13 +49,52 @@ class StorageNetworkImpl
             }
         }
 
-        override suspend fun deleteImageToStorage(imageUrl: String) {
+        override suspend fun getAllImagesForPublication(
+            idUser: String,
+            idPublication: String,
+        ): Flow<List<Bitmap>> =
+            flow {
+                try {
+                    val userRef = getStorageReference(userId = idUser)
+                    val publicationRef = userRef.child(idPublication)
+                    val listImages = mutableListOf<Bitmap>()
+                    val listItem = publicationRef.listAll().await().items
+                    for (item in listItem) {
+                        val imageByte = item.getBytes(Long.MAX_VALUE).await()
+                        val bitmap = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.size)
+                        listImages.add(bitmap)
+                    }
+                    emit(listImages)
+                } catch (e: Exception) {
+                    Log.e("Storage", "Failed get images for publication")
+                    throw e
+                }
+            }
+
+        override suspend fun deletePublicationImages(
+            idUser: String,
+            idPublication: String,
+        ) {
+            val storageRe = getStorageReference(userId = idUser)
             try {
-                val imageRef = getStorageReferenceFromUrl(imageUrl)
-                imageRef.delete().await()
+                val publicationRef = storageRe.child(idPublication)
+                val list = publicationRef.listAll().await() // obtenemos todas las listas
+                for (item in list.items) {
+                    try {
+                        item.delete().await()
+                        Log.e("deleteImage", "se elimino exitosamente las imagenes")
+                    } catch (e: Exception) {
+                        Log.e("deleteImage", "algo fallo al eliminar la imagen")
+                    }
+                }
+                // /elimina todas las subcarpetas
+                for (subFolder in list.prefixes) {
+                    deletePublicationImages(idUser, "$idPublication/${subFolder.name}")
+                }
+
                 Log.e("", "delete image successfully")
             } catch (e: Exception) {
-                Log.e("", "image delete failed imagePath: $imageUrl")
+                Log.e("", "image delete failed")
             }
         }
     }

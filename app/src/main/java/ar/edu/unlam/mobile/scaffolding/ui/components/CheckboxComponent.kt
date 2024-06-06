@@ -10,7 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,9 +21,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun <T> CheckboxComponent(
     options: List<T>,
-    selectedOption: MutableState<T?>,
+    initialSelectedOption: T?,
+    onOptionSelected: (T) -> Unit,
     optionToString: (T) -> String,
 ) {
+    var selectedOption by remember { mutableStateOf(initialSelectedOption) }
+
     Column {
         options.forEach { option ->
             Row(
@@ -29,14 +35,18 @@ fun <T> CheckboxComponent(
                         .fillMaxWidth()
                         .height(56.dp)
                         .clickable {
-                            selectedOption.value = option
+                            selectedOption = option
+                            onOptionSelected(option)
                         }
                         .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 RadioButton(
-                    selected = (selectedOption.value == option),
-                    onClick = { selectedOption.value = option },
+                    selected = (selectedOption == option),
+                    onClick = {
+                        selectedOption = option
+                        onOptionSelected(option)
+                    },
                 )
                 Text(
                     text = optionToString(option),
@@ -44,6 +54,14 @@ fun <T> CheckboxComponent(
                     modifier = Modifier.padding(start = 16.dp),
                 )
             }
+        }
+    }
+
+    if (initialSelectedOption != null) {
+        val foundOption = options.find { it == initialSelectedOption }
+        if (foundOption != null) {
+            selectedOption = foundOption
+            onOptionSelected(foundOption)
         }
     }
 }

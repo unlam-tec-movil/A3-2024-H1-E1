@@ -9,27 +9,53 @@ class FirestoreRepository
     @Inject
     constructor(
         private val firestoreNetworkInterface: FirestoreNetworkInterface,
-    ) {
-        suspend fun addPublication(
+    ) : FirestoreRepositoryInterface {
+        override suspend fun addPublication(
             idUser: String,
             publication: PostWithImages,
         ): Flow<PostWithImages> {
             return firestoreNetworkInterface.addPublication(idUser, publication)
         }
 
-        suspend fun addPublicationToPublicationCollection(publication: PostWithImages): Flow<PostWithImages> {
+        override suspend fun addPublicationToPublicationCollection(publication: PostWithImages): Flow<PostWithImages> {
             return firestoreNetworkInterface.addPublicationToPublicationCollection(publication)
         }
 
-        suspend fun getPublicationsByUserId(idUser: String): Flow<List<PostWithImages>> {
+        override suspend fun getPublicationsByUserId(idUser: String): Flow<List<PostWithImages>> {
             return firestoreNetworkInterface.getPublicationsByUserId(idUser)
         }
 
-        suspend fun getPublicationById(idPublication: String): Flow<PostWithImages> {
+        override suspend fun getPublicationById(idPublication: String): Flow<PostWithImages> {
             return firestoreNetworkInterface.getPublicationById(idPublication)
         }
 
-        suspend fun getAllPublications(): Flow<List<PostWithImages>> {
+        override suspend fun getAllPublications(): Flow<List<PostWithImages>> {
             return firestoreNetworkInterface.getAllPublications()
+        }
+
+        override suspend fun deletePublicationForUser(
+            idUser: String,
+            idPublication: String,
+        ): Flow<Boolean> {
+            return firestoreNetworkInterface.deletePublicationForUser(idUser, idPublication)
+        }
+
+        override suspend fun deletePublicationInAllPublications(idPublication: String): Flow<Boolean> {
+            return firestoreNetworkInterface.deletePublicationInAllPublications(idPublication)
+        }
+
+        override suspend fun editPublicationForUser(
+            idUser: String,
+            idPublication: String,
+            updatedPublication: PostWithImages,
+        ): Flow<PostWithImages> {
+            return firestoreNetworkInterface.editPublicationForUser(idUser, idPublication, updatedPublication)
+        }
+
+        override suspend fun editPublicationInAllPublications(
+            idPublication: String,
+            updatedPublication: PostWithImages,
+        ): Flow<PostWithImages> {
+            return firestoreNetworkInterface.editPublicationInAllPublications(idPublication, updatedPublication)
         }
     }

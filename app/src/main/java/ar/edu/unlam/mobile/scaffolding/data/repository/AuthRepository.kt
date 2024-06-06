@@ -10,16 +10,16 @@ class AuthRepository
     @Inject
     constructor(
         private val authNetworkInterface: AuthNetworkInterface,
-    ) {
-        suspend fun signInWithGoogle(credential: AuthCredential): AuthRes<FirebaseUser> {
+    ) : AuthRepositoryInterface {
+        override suspend fun signInWithGoogle(credential: AuthCredential): AuthRes<FirebaseUser> {
             return authNetworkInterface.signInWithGoogleCredential(credential)
         }
 
-        suspend fun signOut() {
+        override suspend fun signOut() {
             authNetworkInterface.signOut()
         }
 
-        suspend fun getCurrentUser(): FirebaseUser? {
+        override suspend fun getCurrentUser(): FirebaseUser? {
             return authNetworkInterface.getCurrentUser()
         }
     }
