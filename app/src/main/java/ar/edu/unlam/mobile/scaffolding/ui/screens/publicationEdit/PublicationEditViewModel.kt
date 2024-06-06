@@ -18,7 +18,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
-import ar.edu.unlam.mobile.scaffolding.domain.models.UserInfoGoogle
 import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetCurrentUser
@@ -42,15 +41,15 @@ class PublicationEditViewModel
         private val getUser: GetCurrentUser,
         private val firestoreService: FirestoreService,
     ) : ViewModel() {
-        private var currentUserId: UserInfoGoogle? = null
+        private var currentUserId: String? = null
 
         @Suppress("ktlint:standard:backing-property-naming")
         private val _listImagesForUser = mutableStateOf<List<Bitmap>>(emptyList())
 
-        val listImageForPublication: State<List<Bitmap>> = _listImagesForUser
+        val listImageUser: State<List<Bitmap>> = _listImagesForUser
 
-        private val _listBitmap = mutableStateOf<List<Bitmap>>(emptyList())
-        val listBitmap: State<List<Bitmap>> = _listBitmap
+        private val _listBitmapToCameraX = mutableStateOf<List<Bitmap>>(emptyList())
+        val listBitmapToCameraX: State<List<Bitmap>> = _listBitmapToCameraX
 
         init {
             viewModelScope.launch {
@@ -59,11 +58,11 @@ class PublicationEditViewModel
         }
 
         fun addBitmapToList(bitmap: Bitmap) {
-            _listBitmap.value += bitmap
+            _listBitmapToCameraX.value += bitmap
         }
 
         fun resetListBitmapToCamareX() {
-            _listBitmap.value = emptyList()
+            _listBitmapToCameraX.value = emptyList()
         }
 
         fun takePhoto(
@@ -110,18 +109,8 @@ class PublicationEditViewModel
             _listImagesForUser.value = _listImagesForUser.value.filterNot { it == imageBitmap }
         }
 
-        private suspend fun getCurrentUser(): UserInfoGoogle? {
-            val firebaseUser = getUser.getCurrentUser()
-            return if (firebaseUser != null) {
-                UserInfoGoogle(
-                    userId = firebaseUser.uid,
-                    displayName = firebaseUser.displayName,
-                    email = firebaseUser.email,
-                    photoUrl = firebaseUser.photoUrl.toString(),
-                )
-            } else {
-                null
-            }
+        private suspend fun getCurrentUser(): String? {
+            return getUser.getCurrentUser()?.uid
         }
 
         fun hasRequirePermission(
@@ -140,7 +129,7 @@ class PublicationEditViewModel
         private val _publicationState = MutableStateFlow<Result<PostWithImages>?>(null)
         val publicationState: StateFlow<Result<PostWithImages>?> get() = _publicationState
 
-        private var isEditing = mutableStateOf(false)
+        var isEditing = mutableStateOf(false)
 
         private val _id = mutableStateOf("")
         val id: State<String> = _id
@@ -176,8 +165,16 @@ class PublicationEditViewModel
 
         private val dateFormat = SimpleDateFormat("dd/MM/yyyy")
 
-        private fun setId(value: String) {
+        fun setIsEditing() {
+            isEditing.value = !isEditing.value
+        }
+
+        fun setId(value: String) {
             _id.value = value
+        }
+
+        fun setNewId() {
+            _id.value = UUID.randomUUID().toString()
         }
 
         fun setType(value: String) {
@@ -227,9 +224,9 @@ class PublicationEditViewModel
             _contact.value = value
         }
 
-        fun validateForm() {
-            // Comprueba si todos los campos obligatorios están llenos
-            if (title.value.isNotEmpty() &&
+        // /la funcion validateForm esta haciendo mas de 1 cosa,  valida el formulario, setea datos y llama al editar
+        fun validateForm(): Boolean {
+            return title.value.isNotEmpty() &&
                 description.value.isNotEmpty() &&
                 location.value.isNotEmpty() &&
                 type.value.isNotEmpty() &&
@@ -239,36 +236,24 @@ class PublicationEditViewModel
                 species.value.isNotEmpty() &&
                 sex.value.isNotEmpty() &&
                 color.value.isNotEmpty()
-            ) {
-                // Establece un ID único para la publicación si no existe
-                if (id.value.isEmpty()) {
-                    setId(UUID.randomUUID().toString())
-                }
-                // Comprueba si se está editando o agregando una publicación
-                if (isEditing.value) {
-                    // editPublication()
-                    viewModelScope.launch {
-                        addEditPublicationToFirestore()
-                    }
-                } else {
-                    currentUserId?.let { addPublication(it.userId) }
-                }
-            } else {
-                // Realizar componente para avisar de posibles faltantes datos
-            }
         }
 
-        private fun addPublication(idUser: String) {
+        fun addNewPublication() {
             viewModelScope.launch {
                 try {
                     val imageUrls =
-                        uploadImagesToStorage(listImageForPublication.value, idUser, id.value)
+                        uploadImagesToStorage(
+                            listImageUser.value,
+                            currentUserId!!,
+                            id.value,
+                        )
 
                     val postWithImages = createPostWithImage(imageUrls)
                     firestoreService.addPublicationToPublicationCollection(postWithImages).collect { result ->
-                        firestoreService.addPublication(idUser, postWithImages).collect { result ->
-                            _publicationState.value = Result.success(result)
-                        }
+                        firestoreService.addPublication(currentUserId!!, postWithImages)
+                            .collect { result ->
+                                _publicationState.value = Result.success(result)
+                            }
                     }
                 } catch (e: Exception) {
                     Log.e("PublicationEditViewModel", "Failed to add publication", e)
@@ -309,7 +294,7 @@ class PublicationEditViewModel
                 setContact(result.contact.toString())
                 // urlImages
                 viewModelScope.launch {
-                    storageService.getAllImagesForPublication(currentUserId!!.userId, idPublication)
+                    storageService.getAllImagesForPublication(currentUserId!!, idPublication)
                         .collect { result ->
                             if (result.isEmpty()) {
                                 Log.e("Storage", "la lista esta vacia ")
@@ -349,18 +334,25 @@ class PublicationEditViewModel
         }
 
         // /aca lo debemos eliminar la publicacion xq no se pisa , y luego añadir
-        private suspend fun addEditPublicationToFirestore() {
+        fun addEditPublicationToFirestore() {
             viewModelScope.launch {
                 try {
-                    // /eliminar publicaciones del Publication y del user
-                    // tenemos que eliminar primero las imagenes que esta
-                    storageService.deletePublicationImages(currentUserId!!.userId, id.value)
-                    val urls = uploadImagesToStorage(listImageForPublication.value, currentUserId!!.userId, id.value)
+                    storageService.deletePublicationImages(currentUserId!!, id.value)
+                    val urls =
+                        uploadImagesToStorage(
+                            listImageUser.value,
+                            currentUserId!!,
+                            id.value,
+                        )
                     resetListOfImages() // reseteamos devuelta las lista de imagenes para que luego
                     val newPostWithImages = createPostWithImage(urls)
                     firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect {
                             result ->
-                        firestoreService.editPublicationForUser(currentUserId!!.userId, id.value, newPostWithImages).collect {
+                        firestoreService.editPublicationForUser(
+                            currentUserId!!,
+                            id.value,
+                            newPostWithImages,
+                        ).collect {
                                 result ->
                             _publicationState.value = Result.success(result)
                         }
@@ -371,3 +363,5 @@ class PublicationEditViewModel
             }
         }
     }
+// /usar el componente de loading
+// /manejar bien las excepciones por si no podemos subir , traer o editar publicaciones para que en la ui se muestre algun msj

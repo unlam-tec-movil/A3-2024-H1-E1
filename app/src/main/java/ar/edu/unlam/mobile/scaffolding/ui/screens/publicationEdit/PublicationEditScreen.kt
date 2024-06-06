@@ -72,6 +72,8 @@ fun PublicationEditScreen(
     val textButton = remember { mutableStateOf("") }
 
     if (idPublication !== null) {
+        // /inicializamos en true la variable is editing
+        viewModel.setIsEditing()
         textButton.value = "Editar publicacion"
     } else {
         textButton.value = "Crear publicacion"
@@ -101,7 +103,7 @@ fun PublicationEditScreen(
             }
         }
 
-    val imageBitmapList by viewModel.listImageForPublication
+    val imageBitmapList by viewModel.listImageUser
 
     val galleryLauncher =
         rememberLauncherForActivityResult(
@@ -347,10 +349,19 @@ fun PublicationEditScreen(
             }
             Button(
                 onClick = {
-                    viewModel.validateForm()
-                    // /reseteamos las listas de imagenes
-                    viewModel.resetListOfImages()
-                    viewModel.resetListBitmapToCamareX()
+                    if (viewModel.validateForm()) {
+                        if (viewModel.isEditing.value) {
+                            viewModel.addEditPublicationToFirestore()
+                        } else {
+                            viewModel.setNewId()
+                            viewModel.addNewPublication()
+                        }
+                        // /una funcion para que resetee todos los campos de vuelta
+                        viewModel.resetListOfImages()
+                        viewModel.resetListBitmapToCamareX()
+                    } else {
+                        // componente o msj para decir que complete los campos
+                    }
                     // deberiamos ir a la pantalla de publicationScreen la de ro
                 },
                 modifier = Modifier,
@@ -363,7 +374,7 @@ fun PublicationEditScreen(
     // /manejamos aca los otros componentes
     if (openCameraX.value) {
         CameraXComponent(
-            list = viewModel.listBitmap,
+            list = viewModel.listBitmapToCameraX,
             cameraController = cameraController,
             modifier = Modifier.fillMaxSize(),
             onDissmissButton = { openCameraX.value = false },
