@@ -1,5 +1,5 @@
 [versions]
-agp = "8.4.1"
+agp = "8.3.1"
 kotlin = "1.9.23"
 coreKtx = "1.12.0"
 junit = "4.13.2"
@@ -67,9 +67,6 @@ firebase = {group = "com.google.firebase",name = "firebase-bom",version.ref = "f
 coroutine-android = {group  = "org.jetbrains.kotlin",name = "kotlinx-coroutines-android",version.ref = "coroutineAndroid" }
 lifecycleViewModel = {group = "androidx.lifecycle",name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
-
-firebase-auth-common = { group = "com.google.firebase", name = "firebase-auth-common", version.ref = "firebaseAuthCommon" }
-
 
 
 android-camera-core = {group = "androidx.camera", name = "camera-core",version.ref = "cameraX"}
