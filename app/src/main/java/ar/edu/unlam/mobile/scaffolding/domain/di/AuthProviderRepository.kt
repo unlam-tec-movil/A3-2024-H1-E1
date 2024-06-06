@@ -1,6 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.domain.di
 
-import ar.edu.unlam.mobile.scaffolding.data.repository.AuthRepository
+import ar.edu.unlam.mobile.scaffolding.data.repository.AuthRepositoryInterface
 import ar.edu.unlam.mobile.scaffolding.domain.services.AuthService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetCurrentUser
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.SignInWithGoogle
@@ -14,7 +14,7 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object AuthProviderRepository {
     @Provides
-    fun AuthProviderRep(authRepository: AuthRepository): AuthService {
+    fun AuthProviderRep(authRepository: AuthRepositoryInterface): AuthService {
         return AuthService(authRepository = authRepository)
     }
 

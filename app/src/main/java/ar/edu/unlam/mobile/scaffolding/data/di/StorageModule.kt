@@ -2,6 +2,8 @@ package ar.edu.unlam.mobile.scaffolding.data.di
 
 import ar.edu.unlam.mobile.scaffolding.data.network.StorageNetworkImpl
 import ar.edu.unlam.mobile.scaffolding.data.network.StorageNetworkInterface
+import ar.edu.unlam.mobile.scaffolding.data.repository.StorageRepository
+import ar.edu.unlam.mobile.scaffolding.data.repository.StorageRepositoryInterface
 import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
@@ -21,4 +23,7 @@ object StorageModule {
         StorageNetworkImpl(
             storage = storage,
         )
+
+    @Provides
+    fun provideStorageRepositoryInterface(storageRe: StorageNetworkInterface): StorageRepositoryInterface = StorageRepository(storageRe)
 }

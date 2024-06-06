@@ -111,10 +111,10 @@ class FirestoreNetworkImpl
                                 dateLost = it["dateLost"] as String,
                                 species = it["species"] as String,
                                 sex = it["sex"] as String,
-                                age = it["age"] as Int,
+                                age = (it["age"] as Long).toInt(),
                                 color = it["color"] as String,
                                 location = it["location"] as String,
-                                contact = it["contact"] as Int,
+                                contact = (it["contact"] as Long).toInt(),
                                 images = (it["images"] as? List<String>) ?: emptyList(),
                             )
                         }

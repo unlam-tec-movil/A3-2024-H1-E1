@@ -18,11 +18,20 @@ import androidx.compose.ui.Modifier
 @Composable
 inline fun <reified T> SelectComponent(
     list: List<T>,
+    initialSelectedItem: T? = null,
     placeholder: String = "",
     crossinline onItemSelected: (T) -> Unit,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf(list.firstOrNull()) }
+
+    // Variable para manejar el estado del elemento seleccionado
+    var selectedItem by remember { mutableStateOf(initialSelectedItem) }
+
+    // Si initialSelectedItem no es nulo y es una cadena de texto,
+    // intentamos encontrarlo en la lista y establecerlo como seleccionado
+    if (initialSelectedItem != null && initialSelectedItem is String) {
+        selectedItem = list.find { it.toString() == initialSelectedItem }
+    }
 
     ExposedDropdownMenuBox(
         expanded = isExpanded,
@@ -30,7 +39,7 @@ inline fun <reified T> SelectComponent(
         modifier = Modifier.fillMaxWidth(),
     ) {
         TextField(
-            value = selectedItem?.toString() ?: "",
+            value = selectedItem?.toString() ?: "", // Convertimos el elemento seleccionado a String
             onValueChange = {},
             readOnly = true,
             trailingIcon = {

@@ -46,8 +46,9 @@ fun NavigationComponent(
             HomeScreen()
         }
 
-        composable(NavigationRoutes.PublicationEditScreen.route) {
-            PublicationEditScreen(idPublication = null, controller = navigationController)
+        composable(NavigationRoutes.PublicationEditScreen.route) { navBackStackEntry ->
+            val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
+            PublicationEditScreen(idPublication = publicationId, controller = navigationController)
         }
 
         composable(NavigationRoutes.FilterScreen.route) {
