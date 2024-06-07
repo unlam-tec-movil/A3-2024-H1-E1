@@ -31,8 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -54,12 +52,14 @@ import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
 import ar.edu.unlam.mobile.scaffolding.ui.components.CheckboxComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
+import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.CameraXComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -136,241 +136,244 @@ fun PublicationEditScreen(
             }
         }
 
-    // Resultado de la creacion de la PUBLICACION
-    val publicationState by viewModel.publicationState.collectAsState()
-
-    // /porque aca ha dos veces
-    LaunchedEffect(idPublication, publicationState) {
-        if (idPublication != null) {
-            textButton.value = "Editar publicacion"
-            viewModel.setPublication(idPublication)
-        } else {
-            textButton.value = "Crear publicacion"
-        }
-
-        publicationState?.let {
-            if (it.isSuccess) {
-                controller.popBackStack()
-            } else if (it.isFailure) {
-                // Manejar el error, por ejemplo, mostrar un mensaje de error
-                Toast.makeText(context, "Error al crear la publicación", Toast.LENGTH_LONG).show()
-            }
-        }
+    // si la publicacion esta en modo editacion
+    if (viewModel.isEditing.value) {
+        viewModel.setPublication(idPublication!!)
+        viewModel.setIsEditing()
     }
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Carrousel(listOfImage = imageBitmapList) { imageSelected ->
-            selectedItemForSetting = imageSelected
-            showDialogForSettingImage = true
+    when (viewModel.publicationUiState.value) {
+        is PublicationUiState.Loading -> {
+            LoadingComponent()
         }
-        Button(
-            onClick = {
-                showDialogSelectedUpdateImage = true
-            },
-            modifier =
-                Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 5.dp),
-        ) {
-            Text(text = "Añadir Foto")
-        }
-
-        // RADIO GROUPS
-        Column {
-            Text("Selecciona una opción:")
-            CheckboxComponent(
-                options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
-                initialSelectedOption = viewModel.type.value,
-                onOptionSelected = { selectedOption ->
-                    viewModel.setType(selectedOption)
-                },
-                optionToString = { it },
-            )
-        }
-        // DATE PICKER COMPONENT
-        val dateLost by viewModel.dateLost.observeAsState("")
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text("Fecha de perdida:")
-            DatePickerComponent(
-                initialDate = dateLost,
-                onDateSelected = { selectedDate ->
-                    viewModel.setDateLost(selectedDate)
-                },
-            )
-        }
-
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-        ) {
-            Text("Titulo de Publicacion")
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = viewModel.title.value,
-                onValueChange = { viewModel.setTitle(it) },
-                placeholder = { Text("Ingrese el titulo") },
-                singleLine = true,
-            )
-        }
-
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-        ) {
-            Text("Descripcion")
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = viewModel.description.value,
-                onValueChange = { viewModel.setDescription(it) },
-                placeholder = { Text("Ingrese la descripcion") },
-                maxLines = 4,
-            )
-        }
-
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-        ) {
-            Text("Especie")
-            SelectComponent(
-                list = Species.values().toList(),
-                initialSelectedItem = viewModel.species.value,
-            ) { selectedSpecies ->
-                viewModel.setSpecies(selectedSpecies.toString())
-            }
-        }
-
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-        ) {
-            Text("Sexo")
-            SelectComponent(
-                Sex.values().toList(),
-                initialSelectedItem = viewModel.sex.value,
-            ) { selectedSex ->
-                viewModel.setSex(selectedSex.toString())
-            }
-        }
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-        ) {
-            Text("Edad")
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = viewModel.age.value,
-                onValueChange = { viewModel.setAge(it) },
-                placeholder = { Text("Ingrese la edad") },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            )
-        }
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-        ) {
-            Text("Color")
-            SelectComponent(
-                PetColors.values().toList(),
-                initialSelectedItem = viewModel.color.value,
-            ) { selectedColor ->
-                viewModel.setColor(selectedColor.toString())
-            }
-        }
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-        ) {
-            Text("Numero de contacto")
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = viewModel.contact.value,
-                onValueChange = { viewModel.setContact(it) },
-                placeholder = { Text("Ingrese el numero de contacto") },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            )
-        }
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-        ) {
-            Text("Ubicacion")
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = viewModel.location.value,
-                onValueChange = { viewModel.setLocation(it) },
-                placeholder = { Text("Ingrese la ubicacion") },
-            )
-            MapsComponent(
+        is PublicationUiState.Success -> {
+            // /mostramos el contenido principal
+            Column(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .padding(top = 8.dp),
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            TextButton(
-                onClick = {
-                    // en caso de cancelar la publicacion entonces reseteamos las imagenes
-                    viewModel.resetListOfImages()
-                    // en el mismo caso debe ser para los textos
-                    controller.popBackStack()
-                },
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Text("Cancelar")
-            }
-            Button(
-                onClick = {
-                    if (viewModel.validateForm()) {
-                        if (viewModel.isEditing.value) {
-                            viewModel.addEditPublicationToFirestore()
-                        } else {
-                            viewModel.setNewId()
-                            viewModel.addNewPublication()
-                        }
-                        // /una funcion para que resetee todos los campos de vuelta
-                        viewModel.resetListOfImages()
-                        viewModel.resetListBitmapToCamareX()
-                    } else {
-                        // componente o msj para decir que complete los campos
+                Carrousel(listOfImage = imageBitmapList) { imageSelected ->
+                    selectedItemForSetting = imageSelected
+                    showDialogForSettingImage = true
+                }
+                Button(
+                    onClick = {
+                        showDialogSelectedUpdateImage = true
+                    },
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 5.dp),
+                ) {
+                    Text(text = "Añadir Foto")
+                }
+
+                // RADIO GROUPS
+                Column {
+                    Text("Selecciona una opción:")
+                    CheckboxComponent(
+                        options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
+                        initialSelectedOption = viewModel.type.value,
+                        onOptionSelected = { selectedOption ->
+                            viewModel.setType(selectedOption)
+                        },
+                        optionToString = { it },
+                    )
+                }
+                // DATE PICKER COMPONENT
+                val dateLost by viewModel.dateLost.observeAsState("")
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Fecha de perdida:")
+                    DatePickerComponent(
+                        initialDate = dateLost,
+                        onDateSelected = { selectedDate ->
+                            viewModel.setDateLost(selectedDate)
+                        },
+                    )
+                }
+
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
+                ) {
+                    Text("Titulo de Publicacion")
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = viewModel.title.value,
+                        onValueChange = { viewModel.setTitle(it) },
+                        placeholder = { Text("Ingrese el titulo") },
+                        singleLine = true,
+                    )
+                }
+
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
+                ) {
+                    Text("Descripcion")
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = viewModel.description.value,
+                        onValueChange = { viewModel.setDescription(it) },
+                        placeholder = { Text("Ingrese la descripcion") },
+                        maxLines = 4,
+                    )
+                }
+
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
+                ) {
+                    Text("Especie")
+                    SelectComponent(
+                        list = Species.values().toList(),
+                        initialSelectedItem = viewModel.species.value,
+                    ) { selectedSpecies ->
+                        viewModel.setSpecies(selectedSpecies.toString())
                     }
-                    // deberiamos ir a la pantalla de publicationScreen la de ro
-                },
-                modifier = Modifier,
-            ) {
-                Text(textButton.value)
+                }
+
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
+                ) {
+                    Text("Sexo")
+                    SelectComponent(
+                        Sex.values().toList(),
+                        initialSelectedItem = viewModel.sex.value,
+                    ) { selectedSex ->
+                        viewModel.setSex(selectedSex.toString())
+                    }
+                }
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
+                ) {
+                    Text("Edad")
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = viewModel.age.value,
+                        onValueChange = { viewModel.setAge(it) },
+                        placeholder = { Text("Ingrese la edad") },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    )
+                }
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
+                ) {
+                    Text("Color")
+                    SelectComponent(
+                        PetColors.values().toList(),
+                        initialSelectedItem = viewModel.color.value,
+                    ) { selectedColor ->
+                        viewModel.setColor(selectedColor.toString())
+                    }
+                }
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
+                ) {
+                    Text("Numero de contacto")
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = viewModel.contact.value,
+                        onValueChange = { viewModel.setContact(it) },
+                        placeholder = { Text("Ingrese el numero de contacto") },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    )
+                }
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
+                ) {
+                    Text("Ubicacion")
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = viewModel.location.value,
+                        onValueChange = { viewModel.setLocation(it) },
+                        placeholder = { Text("Ingrese la ubicacion") },
+                    )
+                    MapsComponent(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(150.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .padding(top = 8.dp),
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = {
+                            // en caso de cancelar la publicacion entonces reseteamos las imagenes
+                            viewModel.resetListOfImages()
+                            // en el mismo caso debe ser para los textos
+                            controller.popBackStack()
+                        },
+                    ) {
+                        Text("Cancelar")
+                    }
+
+                    Button(
+                        onClick = {
+                            if (viewModel.validateForm()) {
+                                if (viewModel.isEditing.value) {
+                                    viewModel.addEditPublicationToFirestore()
+                                } else {
+                                    viewModel.setNewId()
+                                    viewModel.addNewPublication()
+                                }
+                                // /aca tengo que ir a la
+                                viewModel.resetListOfImages()
+                                viewModel.resetListBitmapToCamareX()
+                                controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                            } else {
+                                // componente o msj para decir que complete los campos
+                            }
+                        },
+                        modifier = Modifier,
+                    ) {
+                        // /muestro el estado
+                        when (viewModel.buttomPublicationState.value) {
+                            is PublicationBottonState.Finished -> {
+                                Text(textButton.value)
+                            }
+                            is PublicationBottonState.Loading -> {
+                                LoadingComponent()
+                            }
+                        }
+                    }
+                }
             }
+        }
+        is PublicationUiState.Error -> {
+            // mostrar un msj error cuando no se puede cargar los campos seteados
         }
     }
-
     // /manejamos aca los otros componentes
     if (openCameraX.value) {
         CameraXComponent(

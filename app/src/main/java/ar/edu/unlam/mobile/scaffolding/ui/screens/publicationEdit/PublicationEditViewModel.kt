@@ -32,7 +32,20 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
-// /problema con las imagenes , no las elimina
+sealed interface PublicationUiState {
+    object Success : PublicationUiState
+
+    object Loading : PublicationUiState
+
+    object Error : PublicationUiState
+}
+
+sealed interface PublicationBottonState {
+    object Loading : PublicationBottonState
+
+    object Finished : PublicationBottonState
+}
+
 @HiltViewModel
 class PublicationEditViewModel
     @Inject
@@ -50,6 +63,13 @@ class PublicationEditViewModel
 
         private val _listBitmapToCameraX = mutableStateOf<List<Bitmap>>(emptyList())
         val listBitmapToCameraX: State<List<Bitmap>> = _listBitmapToCameraX
+
+        @Suppress("ktlint:standard:backing-property-naming")
+        private val _buttomPublication = mutableStateOf<PublicationBottonState>(PublicationBottonState.Finished)
+        val buttomPublicationState: State<PublicationBottonState> = _buttomPublication
+
+        private val _publicationUiState = mutableStateOf<PublicationUiState>(PublicationUiState.Success)
+        val publicationUiState: State<PublicationUiState> = _publicationUiState
 
         init {
             viewModelScope.launch {
@@ -239,6 +259,7 @@ class PublicationEditViewModel
         }
 
         fun addNewPublication() {
+            _buttomPublication.value = PublicationBottonState.Loading
             viewModelScope.launch {
                 try {
                     val imageUrls =
@@ -258,51 +279,58 @@ class PublicationEditViewModel
                 } catch (e: Exception) {
                     Log.e("PublicationEditViewModel", "Failed to add publication", e)
                     _publicationState.value = Result.failure(e)
+                } finally {
+                    _buttomPublication.value = PublicationBottonState.Finished
                 }
             }
         }
 
         // manejar en caso de que traiga un null o que no pueda
-        suspend fun setPublication(idPublication: String) {
-            firestoreService.getPublicationById(idPublication).collect { result ->
-                isEditing.value = true
-                setId(result.id)
-                setType(result.type)
-                setTitle(result.title)
-                setDescription(result.description)
-                val dateLostString =
-                    when (val dateLost = result.dateLost) {
-                        is String -> {
-                            // Parsear la cadena de texto a un objeto Date
-                            val date =
-                                try {
-                                    dateFormat.parse(dateLost)
-                                } catch (e: ParseException) {
-                                    Date() // Si hay un error al analizar, devuelve la fecha actual
-                                }
-                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date) // Formatear Date como una cadena de texto
-                        }
-                        else -> dateFormat.format(Date()) // Valor predeterminado si no es una cadena de texto
-                    }
-                setDateLost(dateLostString)
-                setDateLost(dateLostString)
-                setSpecies(result.species)
-                setSex(result.sex)
-                setAge((result.age).toString())
-                setColor(result.color)
-                setLocation(result.location)
-                setContact(result.contact.toString())
-                // urlImages
+        fun setPublication(idPublication: String) {
+            try {
                 viewModelScope.launch {
-                    storageService.getAllImagesForPublication(currentUserId!!, idPublication)
-                        .collect { result ->
-                            if (result.isEmpty()) {
-                                Log.e("Storage", "la lista esta vacia ")
-                            } else {
-                                _listImagesForUser.value = result
+                    _publicationUiState.value = PublicationUiState.Loading
+                    firestoreService.getPublicationById(idPublication).collect { result ->
+                        setId(result.id)
+                        setType(result.type)
+                        setTitle(result.title)
+                        setDescription(result.description)
+                        val dateLostString =
+                            when (val dateLost = result.dateLost) {
+                                is String -> {
+                                    // Parsear la cadena de texto a un objeto Date
+                                    val date =
+                                        try {
+                                            dateFormat.parse(dateLost)
+                                        } catch (e: ParseException) {
+                                            Date() // Si hay un error al analizar, devuelve la fecha actual
+                                        }
+                                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
+                                }
+                                else -> dateFormat.format(Date()) // Valor predeterminado si no es una cadena de texto
                             }
+                        setDateLost(dateLostString)
+                        setSpecies(result.species)
+                        setSex(result.sex)
+                        setAge((result.age).toString())
+                        setColor(result.color)
+                        setLocation(result.location)
+                        setContact(result.contact.toString())
+                        viewModelScope.launch {
+                            storageService.getAllImagesForPublication(currentUserId!!, idPublication)
+                                .collect { result ->
+                                    if (result.isEmpty()) {
+                                        Log.e("Storage", "la lista esta vacia ")
+                                    } else {
+                                        _listImagesForUser.value = result
+                                    }
+                                }
                         }
+                    }
+                    _publicationUiState.value = PublicationUiState.Success
                 }
+            } catch (e: Exception) {
+                _publicationUiState.value = PublicationUiState.Error
             }
         }
 
@@ -335,6 +363,7 @@ class PublicationEditViewModel
 
         // /aca lo debemos eliminar la publicacion xq no se pisa , y luego añadir
         fun addEditPublicationToFirestore() {
+            _buttomPublication.value = PublicationBottonState.Loading
             viewModelScope.launch {
                 try {
                     storageService.deletePublicationImages(currentUserId!!, id.value)
@@ -344,7 +373,6 @@ class PublicationEditViewModel
                             currentUserId!!,
                             id.value,
                         )
-                    resetListOfImages() // reseteamos devuelta las lista de imagenes para que luego
                     val newPostWithImages = createPostWithImage(urls)
                     firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect {
                             result ->
@@ -359,9 +387,9 @@ class PublicationEditViewModel
                     }
                 } catch (e: Exception) {
                     Log.e("Edit Publication", "Failed upload to Firestore edit Publication")
+                } finally {
+                    _buttomPublication.value = PublicationBottonState.Finished
                 }
             }
         }
     }
-// /usar el componente de loading
-// /manejar bien las excepciones por si no podemos subir , traer o editar publicaciones para que en la ui se muestre algun msj
