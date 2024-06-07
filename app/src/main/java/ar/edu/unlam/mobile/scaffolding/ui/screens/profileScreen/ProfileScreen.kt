@@ -18,7 +18,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
-import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationCell
+import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationCellEdit
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
@@ -58,7 +58,13 @@ fun ProfileScreen(
 
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(getDummyPublications()) { publication ->
-                PublicationCell(publication, onClick = {})
+                PublicationCellEdit(
+                    publication,
+                    onClick = {},
+                    onViewClick = {},
+                    onEditClick = {},
+                    onDeleteClick = {},
+                )
             }
         }
 
@@ -82,9 +88,9 @@ fun ProfileScreen(
                     }
                     controller.navigate(NavigationRoutes.LoginScreen.route)
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             ) {
-                Text("Cerrar sesión", color = Color.White)
+                Text("Cerrar sesión", color = Color.Red)
             }
         }
     }
