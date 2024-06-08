@@ -52,8 +52,8 @@ fun NavigationComponent(
             route = NavigationRoutes.PublicationEditScreen.route,
             arguments = listOf(navArgument("publicationId") { type = NavType.StringType }),
         ) { navBackStackEntry ->
-            val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
-            PublicationEditScreen(idPublication = "f2efa5d1-b0d6-4ef9-a847-12c6475404cb", controller = navigationController)
+            val publicationId = navBackStackEntry.arguments?.getString("publicationId")
+            PublicationEditScreen(idPublication = publicationId, controller = navigationController)
         }
 
         composable(NavigationRoutes.FilterScreen.route) {

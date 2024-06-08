@@ -40,12 +40,6 @@ sealed interface PublicationUiState {
     object Error : PublicationUiState
 }
 
-sealed interface PublicationBottonState {
-    object Loading : PublicationBottonState
-
-    object Finished : PublicationBottonState
-}
-
 @HiltViewModel
 class PublicationEditViewModel
     @Inject
@@ -63,10 +57,6 @@ class PublicationEditViewModel
 
         private val _listBitmapToCameraX = mutableStateOf<List<Bitmap>>(emptyList())
         val listBitmapToCameraX: State<List<Bitmap>> = _listBitmapToCameraX
-
-        @Suppress("ktlint:standard:backing-property-naming")
-        private val _buttomPublication = mutableStateOf<PublicationBottonState>(PublicationBottonState.Finished)
-        val buttomPublicationState: State<PublicationBottonState> = _buttomPublication
 
         private val _publicationUiState = mutableStateOf<PublicationUiState>(PublicationUiState.Success)
         val publicationUiState: State<PublicationUiState> = _publicationUiState
@@ -149,7 +139,8 @@ class PublicationEditViewModel
         private val _publicationState = MutableStateFlow<Result<PostWithImages>?>(null)
         val publicationState: StateFlow<Result<PostWithImages>?> get() = _publicationState
 
-        var isEditing = mutableStateOf(false)
+        private val _isEditing = mutableStateOf(false)
+        var isEditing: State<Boolean> = _isEditing
 
         private val _id = mutableStateOf("")
         val id: State<String> = _id
@@ -185,8 +176,8 @@ class PublicationEditViewModel
 
         private val dateFormat = SimpleDateFormat("dd/MM/yyyy")
 
-        fun setIsEditing() {
-            isEditing.value = !isEditing.value
+        fun setIsEditing(value: Boolean) {
+            _isEditing.value = value
         }
 
         fun setId(value: String) {
@@ -259,7 +250,7 @@ class PublicationEditViewModel
         }
 
         fun addNewPublication() {
-            _buttomPublication.value = PublicationBottonState.Loading
+            _publicationUiState.value = PublicationUiState.Loading
             viewModelScope.launch {
                 try {
                     val imageUrls =
@@ -276,20 +267,20 @@ class PublicationEditViewModel
                                 _publicationState.value = Result.success(result)
                             }
                     }
+                    _publicationUiState.value = PublicationUiState.Success
                 } catch (e: Exception) {
                     Log.e("PublicationEditViewModel", "Failed to add publication", e)
-                    _publicationState.value = Result.failure(e)
-                } finally {
-                    _buttomPublication.value = PublicationBottonState.Finished
+                    _publicationUiState.value = PublicationUiState.Error
                 }
             }
         }
 
         // manejar en caso de que traiga un null o que no pueda
         fun setPublication(idPublication: String) {
-            try {
-                viewModelScope.launch {
-                    _publicationUiState.value = PublicationUiState.Loading
+            _publicationUiState.value = PublicationUiState.Loading
+
+            viewModelScope.launch {
+                try {
                     firestoreService.getPublicationById(idPublication).collect { result ->
                         setId(result.id)
                         setType(result.type)
@@ -307,6 +298,7 @@ class PublicationEditViewModel
                                         }
                                     SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
                                 }
+
                                 else -> dateFormat.format(Date()) // Valor predeterminado si no es una cadena de texto
                             }
                         setDateLost(dateLostString)
@@ -316,21 +308,21 @@ class PublicationEditViewModel
                         setColor(result.color)
                         setLocation(result.location)
                         setContact(result.contact.toString())
-                        viewModelScope.launch {
-                            storageService.getAllImagesForPublication(currentUserId!!, idPublication)
-                                .collect { result ->
-                                    if (result.isEmpty()) {
-                                        Log.e("Storage", "la lista esta vacia ")
-                                    } else {
-                                        _listImagesForUser.value = result
-                                    }
+                        storageService.getAllImagesForPublication(currentUserId!!, idPublication)
+                            .collect { result ->
+                                if (result.isEmpty()) {
+                                    Log.e("Storage", "la lista esta vacia ")
+                                } else {
+                                    _listImagesForUser.value = result
                                 }
-                        }
+                            }
                     }
                     _publicationUiState.value = PublicationUiState.Success
+                } catch (e: Exception) {
+                    Log.e("SetPublication", "no se pudo setear la publicacion")
+
+                    _publicationUiState.value = PublicationUiState.Error
                 }
-            } catch (e: Exception) {
-                _publicationUiState.value = PublicationUiState.Error
             }
         }
 
@@ -357,13 +349,12 @@ class PublicationEditViewModel
                 color = color.value,
                 location = location.value,
                 contact = contact.value.toInt(),
-                images = urls, // Lista de URLs
+                images = urls,
             )
         }
 
-        // /aca lo debemos eliminar la publicacion xq no se pisa , y luego añadir
         fun addEditPublicationToFirestore() {
-            _buttomPublication.value = PublicationBottonState.Loading
+            _publicationUiState.value = PublicationUiState.Loading
             viewModelScope.launch {
                 try {
                     storageService.deletePublicationImages(currentUserId!!, id.value)
@@ -385,10 +376,10 @@ class PublicationEditViewModel
                             _publicationState.value = Result.success(result)
                         }
                     }
+                    _publicationUiState.value = PublicationUiState.Success
                 } catch (e: Exception) {
                     Log.e("Edit Publication", "Failed upload to Firestore edit Publication")
-                } finally {
-                    _buttomPublication.value = PublicationBottonState.Finished
+                    _publicationUiState.value = PublicationUiState.Error
                 }
             }
         }

@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -59,7 +60,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.post.CameraXComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
-import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -71,13 +71,14 @@ fun PublicationEditScreen(
 ) {
     val textButton = remember { mutableStateOf("") }
 
-    if (idPublication !== null) {
-        // /inicializamos en true la variable is editing
-        viewModel.setIsEditing()
+    if (idPublication != null) {
         textButton.value = "Editar publicacion"
     } else {
         textButton.value = "Crear publicacion"
     }
+    // /seteamos la variable isEditing
+    viewModel.setIsEditing(idPublication != null)
+
     val openCameraX =
         remember {
             mutableStateOf(false)
@@ -136,10 +137,10 @@ fun PublicationEditScreen(
             }
         }
 
-    // si la publicacion esta en modo editacion
-    if (viewModel.isEditing.value) {
-        viewModel.setPublication(idPublication!!)
-        viewModel.setIsEditing()
+    LaunchedEffect(viewModel.isEditing) {
+        if (viewModel.isEditing.value) {
+            viewModel.setPublication(idPublication!!)
+        }
     }
 
     when (viewModel.publicationUiState.value) {
@@ -347,25 +348,13 @@ fun PublicationEditScreen(
                                     viewModel.setNewId()
                                     viewModel.addNewPublication()
                                 }
-                                // /aca tengo que ir a la
-                                viewModel.resetListOfImages()
-                                viewModel.resetListBitmapToCamareX()
-                                controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                                // controller.navigate(NavigationRoutes.PublicationDetailsScreen.withPublicationId(idPublication!!))
                             } else {
                                 // componente o msj para decir que complete los campos
                             }
                         },
-                        modifier = Modifier,
                     ) {
-                        // /muestro el estado
-                        when (viewModel.buttomPublicationState.value) {
-                            is PublicationBottonState.Finished -> {
-                                Text(textButton.value)
-                            }
-                            is PublicationBottonState.Loading -> {
-                                LoadingComponent()
-                            }
-                        }
+                        Text(textButton.value)
                     }
                 }
             }
