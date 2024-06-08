@@ -275,53 +275,56 @@ class PublicationEditViewModel
             }
         }
 
-        // manejar en caso de que traiga un null o que no pueda
         fun setPublication(idPublication: String) {
             _publicationUiState.value = PublicationUiState.Loading
-
             viewModelScope.launch {
                 try {
-                    firestoreService.getPublicationById(idPublication).collect { result ->
-                        setId(result.id)
-                        setType(result.type)
-                        setTitle(result.title)
-                        setDescription(result.description)
-                        val dateLostString =
-                            when (val dateLost = result.dateLost) {
-                                is String -> {
-                                    // Parsear la cadena de texto a un objeto Date
-                                    val date =
-                                        try {
-                                            dateFormat.parse(dateLost)
-                                        } catch (e: ParseException) {
-                                            Date() // Si hay un error al analizar, devuelve la fecha actual
-                                        }
-                                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
-                                }
-
-                                else -> dateFormat.format(Date()) // Valor predeterminado si no es una cadena de texto
-                            }
-                        setDateLost(dateLostString)
-                        setSpecies(result.species)
-                        setSex(result.sex)
-                        setAge((result.age).toString())
-                        setColor(result.color)
-                        setLocation(result.location)
-                        setContact(result.contact.toString())
-                        storageService.getAllImagesForPublication(currentUserId!!, idPublication)
-                            .collect { result ->
-                                if (result.isEmpty()) {
-                                    Log.e("Storage", "la lista esta vacia ")
-                                } else {
-                                    _listImagesForUser.value = result
-                                }
-                            }
-                    }
+                    fetchPublicationData(idPublication = idPublication)
                     _publicationUiState.value = PublicationUiState.Success
                 } catch (e: Exception) {
                     Log.e("SetPublication", "no se pudo setear la publicacion")
-
                     _publicationUiState.value = PublicationUiState.Error
+                }
+            }
+        }
+
+        private fun fetchPublicationData(idPublication: String) {
+            viewModelScope.launch {
+                firestoreService.getPublicationById(idPublication).collect { result ->
+                    setId(result.id)
+                    setType(result.type)
+                    setTitle(result.title)
+                    setDescription(result.description)
+                    val dateLostString =
+                        when (val dateLost = result.dateLost) {
+                            is String -> {
+                                // Parsear la cadena de texto a un objeto Date
+                                val date =
+                                    try {
+                                        dateFormat.parse(dateLost)
+                                    } catch (e: ParseException) {
+                                        Date() // Si hay un error al analizar, devuelve la fecha actual
+                                    }
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
+                            }
+
+                            else -> dateFormat.format(Date()) // Valor predeterminado si no es una cadena de texto
+                        }
+                    setDateLost(dateLostString)
+                    setSpecies(result.species)
+                    setSex(result.sex)
+                    setAge((result.age).toString())
+                    setColor(result.color)
+                    setLocation(result.location)
+                    setContact(result.contact.toString())
+                    storageService.getAllImagesForPublication(currentUserId!!, idPublication)
+                        .collect { result ->
+                            if (result.isEmpty()) {
+                                Log.e("Storage", "la lista esta vacia ")
+                            } else {
+                                _listImagesForUser.value = result
+                            }
+                        }
                 }
             }
         }
