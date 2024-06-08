@@ -40,6 +40,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.models.AuthRes
+import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldEmail
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldPassword
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
@@ -96,98 +97,110 @@ fun LoginScreen(navHostController: NavHostController) {
         composition = composition,
         iterations = LottieConstants.IterateForever,
     )
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize(),
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(250.dp),
-        ) {
-            LottieAnimation(
+
+    when (loginViewModel.loginUiState.value) {
+        is LoginUiState.Loading -> {
+            LoadingComponent()
+        }
+        is LoginUiState.Succes -> {
+            Column(
                 modifier =
                     Modifier
                         .fillMaxSize(),
-                composition = composition,
-                progress = progress,
-            )
-        }
+            ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(250.dp),
+                ) {
+                    LottieAnimation(
+                        modifier =
+                            Modifier
+                                .fillMaxSize(),
+                        composition = composition,
+                        progress = progress,
+                    )
+                }
 
-        Column(
-            modifier = Modifier.padding(start = 25.dp, top = 15.dp, end = 25.dp, bottom = 5.dp),
-        ) {
-            Text(
-                text = "Inicio de Sesion",
-                fontSize = 30.sp,
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.padding(bottom = 10.dp),
-            )
-            TextFieldEmail(
-                tittle = "Email",
-                label = "abcd@gmail.com",
-            ) { email ->
-                // /manejamos el resultado del email, lo validamos
-            }
-            Spacer(modifier = Modifier.padding(15.dp))
-            TextFieldPassword(
-                tittle = "Password",
-                label = "password",
-            ) { password ->
-                // manejamos el resultado de la contraseña aca
-            }
-        }
+                Column(
+                    modifier = Modifier.padding(start = 25.dp, top = 15.dp, end = 25.dp, bottom = 5.dp),
+                ) {
+                    Text(
+                        text = "Inicio de Sesion",
+                        fontSize = 30.sp,
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.padding(bottom = 10.dp),
+                    )
+                    TextFieldEmail(
+                        tittle = "Email",
+                        label = "abcd@gmail.com",
+                    ) { email ->
+                        // /manejamos el resultado del email, lo validamos
+                    }
+                    Spacer(modifier = Modifier.padding(15.dp))
+                    TextFieldPassword(
+                        tittle = "Password",
+                        label = "password",
+                    ) { password ->
+                        // manejamos el resultado de la contraseña aca
+                    }
+                }
 
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .padding(start = 25.dp, top = 25.dp, end = 25.dp, bottom = 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround,
-        ) {
-            IconButton(onClick = {
-                // /aca iria el when con el estado del boton
-                loginViewModel.signInWithGoogle(googleSignInLauncher = googleSignInLauncher)
-                // /accion para acceder con google
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.icon_google),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(100.dp),
-                )
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(100.dp)
+                            .padding(start = 25.dp, top = 25.dp, end = 25.dp, bottom = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
+                ) {
+                    IconButton(onClick = {
+                        // /aca iria el when con el estado del boton
+                        loginViewModel.signInWithGoogle(googleSignInLauncher = googleSignInLauncher)
+                        // /accion para acceder con google
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.icon_google),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(100.dp),
+                        )
+                    }
+                }
+                // boton de inicio de sesion
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        loginViewModel.sigInWithEmailAndPassword()
+                    },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 25.dp, top = 35.dp, end = 25.dp, bottom = 5.dp),
+                ) {
+                    Text(text = "iniciar sesion")
+                }
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 25.dp, top = 10.dp, end = 25.dp, bottom = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(text = "¿No tienes cuenta? ")
+                    TextButton(onClick = {
+                        // nos lleva a la pantalla de crear nuevo Usuario
+                    }) {
+                        Text(text = "Registrate")
+                    }
+                }
             }
         }
-        // boton de inicio de sesion
-        ExtendedFloatingActionButton(
-            onClick = { /*TODO*/ },
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 25.dp, top = 35.dp, end = 25.dp, bottom = 5.dp),
-        ) {
-            Text(text = "iniciar sesion")
-        }
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 25.dp, top = 10.dp, end = 25.dp, bottom = 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Text(text = "¿No tienes cuenta? ")
-            TextButton(onClick = {
-                // nos lleva a la pantalla de crear nuevo Usuario
-            }) {
-                Text(text = "Registrate")
-            }
+        is LoginUiState.Error -> {
         }
     }
 }

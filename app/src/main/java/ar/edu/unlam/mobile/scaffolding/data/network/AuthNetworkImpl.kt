@@ -33,4 +33,38 @@ class AuthNetworkImpl
         override suspend fun getCurrentUser(): FirebaseUser? {
             return firebaseAuth.currentUser
         }
+
+        override suspend fun signInWithEmailAndPassword(
+            email: String,
+            password: String,
+        ): AuthRes<FirebaseUser> {
+            return try {
+                val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+                val firebaseUser = result.user
+                if (firebaseUser != null) {
+                    AuthRes.Success(firebaseUser)
+                } else {
+                    AuthRes.Error("authentication failed")
+                }
+            } catch (e: Exception) {
+                AuthRes.Error(e.message ?: "Ocurrio un problema al auntenticarse")
+            }
+        }
+
+        override suspend fun createUserWithEmailAndPassword(
+            email: String,
+            password: String,
+        ): AuthRes<FirebaseUser> {
+            return try {
+                val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+                val firebaseUser = result.user
+                if (firebaseUser != null) {
+                    AuthRes.Success(firebaseUser)
+                } else {
+                    AuthRes.Error("User creation failed: No user found")
+                }
+            } catch (e: Exception) {
+                AuthRes.Error(e.message ?: "An unknown error occurred")
+            }
+        }
     }

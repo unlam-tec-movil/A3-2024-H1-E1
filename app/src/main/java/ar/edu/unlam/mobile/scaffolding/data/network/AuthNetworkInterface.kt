@@ -10,4 +10,14 @@ interface AuthNetworkInterface {
     suspend fun signOut()
 
     suspend fun getCurrentUser(): FirebaseUser?
+
+    suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String,
+    ): AuthRes<FirebaseUser>
+
+    suspend fun createUserWithEmailAndPassword(
+        email: String,
+        password: String,
+    ): AuthRes<FirebaseUser>
 }
