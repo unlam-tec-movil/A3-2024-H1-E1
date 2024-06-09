@@ -33,7 +33,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.backgroundLogin
 @Composable
 fun TextFieldPassword(
     tittle: String,
-    label: String,
+    placeholder: String,
     onResult: (String) -> Unit,
 ) {
     var visible by remember {
@@ -66,7 +66,7 @@ fun TextFieldPassword(
                     .border(3.dp, backgroundLogin, RoundedCornerShape(10.dp)),
             placeholder = {
                 Text(
-                    text = label,
+                    text = placeholder,
                     color = Color.LightGray,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(start = 3.dp),
@@ -99,6 +99,6 @@ fun TextFieldPassword(
 @Preview(showBackground = true)
 @Composable
 fun TextFielPasswordPreview() {
-    TextFieldPassword(tittle = "Password", label = "password") {
+    TextFieldPassword(tittle = "Password", placeholder = "password") {
     }
 }

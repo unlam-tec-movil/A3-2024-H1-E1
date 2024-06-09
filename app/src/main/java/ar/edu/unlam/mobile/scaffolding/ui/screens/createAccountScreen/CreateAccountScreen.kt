@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.createAccountScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +38,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.backgroundLogin
 @Composable
 fun CreateAccountScreen(navHostController: NavHostController) {
     val createAccountVM: CreateAccountViewModel = hiltViewModel()
+    val context = LocalContext.current
     Column(
         modifier =
             Modifier
@@ -86,17 +89,29 @@ fun CreateAccountScreen(navHostController: NavHostController) {
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldPassword(
                 tittle = "Password",
-                label = "password",
+                placeholder = "password",
             ) { password ->
                 // manejamos el resultado de la contraseña aca
                 createAccountVM.setPassword(password)
             }
+            Text(
+                text = "minimo 8 caracteres, una mayuscula y un numero",
+                fontSize = 12.sp,
+                color = Color.Red,
+            )
         }
 
         ExtendedFloatingActionButton(
             onClick = {
-                createAccountVM.creatNewAccount()
-                navHostController.navigate(NavigationRoutes.MapScreen.route)
+                if (createAccountVM.validateEmail(createAccountVM.email.value) &&
+                    createAccountVM.validatePassword(createAccountVM.email.value)
+                )
+                    {
+                        createAccountVM.creatNewAccount()
+                        navHostController.navigate(NavigationRoutes.MapScreen.route)
+                    } else {
+                    Toast.makeText(context, "email o contraseña invalida", Toast.LENGTH_LONG).show()
+                }
             },
             modifier =
                 Modifier

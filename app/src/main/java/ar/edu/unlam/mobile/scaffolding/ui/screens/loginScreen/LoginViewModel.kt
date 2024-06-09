@@ -98,4 +98,14 @@ class LoginViewModel
                 }
             }
         }
+
+        fun validateEmail(value: String): Boolean {
+            val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.com$".toRegex()
+            return value.matches(emailRegex)
+        }
+
+        fun validatePassword(value: String): Boolean  {
+            val passwordRegex = "^(?=.*[A-Z])(?=.*[0-9]).{8,}$".toRegex()
+            return value.matches(passwordRegex)
+        }
     }

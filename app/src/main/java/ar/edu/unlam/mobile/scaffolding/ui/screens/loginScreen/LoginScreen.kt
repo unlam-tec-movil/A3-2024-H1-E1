@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.models.AuthRes
 import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
@@ -97,7 +96,6 @@ fun LoginScreen(navHostController: NavHostController) {
         composition = composition,
         iterations = LottieConstants.IterateForever,
     )
-
     when (loginViewModel.loginUiState.value) {
         is LoginUiState.Loading -> {
             LoadingComponent()
@@ -139,17 +137,20 @@ fun LoginScreen(navHostController: NavHostController) {
                         tittle = "Email",
                         placeholder = "abcd@gmail.com",
                     ) { email ->
-                        // /manejamos el resultado del email, lo validamos
                         loginViewModel.setEmail(email)
                     }
                     Spacer(modifier = Modifier.padding(10.dp))
                     TextFieldPassword(
                         tittle = "Password",
-                        label = "password",
+                        placeholder = "password",
                     ) { password ->
-                        // manejamos el resultado de la contraseña aca
                         loginViewModel.setPassword(password)
                     }
+                    Text(
+                        text = "minimo 8 caracteres, una mayuscula y un numero",
+                        fontSize = 12.sp,
+                        color = Color.Red,
+                    )
                 }
 
                 Row(
@@ -175,13 +176,19 @@ fun LoginScreen(navHostController: NavHostController) {
                 // boton de inicio de sesion
                 ExtendedFloatingActionButton(
                     onClick = {
-                        loginViewModel.sigInWithEmailAndPassword()
-                        navHostController.navigate(NavigationRoutes.MapScreen.route)
+                        if (loginViewModel.validateEmail(loginViewModel.email.value) &&
+                            loginViewModel.validatePassword(loginViewModel.password.value)
+                        ) {
+                            loginViewModel.sigInWithEmailAndPassword()
+                            navHostController.navigate(NavigationRoutes.MapScreen.route)
+                        } else {
+                            Toast.makeText(context, "email o contraseña incorrecto", Toast.LENGTH_LONG).show()
+                        }
                     },
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(start = 25.dp, top = 35.dp, end = 25.dp, bottom = 5.dp),
+                            .padding(top = 35.dp, bottom = 5.dp),
                     containerColor = backgroundLogin,
                 ) {
                     Text(
@@ -217,6 +224,35 @@ fun LoginScreen(navHostController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    val navHostController = rememberNavController()
-    LoginScreen(navHostController = navHostController)
+    Column(
+        modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
+    ) {
+        Text(
+            text = "Inicio de Sesion",
+            fontSize = 30.sp,
+            fontFamily = FontFamily.SansSerif,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Start,
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        TextFieldOwn(
+            tittle = "Email",
+            placeholder = "abcd@gmail.com",
+        ) { email ->
+            // /manejamos el resultado del email, lo validamos
+        }
+        Spacer(modifier = Modifier.padding(10.dp))
+        TextFieldPassword(
+            tittle = "Password",
+            placeholder = "password",
+        ) { password ->
+            // manejamos el resultado de la contraseña aca
+            // tenemos que validar la contraseña
+        }
+        Text(
+            text = "minimo 8 caracteres, una mayuscula y un numero",
+            fontSize = 12.sp,
+            color = Color.Red,
+        )
+    }
 }
