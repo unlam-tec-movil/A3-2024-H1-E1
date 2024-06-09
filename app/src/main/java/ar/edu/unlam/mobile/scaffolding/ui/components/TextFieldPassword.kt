@@ -1,9 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.theme.backgroundLogin
 
 @Composable
 fun TextFieldPassword(
@@ -46,7 +49,7 @@ fun TextFieldPassword(
     ) {
         Text(
             text = tittle,
-            fontWeight = FontWeight.Light,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 20.sp,
             textAlign = TextAlign.Start,
         )
@@ -59,8 +62,9 @@ fun TextFieldPassword(
             },
             modifier =
                 Modifier
-                    .fillMaxWidth(),
-            label = {
+                    .fillMaxWidth()
+                    .border(3.dp, backgroundLogin, RoundedCornerShape(10.dp)),
+            placeholder = {
                 Text(
                     text = label,
                     color = Color.LightGray,

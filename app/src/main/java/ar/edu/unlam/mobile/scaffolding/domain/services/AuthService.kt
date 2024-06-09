@@ -29,10 +29,11 @@ class AuthService
         }
 
         override suspend fun createNewAccountWithEmailAndPassword(
+            name: String,
             email: String,
             password: String,
         ): AuthRes<FirebaseUser> {
-            return authRepository.createUserWithEmailAndPassword(email, password)
+            return authRepository.createUserWithEmailAndPassword(name, email, password)
         }
 
         override suspend fun signInWithEmailAndPassword(

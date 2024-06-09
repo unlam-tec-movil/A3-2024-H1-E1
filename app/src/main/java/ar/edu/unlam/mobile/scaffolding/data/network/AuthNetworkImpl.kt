@@ -4,6 +4,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.models.AuthRes
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -52,6 +53,7 @@ class AuthNetworkImpl
         }
 
         override suspend fun createUserWithEmailAndPassword(
+            name: String,
             email: String,
             password: String,
         ): AuthRes<FirebaseUser> {
@@ -59,6 +61,12 @@ class AuthNetworkImpl
                 val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
                 val firebaseUser = result.user
                 if (firebaseUser != null) {
+                    val profileUpdates =
+                        UserProfileChangeRequest.Builder()
+                            .setDisplayName(name)
+                            .build()
+
+                    firebaseUser.updateProfile(profileUpdates).await()
                     AuthRes.Success(firebaseUser)
                 } else {
                     AuthRes.Error("User creation failed: No user found")

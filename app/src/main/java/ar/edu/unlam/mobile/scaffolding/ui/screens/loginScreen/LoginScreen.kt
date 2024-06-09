@@ -23,7 +23,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,9 +40,10 @@ import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.models.AuthRes
 import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
-import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldEmail
+import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldOwn
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldPassword
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
+import ar.edu.unlam.mobile.scaffolding.ui.theme.backgroundLogin
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -106,7 +106,8 @@ fun LoginScreen(navHostController: NavHostController) {
             Column(
                 modifier =
                     Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(horizontal = 25.dp, vertical = 20.dp),
             ) {
                 Box(
                     modifier =
@@ -124,7 +125,7 @@ fun LoginScreen(navHostController: NavHostController) {
                 }
 
                 Column(
-                    modifier = Modifier.padding(start = 25.dp, top = 15.dp, end = 25.dp, bottom = 5.dp),
+                    modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
                 ) {
                     Text(
                         text = "Inicio de Sesion",
@@ -132,20 +133,22 @@ fun LoginScreen(navHostController: NavHostController) {
                         fontFamily = FontFamily.SansSerif,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,
-                        modifier = Modifier.padding(bottom = 10.dp),
                     )
-                    TextFieldEmail(
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    TextFieldOwn(
                         tittle = "Email",
-                        label = "abcd@gmail.com",
+                        placeholder = "abcd@gmail.com",
                     ) { email ->
                         // /manejamos el resultado del email, lo validamos
+                        loginViewModel.setEmail(email)
                     }
-                    Spacer(modifier = Modifier.padding(15.dp))
+                    Spacer(modifier = Modifier.padding(10.dp))
                     TextFieldPassword(
                         tittle = "Password",
                         label = "password",
                     ) { password ->
                         // manejamos el resultado de la contraseña aca
+                        loginViewModel.setPassword(password)
                     }
                 }
 
@@ -153,15 +156,13 @@ fun LoginScreen(navHostController: NavHostController) {
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .height(100.dp)
-                            .padding(start = 25.dp, top = 25.dp, end = 25.dp, bottom = 5.dp),
+                            .height(80.dp)
+                            .padding(top = 25.dp, bottom = 5.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround,
                 ) {
                     IconButton(onClick = {
-                        // /aca iria el when con el estado del boton
                         loginViewModel.signInWithGoogle(googleSignInLauncher = googleSignInLauncher)
-                        // /accion para acceder con google
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.icon_google),
@@ -175,25 +176,32 @@ fun LoginScreen(navHostController: NavHostController) {
                 ExtendedFloatingActionButton(
                     onClick = {
                         loginViewModel.sigInWithEmailAndPassword()
+                        navHostController.navigate(NavigationRoutes.MapScreen.route)
                     },
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .padding(start = 25.dp, top = 35.dp, end = 25.dp, bottom = 5.dp),
+                    containerColor = backgroundLogin,
                 ) {
-                    Text(text = "iniciar sesion")
+                    Text(
+                        text = "iniciar sesion",
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White,
+                        fontSize = 18.sp,
+                    )
                 }
                 Row(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(start = 25.dp, top = 10.dp, end = 25.dp, bottom = 5.dp),
+                            .padding(top = 10.dp, bottom = 5.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Text(text = "¿No tienes cuenta? ")
                     TextButton(onClick = {
-                        // nos lleva a la pantalla de crear nuevo Usuario
+                        navHostController.navigate(NavigationRoutes.CreateAccountScreen.route)
                     }) {
                         Text(text = "Registrate")
                     }
@@ -201,6 +209,7 @@ fun LoginScreen(navHostController: NavHostController) {
             }
         }
         is LoginUiState.Error -> {
+            Toast.makeText(context, "Failed login", Toast.LENGTH_SHORT).show()
         }
     }
 }

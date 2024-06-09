@@ -17,6 +17,7 @@ interface AuthNetworkInterface {
     ): AuthRes<FirebaseUser>
 
     suspend fun createUserWithEmailAndPassword(
+        name: String,
         email: String,
         password: String,
     ): AuthRes<FirebaseUser>

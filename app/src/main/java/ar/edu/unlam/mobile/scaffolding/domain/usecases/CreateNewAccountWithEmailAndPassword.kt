@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseUser
 
 interface CreateNewAccountWithEmailAndPassword {
     suspend fun createNewAccountWithEmailAndPassword(
+        name: String,
         email: String,
         password: String,
     ): AuthRes<FirebaseUser>

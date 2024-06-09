@@ -31,9 +31,10 @@ class AuthRepository
         }
 
         override suspend fun createUserWithEmailAndPassword(
+            name: String,
             email: String,
             password: String,
         ): AuthRes<FirebaseUser> {
-            return authNetworkInterface.createUserWithEmailAndPassword(email, password)
+            return authNetworkInterface.createUserWithEmailAndPassword(name, email, password)
         }
     }

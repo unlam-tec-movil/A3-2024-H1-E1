@@ -22,6 +22,8 @@ sealed class NavigationRoutes(val route: String) {
     object PublicationEditScreen : NavigationRoutes("publicationEditScreen/{publicationId}") {
         fun withPublicationId(publicationId: String?) = "publicationEditScreen/$publicationId"
     }
+
+    object CreateAccountScreen : NavigationRoutes("createAccountScreen")
 }
 /*
 For futures screens you can add here the new routes

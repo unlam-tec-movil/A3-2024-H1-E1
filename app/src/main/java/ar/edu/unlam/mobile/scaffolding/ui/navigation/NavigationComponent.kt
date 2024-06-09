@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import ar.edu.unlam.mobile.scaffolding.ui.screens.createAccountScreen.CreateAccountScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings.FilterSettingsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.home.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.loginScreen.LoginScreen
@@ -35,6 +36,9 @@ fun NavigationComponent(
         }
         composable(NavigationRoutes.LoginScreen.route) {
             LoginScreen(navHostController = navigationController)
+        }
+        composable(NavigationRoutes.CreateAccountScreen.route) {
+            CreateAccountScreen(navHostController = navigationController)
         }
         composable(NavigationRoutes.MapScreen.route) {
             PublicationsMapScreen(controller = navigationController)
