@@ -42,7 +42,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldOwn
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldPassword
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
-import ar.edu.unlam.mobile.scaffolding.ui.theme.backgroundLogin
+import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueMarine
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -189,7 +189,7 @@ fun LoginScreen(navHostController: NavHostController) {
                         Modifier
                             .fillMaxWidth()
                             .padding(top = 35.dp, bottom = 5.dp),
-                    containerColor = backgroundLogin,
+                    containerColor = BlueMarine,
                 ) {
                     Text(
                         text = "iniciar sesion",

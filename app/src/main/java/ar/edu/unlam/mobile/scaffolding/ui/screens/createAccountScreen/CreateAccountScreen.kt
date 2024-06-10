@@ -33,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldOwn
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldPassword
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
-import ar.edu.unlam.mobile.scaffolding.ui.theme.backgroundLogin
+import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueMarine
 
 @Composable
 fun CreateAccountScreen(navHostController: NavHostController) {
@@ -105,11 +105,10 @@ fun CreateAccountScreen(navHostController: NavHostController) {
             onClick = {
                 if (createAccountVM.validateEmail(createAccountVM.email.value) &&
                     createAccountVM.validatePassword(createAccountVM.email.value)
-                )
-                    {
-                        createAccountVM.creatNewAccount()
-                        navHostController.navigate(NavigationRoutes.MapScreen.route)
-                    } else {
+                ) {
+                    createAccountVM.createNewAccount()
+                    navHostController.navigate(NavigationRoutes.MapScreen.route)
+                } else {
                     Toast.makeText(context, "email o contraseña invalida", Toast.LENGTH_LONG).show()
                 }
             },
@@ -117,7 +116,7 @@ fun CreateAccountScreen(navHostController: NavHostController) {
                 Modifier
                     .fillMaxWidth()
                     .padding(top = 35.dp, bottom = 5.dp),
-            containerColor = backgroundLogin,
+            containerColor = BlueMarine,
         ) {
             Text(
                 text = "Crear cuenta",

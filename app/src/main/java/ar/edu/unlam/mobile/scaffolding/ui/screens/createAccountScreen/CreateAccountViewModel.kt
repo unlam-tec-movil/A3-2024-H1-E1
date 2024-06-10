@@ -36,7 +36,7 @@ class CreateAccountViewModel
             _password.value = value
         }
 
-        fun creatNewAccount() {
+        fun createNewAccount() {
             viewModelScope.launch {
                 createNewAccountWithEmailAndPassword.createNewAccountWithEmailAndPassword(
                     name.value,
@@ -46,6 +46,7 @@ class CreateAccountViewModel
             }
         }
 
+        // /me molesta tener estas dos validaciones repetidas
         fun validateEmail(value: String): Boolean {
             val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.com$".toRegex()
             return value.matches(emailRegex)

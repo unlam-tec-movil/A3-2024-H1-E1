@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,6 +61,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.post.CameraXComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
+import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueMarine
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -157,7 +159,10 @@ fun PublicationEditScreen(
                         .padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Carrousel(listOfImage = imageBitmapList) { imageSelected ->
+                Carrousel(
+                    listOfImage = imageBitmapList,
+                    paddingValues = 10.dp,
+                ) { imageSelected ->
                     selectedItemForSetting = imageSelected
                     showDialogForSettingImage = true
                 }
@@ -168,7 +173,8 @@ fun PublicationEditScreen(
                     modifier =
                         Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(top = 5.dp),
+                            .padding(top = 5.dp)
+                            .background(BlueMarine),
                 ) {
                     Text(text = "Añadir Foto")
                 }
@@ -353,6 +359,7 @@ fun PublicationEditScreen(
                                 // componente o msj para decir que complete los campos
                             }
                         },
+                        modifier = Modifier.background(BlueMarine),
                     ) {
                         Text(textButton.value)
                     }

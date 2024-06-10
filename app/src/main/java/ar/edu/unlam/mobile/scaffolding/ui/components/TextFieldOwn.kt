@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ar.edu.unlam.mobile.scaffolding.ui.theme.backgroundLogin
+import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueMarine
 
 @Composable
 fun TextFieldOwn(
@@ -46,7 +46,7 @@ fun TextFieldOwn(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .border(3.dp, backgroundLogin, RoundedCornerShape(10.dp)),
+                    .border(3.dp, BlueMarine, RoundedCornerShape(10.dp)),
             placeholder = {
                 Text(
                     text = placeholder,
