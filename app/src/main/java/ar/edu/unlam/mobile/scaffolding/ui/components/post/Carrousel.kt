@@ -26,7 +26,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun Carrousel(
     listOfImage: List<Bitmap>,
-    paddingValues: Dp, // /cambia el tamaño , a menor valordp mas ancho , a mayor valor mas angosto
+    paddingValues: Dp, // /cambia el tamaño , a menor valor dp mas ancho , a mayor valor mas angosto
     onSelectedITem: (Bitmap) -> Unit = {},
 ) {
     val pagerState = rememberPagerState(initialPage = 0)
@@ -71,7 +71,7 @@ fun Carrousel(
 @Preview(showBackground = true)
 @Composable
 fun CarrouselPreview() {
-    Carrousel(listOfImage = emptyList<Bitmap>(), paddingValues = 10.dp) {
+    Carrousel(listOfImage = emptyList<Bitmap>(), paddingValues = 5.dp) {
 //
     }
 }

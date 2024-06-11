@@ -88,6 +88,8 @@ fun LoginScreen(navHostController: NavHostController) {
                 null -> {
                     Toast.makeText(context, "Error Desconocido", Toast.LENGTH_SHORT).show()
                 }
+
+                else -> {}
             }
         }
     // /aca vamos a implementar la login screen con animacion
@@ -218,6 +220,8 @@ fun LoginScreen(navHostController: NavHostController) {
         is LoginUiState.Error -> {
             Toast.makeText(context, "Failed login", Toast.LENGTH_SHORT).show()
         }
+
+        else -> {}
     }
 }
 

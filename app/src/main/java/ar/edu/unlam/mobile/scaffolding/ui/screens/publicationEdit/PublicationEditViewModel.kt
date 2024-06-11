@@ -13,6 +13,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,8 +23,6 @@ import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetCurrentUser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -60,6 +59,9 @@ class PublicationEditViewModel
 
         private val _publicationUiState = mutableStateOf<PublicationUiState>(PublicationUiState.Success)
         val publicationUiState: State<PublicationUiState> = _publicationUiState
+
+        private val _snackbar = mutableStateOf(false)
+        val snackbar: State<Boolean> = _snackbar
 
         init {
             viewModelScope.launch {
@@ -136,9 +138,6 @@ class PublicationEditViewModel
             _listImagesForUser.value = emptyList()
         }
 
-        private val _publicationState = MutableStateFlow<Result<PostWithImages>?>(null)
-        val publicationState: StateFlow<Result<PostWithImages>?> get() = _publicationState
-
         private val _isEditing = mutableStateOf(false)
         var isEditing: State<Boolean> = _isEditing
 
@@ -176,8 +175,48 @@ class PublicationEditViewModel
 
         private val dateFormat = SimpleDateFormat("dd/MM/yyyy")
 
+        private val _isErrorTitle = mutableStateOf(false)
+        val isErrorTitle: State<Boolean> get() = _isErrorTitle
+
+        private val _isErrorDescription = mutableStateOf(false)
+        val isErrorDescription: State<Boolean> get() = _isErrorDescription
+
+        private val _isErrorAge = mutableStateOf(false)
+        val isErrorAge: State<Boolean> get() = _isErrorAge
+
+        private val _isErrorSex = mutableStateOf(false)
+        val isErrorSex: State<Boolean> get() = _isErrorSex
+
+        private val _isErrorType = mutableStateOf(false)
+        val isErrorType: State<Boolean> get() = _isErrorType
+
+        private val _isErrorColor = mutableStateOf(false)
+        val isErrorColor: State<Boolean> get() = _isErrorColor
+
+        private val _isErrorSpecies = mutableStateOf(false)
+        val isErrorSpecies: State<Boolean> get() = _isErrorSpecies
+
+        private val _isErrorDateLost = mutableStateOf(false)
+        val isErrorDateLost: State<Boolean> get() = _isErrorDateLost
+
+        private val _isErrorContact = mutableStateOf(false)
+        val isErrorContact: State<Boolean> get() = _isErrorContact
+
+        private val _isErrorLocation = mutableStateOf(false)
+        val isErrorLocation: State<Boolean> get() = _isErrorLocation
+
         fun setIsEditing(value: Boolean) {
             _isEditing.value = value
+        }
+
+        fun setType(value: String) {
+            _type.value = value
+            validateType()
+            clearErrorType()
+        }
+
+        private fun clearErrorType() {
+            _isErrorType.value = false
         }
 
         fun setId(value: String) {
@@ -188,16 +227,14 @@ class PublicationEditViewModel
             _id.value = UUID.randomUUID().toString()
         }
 
-        fun setType(value: String) {
-            _type.value = value
-        }
-
         fun setTitle(value: String) {
             _title.value = value
+            validateTitle()
         }
 
         fun setDescription(value: String) {
             _description.value = value
+            validateDescription()
         }
 
         fun setDateLost(value: String) {
@@ -209,41 +246,135 @@ class PublicationEditViewModel
                 }
             Log.d("PublicationViewModel", "Setting date lost to: $formattedDate")
             _dateLost.value = formattedDate
+            clearErrorDateLost()
+        }
+
+        private fun clearErrorDateLost() {
+            _isErrorDateLost.value = false
         }
 
         fun setSpecies(value: String) {
             _species.value = value
+            validateSpecies()
         }
 
         fun setSex(value: String) {
             _sex.value = value
+            validateSex()
         }
 
         fun setAge(value: String) {
             _age.value = value
+            validateAge()
         }
 
         fun setColor(value: String) {
             _color.value = value
+            validateColor()
         }
 
         fun setLocation(value: String) {
             _location.value = value
+            validateLocation()
         }
 
         fun setContact(value: String) {
             _contact.value = value
+            validateContact()
         }
 
-        // /la funcion validateForm esta haciendo mas de 1 cosa,  valida el formulario, setea datos y llama al editar
+        fun validateTitle(): Boolean {
+            _isErrorTitle.value = title.value.isEmpty()
+            return isErrorTitle.value
+        }
+
+        fun setSnackbar(value: Boolean) {
+            _snackbar.value = value
+        }
+
+        fun validateDescription(): Boolean {
+            _isErrorDescription.value = description.value.isEmpty()
+            return isErrorDescription.value
+        }
+
+        fun validateType(): Boolean {
+            _isErrorType.value = type.value.isEmpty()
+            return isErrorType.value
+        }
+
+        var messageErrorAge = ""
+
+        fun validateAge(): Boolean {
+            _isErrorAge.value =
+                when {
+                    age.value.isEmpty() -> {
+                        messageErrorAge = "Campo requerido"
+                        true
+                    }
+
+                    !age.value.isDigitsOnly() -> {
+                        messageErrorAge = "Ingresar caracteres númericos"
+                        true
+                    }
+
+                    else -> false
+                }
+            return isErrorAge.value
+        }
+
+        var messageErrorContact = ""
+
+        fun validateContact(): Boolean {
+            _isErrorContact.value =
+                when {
+                    contact.value.isEmpty() -> {
+                        messageErrorContact = "Campo requerido"
+                        true
+                    }
+
+                    !contact.value.isDigitsOnly() -> {
+                        messageErrorContact = "Ingresar caracteres númericos"
+                        true
+                    }
+
+                    else -> false
+                }
+            return isErrorContact.value
+        }
+
+        fun validateLocation(): Boolean {
+            _isErrorLocation.value = location.value.isEmpty()
+            return isErrorLocation.value
+        }
+
+        fun validateDateLost(): Boolean {
+            _isErrorDateLost.value = dateLost.value.isNullOrBlank()
+            return isErrorDateLost.value
+        }
+
+        fun validateSpecies(): Boolean {
+            _isErrorSpecies.value = species.value.isBlank()
+            return isErrorSpecies.value
+        }
+
+        fun validateSex(): Boolean {
+            _isErrorSex.value = sex.value.isBlank()
+            return isErrorSex.value
+        }
+
+        fun validateColor(): Boolean {
+            _isErrorColor.value = color.value.isBlank()
+            return isErrorColor.value
+        }
+
         fun validateForm(): Boolean {
             return title.value.isNotEmpty() &&
                 description.value.isNotEmpty() &&
                 location.value.isNotEmpty() &&
                 type.value.isNotEmpty() &&
-                age.value.isNotEmpty() &&
-                contact.value.isNotEmpty() &&
-                (dateLost.value?.isNotEmpty() == true) &&
+                (age.value.isNotEmpty() && age.value.isDigitsOnly()) &&
+                (contact.value.isNotEmpty() && contact.value.isDigitsOnly()) &&
+                dateLost.value.isNullOrBlank() &&
                 species.value.isNotEmpty() &&
                 sex.value.isNotEmpty() &&
                 color.value.isNotEmpty()
@@ -263,9 +394,6 @@ class PublicationEditViewModel
                     val postWithImages = createPostWithImage(imageUrls)
                     firestoreService.addPublicationToPublicationCollection(postWithImages).collect { result ->
                         firestoreService.addPublication(currentUserId!!, postWithImages)
-                            .collect { result ->
-                                _publicationState.value = Result.success(result)
-                            }
                     }
                     _publicationUiState.value = PublicationUiState.Success
                 } catch (e: Exception) {
@@ -374,10 +502,7 @@ class PublicationEditViewModel
                             currentUserId!!,
                             id.value,
                             newPostWithImages,
-                        ).collect {
-                                result ->
-                            _publicationState.value = Result.success(result)
-                        }
+                        )
                     }
                     _publicationUiState.value = PublicationUiState.Success
                 } catch (e: Exception) {
