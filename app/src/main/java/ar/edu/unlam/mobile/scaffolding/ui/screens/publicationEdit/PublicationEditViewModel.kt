@@ -232,10 +232,10 @@ class PublicationEditViewModel
                 type.value.isNotEmpty() &&
                 age.value.isNotEmpty() &&
                 contact.value.isNotEmpty() &&
-                (dateLost.value?.isNotEmpty() == true) &&
-                species.value.isNotEmpty() &&
-                sex.value.isNotEmpty() &&
-                color.value.isNotEmpty()
+                (dateLost.value?.isNotEmpty() == true) // &&
+            //   species.value.isNotEmpty() &&
+            // sex.value.isNotEmpty() &&
+            // color.value.isNotEmpty()
         }
 
         fun addNewPublication() {

@@ -27,4 +27,9 @@ interface UseFirestore {
         idPublication: String,
         updatedPublication: PostWithImages,
     ): Flow<PostWithImages>
+
+    suspend fun deletePublicationForUser(
+        userId: String,
+        publicationId: String,
+    ): Flow<Boolean>
 }

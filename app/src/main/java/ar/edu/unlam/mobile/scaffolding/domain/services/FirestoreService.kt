@@ -49,4 +49,11 @@ class FirestoreService
         ): Flow<PostWithImages> {
             return firestoreRepository.editPublicationInAllPublications(idPublication, updatedPublication)
         }
+
+        override suspend fun deletePublicationForUser(
+            userId: String,
+            publicationId: String,
+        ): Flow<Boolean> {
+            return firestoreRepository.deletePublicationForUser(userId, publicationId)
+        }
     }

@@ -17,7 +17,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationCellEdit
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 import coil.compose.AsyncImage
@@ -31,6 +30,17 @@ fun ProfileScreen(
     viewModel: ProfileScreenViewModel = hiltViewModel(),
 ) {
     val userProfile by viewModel.currentUser
+    val userPublications by viewModel.publications
+    val deleteSuccess by viewModel.deleteSuccess.collectAsState()
+
+    LaunchedEffect(Unit) {
+        userProfile?.userId?.let { userId ->
+            viewModel.fetchPublications(userId)
+            if (deleteSuccess) {
+                //  Toast.makeText(context, "Publication deleted", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Column(
         modifier =
@@ -57,13 +67,23 @@ fun ProfileScreen(
         Text(text = "Publications")
 
         LazyColumn(modifier = Modifier.weight(1f)) {
-            items(getDummyPublications()) { publication ->
+            items(userPublications) { publication ->
                 PublicationCellEdit(
-                    publication,
+                    item = publication,
                     onClick = {},
-                    onViewClick = {},
-                    onEditClick = {},
-                    onDeleteClick = {},
+                    onViewClick = {
+                        controller.navigate(NavigationRoutes.PublicationScreen.route)
+                    }, // lleva a PublicacionDetailScreen del currentUser
+
+                    onEditClick = {
+                        val publicationId = publication.id
+                        controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(publicationId))
+                    },
+                    onDeleteClick = {
+                        userProfile?.let { profile ->
+                            viewModel.deletePublication(publication.id, profile.userId)
+                        }
+                    },
                 )
             }
         }
@@ -94,20 +114,6 @@ fun ProfileScreen(
             }
         }
     }
-}
-
-// Función de utilidad para obtener publicaciones de ejemplo
-fun getDummyPublications(): List<PublicationCellModel> {
-    return listOf(
-        PublicationCellModel(
-            id = "1",
-            title = "Title",
-            description = "Description",
-            distance = "Distance",
-            imageResourceId = "",
-            publicationType = "PublicationType",
-        ),
-    )
 }
 
 @Preview(showBackground = true)
