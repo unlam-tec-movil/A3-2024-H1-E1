@@ -104,8 +104,8 @@ class LoginViewModel
             return value.matches(emailRegex)
         }
 
-        fun validatePassword(value: String): Boolean  {
-            val passwordRegex = "^(?=.*[A-Z])(?=.*[0-9]).{8,}$".toRegex()
+        fun validatePassword(value: String): Boolean {
+            val passwordRegex = "^(?=.*[A-Z])(?=.*[0-9]).{4,}$".toRegex()
             return value.matches(passwordRegex)
         }
     }

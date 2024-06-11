@@ -19,8 +19,8 @@ sealed class NavigationRoutes(val route: String) {
 
     object LoginScreen : NavigationRoutes("loginScreen")
 
-    object PublicationEditScreen : NavigationRoutes("publicationEditScreen/{publicationId}") {
-        fun withPublicationId(publicationId: String?) = "publicationEditScreen/$publicationId"
+    object PublicationEditScreen : NavigationRoutes("publicationEditScreen/{idPublication}") {
+        fun withPublicationId(idPublication: String?) = "publicationEditScreen/$idPublication"
     }
 
     object CreateAccountScreen : NavigationRoutes("createAccountScreen")

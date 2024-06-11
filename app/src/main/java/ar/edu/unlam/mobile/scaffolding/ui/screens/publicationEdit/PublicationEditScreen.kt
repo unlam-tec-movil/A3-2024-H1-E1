@@ -71,12 +71,10 @@ fun PublicationEditScreen(
     modifier: Modifier = Modifier,
     controller: NavHostController,
     viewModel: PublicationEditViewModel = hiltViewModel(),
-    idPublication: String?,
+    idPublication: String? = null,
 ) {
-    val textButton = remember { mutableStateOf("") }
-
     // /seteamos la variable isEditing
-    viewModel.setIsEditing(idPublication != null)
+    viewModel.setIsEditing(!idPublication.isNullOrBlank())
 
     val openCameraX =
         remember {
@@ -320,9 +318,7 @@ fun PublicationEditScreen(
                 ) {
                     TextButton(
                         onClick = {
-                            // en caso de cancelar la publicacion entonces reseteamos las imagenes
                             viewModel.resetListOfImages()
-                            // en el mismo caso debe ser para los textos
                             controller.popBackStack()
                         },
                     ) {
@@ -340,7 +336,6 @@ fun PublicationEditScreen(
                                 }
                                 controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
                             } else {
-                                // componente o msj para decir que complete los campos
                                 viewModel.validateTitle()
                                 viewModel.validateDescription()
                                 viewModel.validateType()
@@ -355,7 +350,7 @@ fun PublicationEditScreen(
                             }
                         },
                     ) {
-                        if (idPublication == null) {
+                        if (idPublication.isNullOrBlank()) {
                             Text(text = "Crear Publicacion")
                         } else {
                             Text(text = "Editar Publicacion")

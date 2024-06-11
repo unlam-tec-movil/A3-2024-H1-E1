@@ -5,10 +5,8 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.screens.createAccountScreen.CreateAccountScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings.FilterSettingsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.home.HomeScreen
@@ -54,7 +52,6 @@ fun NavigationComponent(
 
         composable(
             route = NavigationRoutes.PublicationEditScreen.route,
-            arguments = listOf(navArgument("publicationId") { type = NavType.StringType }),
         ) { navBackStackEntry ->
             val publicationId = navBackStackEntry.arguments?.getString("publicationId")
             PublicationEditScreen(idPublication = publicationId, controller = navigationController)

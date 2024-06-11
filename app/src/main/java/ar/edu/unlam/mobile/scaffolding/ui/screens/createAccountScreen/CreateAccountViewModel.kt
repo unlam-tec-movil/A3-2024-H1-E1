@@ -53,7 +53,7 @@ class CreateAccountViewModel
         }
 
         fun validatePassword(value: String): Boolean {
-            val passwordRegex = "^(?=.*[A-Z])(?=.*[0-9]).{8,}$".toRegex()
+            val passwordRegex = "^(?=.*[A-Z])(?=.*[0-9]).{4,}$".toRegex()
             return value.matches(passwordRegex)
         }
     }
