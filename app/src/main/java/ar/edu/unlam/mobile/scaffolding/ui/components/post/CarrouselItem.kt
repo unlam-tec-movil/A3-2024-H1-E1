@@ -15,7 +15,7 @@ import androidx.compose.ui.util.lerp
 fun CarrouselItem(
     item: Bitmap,
     pageOffset: Float,
-    onItemClick: (Bitmap) -> Unit = {}
+    onItemClick: (Bitmap) -> Unit = {},
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),

@@ -36,12 +36,12 @@ object AuthProviderRepository {
     }
 
     @Provides
-    fun provideCreateNewAccount(authService: AuthService): CreateNewAccountWithEmailAndPassword  {
+    fun provideCreateNewAccount(authService: AuthService): CreateNewAccountWithEmailAndPassword {
         return authService
     }
 
     @Provides
-    fun provideSignInWithEmailAndPassword(authService: AuthService): SignInWithEmailAndPassword  {
+    fun provideSignInWithEmailAndPassword(authService: AuthService): SignInWithEmailAndPassword {
         return authService
     }
 }
