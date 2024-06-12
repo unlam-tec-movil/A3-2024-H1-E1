@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components.post
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,22 +8,19 @@ import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import ar.edu.unlam.mobile.scaffolding.R
-import coil.size.Scale
+import coil.compose.AsyncImage
 
 @Composable
-fun CarrouselItem(
-    item: String?,
+fun <T> CarrouselItem(
+    item: T,
     pageOffset: Float,
-    onItemClick: (String) -> Unit,
+    onItemClick: (T) -> Unit,
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        // animacion de la img ,
         modifier =
             Modifier
                 .graphicsLayer {
@@ -43,20 +41,24 @@ fun CarrouselItem(
                         )
                 }
                 .clickable {
-                    item?.let { onItemClick(it) }
+                    onItemClick(item)
                 },
     ) {
-        CoilImage(
-            data = item,
-            context = LocalContext.current,
-            scale = Scale.FILL,
-            crossFade = true,
-            contentDescription = null,
-            placeHolder = painterResource(id = R.drawable.loading_image),
-            error = painterResource(id = R.drawable.images_error),
-            modifier =
-                Modifier
-                    .fillMaxSize(),
-        )
+        if (item is Bitmap) {
+            DisplayImageBitmap(
+                data = item,
+                contentDescription = null,
+                modifier =
+                    Modifier
+                        .fillMaxSize(),
+            )
+        } else {
+            AsyncImage(
+                model = item,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+        }
     }
 }

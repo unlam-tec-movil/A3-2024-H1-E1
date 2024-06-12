@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.firebase.common.ktx)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -117,7 +118,20 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.google.play.service)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.firestore)
 
     // life
     implementation(libs.lifecycleViewModel)
+
+    // lottie
+    implementation(libs.lottie.compose)
+
+    // /camerax
+    implementation(libs.cameraCore)
+    implementation(libs.cameraCamera2)
+    implementation(libs.cameraLifecycle)
+    implementation(libs.cameraVideo)
+    implementation(libs.cameraView)
+    implementation(libs.cameraExtensions)
 }

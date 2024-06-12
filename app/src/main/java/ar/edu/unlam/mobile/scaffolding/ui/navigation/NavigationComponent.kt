@@ -1,5 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -8,12 +10,14 @@ import androidx.navigation.compose.composable
 import ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings.FilterSettingsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.home.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.loginScreen.LoginScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.profileScreen.ProfileScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationDetails.PublicationDetailsScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationEdit.PublicationEditScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList.PublicationsListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap.PublicationsMapScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splashScreen.SplashScreen
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun NavigationComponent(
     navigationController: NavHostController,
@@ -42,12 +46,16 @@ fun NavigationComponent(
             HomeScreen()
         }
 
-        composable(NavigationRoutes.PublicationEditScreen.route) {
-            PublicationEditScreen(controller = navigationController)
+        composable(NavigationRoutes.PublicationEditScreen.route) { navBackStackEntry ->
+            val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
+            PublicationEditScreen(idPublication = publicationId, controller = navigationController)
         }
 
         composable(NavigationRoutes.FilterScreen.route) {
             FilterSettingsScreen(controller = navigationController)
+        }
+        composable(NavigationRoutes.ProfileScreen.route) {
+            ProfileScreen(controller = navigationController)
         }
 
         composable(NavigationRoutes.PublicationScreen.route) { navBackStackEntry ->
@@ -59,6 +67,7 @@ fun NavigationComponent(
         }
     }
 }
+
 /*
 For futures implementation you can add here the composable functions for each screen
 Here is an example of how to add a new screen

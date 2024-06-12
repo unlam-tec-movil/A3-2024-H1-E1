@@ -56,14 +56,13 @@ fun FilterSettingsScreen(
             )
         }
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Fecha de perdida: $dateLost")
-            DatePickerComponent { selectedDate ->
-                dateLost = selectedDate
-            }
+            Text("Fecha de perdida:")
+            DatePickerComponent(
+                onDateSelected = { selectedDate ->
+                },
+            )
         }
 
         Column(

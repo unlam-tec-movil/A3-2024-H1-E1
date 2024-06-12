@@ -29,6 +29,9 @@ fun SplashScreen(navHostController: NavHostController) {
             }
 
             else -> {
+                navHostController.navigate(NavigationRoutes.LoginScreen.route) {
+                    popUpTo(NavigationRoutes.Splash.route) { inclusive = true }
+                }
             }
         }
     }
