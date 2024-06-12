@@ -8,26 +8,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 
 @Composable
 fun PublicationCellEdit(
-    item: PostWithImages,
+    //  item: PublicationCellModel,
+    post: PostWithImages,
     onClick: () -> Unit,
     onViewClick: () -> Unit,
     onEditClick: () -> Unit,
@@ -37,66 +36,81 @@ fun PublicationCellEdit(
         verticalArrangement = Arrangement.Center,
     ) {
         ListItem(
-            modifier =
-                Modifier
-                    .clickable(onClick = onClick),
+            modifier = Modifier.clickable(onClick = onClick),
             headlineContent = {
                 Text(
-                    item.title,
+                    text = post.title,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 )
             },
             supportingContent = {
                 Text(
-                    item.description,
+                    text = post.description,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
             leadingContent = {
+                val imagePainter =
+                    if (post.images.isNotEmpty()) {
+                        rememberAsyncImagePainter(
+                            ImageRequest.Builder(LocalContext.current)
+                                .data(post.images)
+                                .apply {
+                                    crossfade(true)
+                                    transformations(CircleCropTransformation())
+                                }
+                                .build(),
+                        )
+                    } else {
+                        painterResource(id = R.drawable.loading_image)
+                    }
+
                 Image(
-                    painter = painterResource(id = R.drawable.pichi),
-                    contentDescription = "",
+                    painter = imagePainter,
+                    contentDescription = null,
                     modifier =
                         Modifier
-                            .size(50.dp)
+                            .size(60.dp)
                             .clip(CircleShape),
                     contentScale = ContentScale.Crop,
                 )
             },
             trailingContent = {
-                Row(horizontalArrangement = Arrangement.End) {
-                    IconButton(
-                        onClick = onViewClick,
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onBackground,
-                            ),
-                    ) {
-                        Icon(Icons.Filled.Info, contentDescription = "Ver Publicación")
-                    }
-                    IconButton(
-                        onClick = onEditClick,
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                    ) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Edit Publication")
-                    }
-                    IconButton(
-                        onClick = onDeleteClick,
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error,
-                            ),
-                    ) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Delete Publication")
+                Column {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row {
+                        IconButton(
+                            onClick = onViewClick,
+                            colors =
+                                IconButtonDefaults.iconButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary,
+                                ),
+                        ) {
+                            Icon(Icons.Filled.Info, contentDescription = "View Publication")
+                        }
+                        IconButton(
+                            onClick = onEditClick,
+                            colors =
+                                IconButtonDefaults.iconButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary,
+                                ),
+                        ) {
+                            Icon(Icons.Filled.Edit, contentDescription = "Edit Publication")
+                        }
+                        IconButton(
+                            onClick = onDeleteClick,
+                            colors =
+                                IconButtonDefaults.iconButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.error,
+                                ),
+                        ) {
+                            Icon(Icons.Filled.Delete, contentDescription = "Delete Publication")
+                        }
                     }
                 }
             },
         )
-
         Divider(color = MaterialTheme.colorScheme.outline)
     }
 }

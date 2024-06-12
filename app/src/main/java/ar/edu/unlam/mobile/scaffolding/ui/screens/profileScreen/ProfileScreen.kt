@@ -1,25 +1,27 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.profileScreen
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationCellEdit
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
-import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -28,6 +30,7 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     controller: NavHostController,
     viewModel: ProfileScreenViewModel = hiltViewModel(),
+    publicationId: String,
 ) {
     val userProfile by viewModel.currentUser
     val userPublications by viewModel.publications
@@ -51,13 +54,21 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         userProfile?.let { profile ->
-            Column {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 Text(text = "Name: ${profile.displayName}")
                 Text(text = "Email: ${profile.email}")
-                AsyncImage(
-                    model = profile.photoUrl,
-                    contentDescription = null,
-                    modifier = Modifier.size(100.dp),
+                Image(
+                    painter = rememberImagePainter(data = profile.photoUrl),
+                    contentDescription = "",
+                    modifier =
+                        Modifier
+                            .size(100.dp)
+                            .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
                 )
             }
         } ?: Text("Profile is loading...")
@@ -69,15 +80,15 @@ fun ProfileScreen(
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(userPublications) { publication ->
                 PublicationCellEdit(
-                    item = publication,
+                    post = publication,
                     onClick = {},
                     onViewClick = {
-                        controller.navigate(NavigationRoutes.PublicationScreen.route)
-                    }, // lleva a PublicacionDetailScreen del currentUser
-
-                    onEditClick = {
                         val publicationId = publication.id
-                        controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(publicationId))
+                        controller.navigate(NavigationRoutes.PublicationDetailsScreen.withPublicationId(publicationId))
+                    },
+                    onEditClick = {
+                        val publicationId = publication.id.toString()
+                        controller.navigate(NavigationRoutes.PublicationEditScreen.withPublicationId(publicationId))
                     },
                     onDeleteClick = {
                         userProfile?.let { profile ->
@@ -87,7 +98,6 @@ fun ProfileScreen(
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
@@ -114,11 +124,4 @@ fun ProfileScreen(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProfileScreenPreview() {
-    val controller = rememberNavController()
-    ProfileScreen(controller = controller)
 }
