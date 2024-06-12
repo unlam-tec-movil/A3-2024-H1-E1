@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,7 +38,6 @@ import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
 import ar.edu.unlam.mobile.scaffolding.ui.components.CheckboxComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
-import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
@@ -234,14 +232,14 @@ fun PublicationEditScreen(
                 onValueChange = { location = it },
                 placeholder = { Text("Ingrese la ubicacion") },
             )
-            MapsComponent(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .padding(top = 8.dp),
-            )
+//            MapsComponent(
+//                modifier =
+//                    Modifier
+//                        .fillMaxWidth()
+//                        .height(150.dp)
+//                        .clip(RoundedCornerShape(12.dp))
+//                        .padding(top = 8.dp),
+//            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))

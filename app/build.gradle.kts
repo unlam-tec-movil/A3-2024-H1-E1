@@ -80,6 +80,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -89,6 +91,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     // Map
     implementation(libs.google.maps)
+    implementation(libs.google.play.services.location)
+    implementation(libs.google.play.services.maps)
+    // Permisions
+    implementation(libs.accompanistPermissions)
     // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
     ksp(libs.google.dagger.hilt.android.compiler)
