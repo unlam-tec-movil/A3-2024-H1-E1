@@ -2,33 +2,28 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap
 
 import android.Manifest
 import android.content.Intent
+import android.net.Uri
 import android.provider.Settings
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.core.utils.hasLocationPermission
 import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.RationaleAlert
 import ar.edu.unlam.mobile.scaffolding.ui.components.SearchBox
@@ -61,6 +56,7 @@ fun PublicationsMapScreen(
     val currentLocation by viewModel.currentLocation.collectAsState()
     val isUserLocationEnabled by viewModel.isUserLocationEnabled.collectAsState()
     val cameraCenterLocation by viewModel.cameraCenterLocation.collectAsState()
+    val showRationaleAlert by viewModel.showRationaleAlert.collectAsState()
 
     LaunchedEffect(cameraCenterLocation) {
         if (permissionState.allPermissionsGranted) {
@@ -83,12 +79,12 @@ fun PublicationsMapScreen(
         with(viewState) {
             when (this) {
                 is ViewState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator()
-                    }
+//                    Box(
+//                        modifier = Modifier.fillMaxSize(),
+//                        contentAlignment = Alignment.Center,
+//                    ) {
+//                        CircularProgressIndicator()
+//                    }
                 }
                 is ViewState.Success -> {
                     LaunchedEffect(Unit) {
@@ -98,35 +94,28 @@ fun PublicationsMapScreen(
                     }
                 }
                 is ViewState.ShouldShowRationale -> {
-                    RationaleAlert(onDismiss = { }) {
-                        permissionState.launchMultiplePermissionRequest()
+                    if (showRationaleAlert) {
+                        RationaleAlert(
+                            onDismiss = { viewModel.dismissRationaleAlert() },
+                            onConfirm = {
+                                val intent =
+                                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        data = Uri.fromParts("package", context.packageName, null)
+                                    }
+                                context.startActivity(intent)
+                            },
+                            confirmButtonText = "Abrir configuración",
+                        )
                     }
                 }
                 is ViewState.RevokedPermissions -> {
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(24.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text("We need permissions to use this app")
-                        Button(
-                            onClick = {
-                                context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS))
-                            },
-                            enabled = !context.hasLocationPermission(),
-                        ) {
-                            if (context.hasLocationPermission()) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(14.dp),
-                                    color = Color.White,
-                                )
-                            } else {
-                                Text("Settings")
-                            }
-                        }
+                    if (showRationaleAlert) {
+                        RationaleAlert(
+                            onDismiss = { viewModel.dismissRationaleAlert() },
+                            onConfirm = { },
+//                            confirmButtonText = "Conceder permisos",
+                        )
                     }
                 }
             }

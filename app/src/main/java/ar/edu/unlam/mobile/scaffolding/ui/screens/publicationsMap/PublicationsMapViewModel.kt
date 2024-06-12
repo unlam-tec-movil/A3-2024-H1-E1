@@ -22,7 +22,8 @@ class PublicationsMapViewModel
         val isUserLocationEnabled = _isUserLocationEnabled.asStateFlow()
         private var _currentLocation = MutableStateFlow<LatLng?>(null)
         var currentLocation = _currentLocation.asStateFlow()
-
+        private val _showRationaleAlert = MutableStateFlow(false)
+        val showRationaleAlert = _showRationaleAlert.asStateFlow()
         private var _cameraCenterLocation = MutableStateFlow<LatLng?>(null)
         val cameraCenterLocation = _cameraCenterLocation.asStateFlow()
 
@@ -39,10 +40,12 @@ class PublicationsMapViewModel
                 }
 
                 is PermissionEvent.Revoked -> {
+                    _showRationaleAlert.value = true
                     _viewState.value = ViewState.RevokedPermissions
                 }
 
                 is PermissionEvent.ShouldShowRationale -> {
+                    _showRationaleAlert.value = true
                     _viewState.value = ViewState.ShouldShowRationale
                 }
             }
@@ -56,6 +59,10 @@ class PublicationsMapViewModel
 
         fun setIsUserLocationEnabled(isEnabled: Boolean) {
             _isUserLocationEnabled.value = isEnabled
+        }
+
+        fun dismissRationaleAlert() {
+            _showRationaleAlert.value = false
         }
     }
 
