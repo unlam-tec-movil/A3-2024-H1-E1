@@ -80,9 +80,9 @@ fun TextFieldPassword(
             trailingIcon = {
                 val image =
                     if (visible) {
-                        R.drawable.visibility_on
+                        R.drawable.baseline_visibility_24
                     } else {
-                        R.drawable.visibility_off
+                        R.drawable.baseline_visibility_off_24
                     }
                 IconButton(onClick = { visible = !visible }) {
                     Icon(

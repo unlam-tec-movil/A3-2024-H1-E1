@@ -14,8 +14,8 @@ class AuthNetworkImpl
         private val firebaseAuth: FirebaseAuth,
     ) : AuthNetworkInterface {
         // intentamos iniciar sesison con la credencial de google
-        override suspend fun signInWithGoogleCredential(credential: AuthCredential): AuthRes<FirebaseUser> {
-            return try {
+        override suspend fun signInWithGoogleCredential(credential: AuthCredential): AuthRes<FirebaseUser> =
+            try {
                 val firebaseUser = firebaseAuth.signInWithCredential(credential).await()
                 firebaseUser.user?.let {
                     AuthRes.Success(it)
@@ -23,7 +23,6 @@ class AuthNetworkImpl
             } catch (e: Exception) {
                 AuthRes.Error(e.message ?: "Sign in with Google failed")
             }
-        }
 
         // cerramos sesion
         override suspend fun signOut() {
@@ -31,15 +30,13 @@ class AuthNetworkImpl
         }
 
         // obtenemos el usuario
-        override suspend fun getCurrentUser(): FirebaseUser? {
-            return firebaseAuth.currentUser
-        }
+        override suspend fun getCurrentUser(): FirebaseUser? = firebaseAuth.currentUser
 
         override suspend fun signInWithEmailAndPassword(
             email: String,
             password: String,
-        ): AuthRes<FirebaseUser> {
-            return try {
+        ): AuthRes<FirebaseUser> =
+            try {
                 val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
                 val firebaseUser = result.user
                 if (firebaseUser != null) {
@@ -48,21 +45,21 @@ class AuthNetworkImpl
                     AuthRes.Error("authentication failed")
                 }
             } catch (e: Exception) {
-                AuthRes.Error(e.message ?: "Ocurrio un problema al auntenticarse")
+                AuthRes.Error(e.message ?: "An error occurred while logging in")
             }
-        }
 
         override suspend fun createUserWithEmailAndPassword(
             name: String,
             email: String,
             password: String,
-        ): AuthRes<FirebaseUser> {
-            return try {
+        ): AuthRes<FirebaseUser> =
+            try {
                 val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
                 val firebaseUser = result.user
                 if (firebaseUser != null) {
                     val profileUpdates =
-                        UserProfileChangeRequest.Builder()
+                        UserProfileChangeRequest
+                            .Builder()
                             .setDisplayName(name)
                             .build()
 
@@ -74,5 +71,4 @@ class AuthNetworkImpl
             } catch (e: Exception) {
                 AuthRes.Error(e.message ?: "An unknown error occurred")
             }
-        }
     }

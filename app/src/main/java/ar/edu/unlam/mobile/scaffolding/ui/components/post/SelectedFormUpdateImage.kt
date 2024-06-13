@@ -62,7 +62,7 @@ fun SelectedFormUpdateImage(
                         onDissmisButton()
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.icon_camara),
+                            painter = painterResource(id = R.drawable.outline_photo_camera_24),
                             contentDescription = null,
                             modifier = Modifier.size(50.dp),
                         )
@@ -75,7 +75,7 @@ fun SelectedFormUpdateImage(
                         onDissmisButton()
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.icon_abrir_galeria),
+                            painter = painterResource(id = R.drawable.baseline_photo_library_24),
                             contentDescription = null,
                             modifier = Modifier.size(50.dp),
                         )
