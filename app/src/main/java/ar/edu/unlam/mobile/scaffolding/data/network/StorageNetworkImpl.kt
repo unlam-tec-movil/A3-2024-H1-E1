@@ -87,11 +87,6 @@ class StorageNetworkImpl
                         Log.e("deleteImage", "algo fallo al eliminar la imagen")
                     }
                 }
-                // /elimina todas las subcarpetas
-                for (subFolder in list.prefixes) {
-                    deletePublicationImages(idUser, "$idPublication/${subFolder.name}")
-                }
-
                 Log.e("", "delete image successfully")
             } catch (e: Exception) {
                 Log.e("", "image delete failed")
