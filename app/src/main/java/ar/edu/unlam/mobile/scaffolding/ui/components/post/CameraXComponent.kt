@@ -97,7 +97,7 @@ fun CameraXComponent(
                     modifier = Modifier.offset(16.dp, 16.dp),
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.icon_cambiar_camara),
+                        painter = painterResource(id = R.drawable.outline_flip_camera_ios_24),
                         contentDescription = null,
                         modifier = Modifier.size(50.dp),
                     )
@@ -117,7 +117,7 @@ fun CameraXComponent(
                         }
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.icon_galeria),
+                            painter = painterResource(id = R.drawable.baseline_photo_library_24),
                             contentDescription = null,
                             modifier = Modifier.size(50.dp),
                         )
@@ -128,7 +128,7 @@ fun CameraXComponent(
                         takePicture()
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.icon_camara),
+                            painter = painterResource(id = R.drawable.outline_photo_camera_24),
                             contentDescription = null,
                             modifier = Modifier.size(50.dp),
                         )

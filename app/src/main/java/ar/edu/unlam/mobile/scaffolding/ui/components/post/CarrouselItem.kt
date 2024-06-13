@@ -8,16 +8,14 @@ import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import coil.compose.AsyncImage
 
 @Composable
-fun <T> CarrouselItem(
-    item: T,
+fun CarrouselItem(
+    item: Bitmap,
     pageOffset: Float,
-    onItemClick: (T) -> Unit,
+    onItemClick: (Bitmap) -> Unit = {},
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
@@ -44,21 +42,12 @@ fun <T> CarrouselItem(
                     onItemClick(item)
                 },
     ) {
-        if (item is Bitmap) {
-            DisplayImageBitmap(
-                data = item,
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .fillMaxSize(),
-            )
-        } else {
-            AsyncImage(
-                model = item,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-            )
-        }
+        DisplayImageBitmap(
+            data = item,
+            contentDescription = null,
+            modifier =
+                Modifier
+                    .fillMaxSize(),
+        )
     }
 }
