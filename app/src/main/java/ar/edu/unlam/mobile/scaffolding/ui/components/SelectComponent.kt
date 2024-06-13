@@ -1,10 +1,12 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -16,53 +18,59 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-inline fun <reified T> SelectComponent(
-    list: List<T>,
-    initialSelectedItem: T? = null,
+fun SelectComponent(
+    title: String = "",
+    list: List<String>,
+    initialSelectedItem: String = "",
     placeholder: String = "",
-    crossinline onItemSelected: (T) -> Unit,
+    onItemSelected: (String) -> Unit,
+    isError: Boolean = false,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
     // Variable para manejar el estado del elemento seleccionado
     var selectedItem by remember { mutableStateOf(initialSelectedItem) }
 
-    // Si initialSelectedItem no es nulo y es una cadena de texto,
-    // intentamos encontrarlo en la lista y establecerlo como seleccionado
-    if (initialSelectedItem != null && initialSelectedItem is String) {
-        selectedItem = list.find { it.toString() == initialSelectedItem }
-    }
-
-    ExposedDropdownMenuBox(
-        expanded = isExpanded,
-        onExpandedChange = { isExpanded = it },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        TextField(
-            value = selectedItem?.toString() ?: "", // Convertimos el elemento seleccionado a String
-            onValueChange = {},
-            readOnly = true,
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-            },
-            modifier = Modifier.menuAnchor().fillMaxWidth(),
-            placeholder = { Text(placeholder) },
-        )
-        ExposedDropdownMenu(
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(text = title)
+        ExposedDropdownMenuBox(
             expanded = isExpanded,
-            onDismissRequest = { isExpanded = false },
+            onExpandedChange = { isExpanded = it },
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            list.forEach { item ->
-                DropdownMenuItem(
-                    text = { Text(item.toString()) },
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        selectedItem = item
-                        isExpanded = false
-                        onItemSelected(item)
-                    },
-                )
+            TextField(
+                value = selectedItem, // Convertimos el elemento seleccionado a String
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                },
+                modifier = Modifier.menuAnchor().fillMaxWidth(),
+                placeholder = { Text(placeholder) },
+            )
+            ExposedDropdownMenu(
+                expanded = isExpanded,
+                onDismissRequest = { isExpanded = false },
+            ) {
+                list.forEach { item ->
+                    DropdownMenuItem(
+                        text = { Text(item) },
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            selectedItem = item
+                            isExpanded = false
+                            onItemSelected(item)
+                        },
+                    )
+                }
             }
+        }
+        if (isError) {
+            Text(
+                text = "Campo requerido",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 }
