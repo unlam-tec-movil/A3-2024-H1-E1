@@ -121,18 +121,15 @@ class PublicationEditViewModel
             _listImagesForUser.value = _listImagesForUser.value.filterNot { it == imageBitmap }
         }
 
-        private suspend fun getCurrentUser(): String? {
-            return getUser.getCurrentUser()?.uid
-        }
+        private suspend fun getCurrentUser(): String? = getUser.getCurrentUser()?.uid
 
         fun hasRequirePermission(
             permisssion: Array<String>,
             context: Context,
-        ): Boolean {
-            return permisssion.all {
+        ): Boolean =
+            permisssion.all {
                 ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
             }
-        }
 
         fun resetListOfImages() {
             _listImagesForUser.value = emptyList()
@@ -212,7 +209,7 @@ class PublicationEditViewModel
         fun setType(value: String) {
             _type.value = value
             validateType()
-            clearErrorType()
+            // clearErrorType()
         }
 
         private fun clearErrorType() {
@@ -246,7 +243,8 @@ class PublicationEditViewModel
                 }
             Log.d("PublicationViewModel", "Setting date lost to: $formattedDate")
             _dateLost.value = formattedDate
-            clearErrorDateLost()
+            // clearErrorDateLost()
+            validateDateLost()
         }
 
         private fun clearErrorDateLost() {
@@ -367,18 +365,18 @@ class PublicationEditViewModel
             return isErrorColor.value
         }
 
-        fun validateForm(): Boolean {
-            return title.value.isNotEmpty() &&
-                description.value.isNotEmpty() &&
-                location.value.isNotEmpty() &&
-                type.value.isNotEmpty() &&
-                (age.value.isNotEmpty() && age.value.isDigitsOnly()) &&
-                (contact.value.isNotEmpty() && contact.value.isDigitsOnly()) &&
-                dateLost.value.isNullOrBlank() &&
-                species.value.isNotEmpty() &&
-                sex.value.isNotEmpty() &&
-                color.value.isNotEmpty()
-        }
+        // /el validate form me esta dando problemas al validar los campos
+        fun validateForm(): Boolean =
+            validateTitle() ||
+                validateDescription() ||
+                validateType() ||
+                validateSpecies() ||
+                validateDateLost() ||
+                validateSex() ||
+                validateLocation() ||
+                validateContact() ||
+                validateColor() ||
+                validateAge()
 
         fun addNewPublication() {
             _publicationUiState.value = PublicationUiState.Loading
@@ -445,7 +443,8 @@ class PublicationEditViewModel
                     setColor(result.color)
                     setLocation(result.location)
                     setContact(result.contact.toString())
-                    storageService.getAllImagesForPublication(currentUserId!!, idPublication)
+                    storageService
+                        .getAllImagesForPublication(currentUserId!!, idPublication)
                         .collect { result ->
                             if (result.isEmpty()) {
                                 Log.e("Storage", "la lista esta vacia ")
@@ -461,14 +460,13 @@ class PublicationEditViewModel
             images: List<Bitmap>,
             idUser: String,
             idPublication: String,
-        ): List<String> {
-            return images.map { imageBitmap ->
+        ): List<String> =
+            images.map { imageBitmap ->
                 storageService.uploadImage(image = imageBitmap, userId = idUser, publicationId = idPublication)
             }
-        }
 
-        private fun createPostWithImage(urls: List<String>): PostWithImages {
-            return PostWithImages(
+        private fun createPostWithImage(urls: List<String>): PostWithImages =
+            PostWithImages(
                 id = id.value,
                 type = type.value,
                 title = title.value,
@@ -482,7 +480,6 @@ class PublicationEditViewModel
                 contact = contact.value.toInt(),
                 images = urls,
             )
-        }
 
         fun addEditPublicationToFirestore() {
             _publicationUiState.value = PublicationUiState.Loading
@@ -496,8 +493,7 @@ class PublicationEditViewModel
                             id.value,
                         )
                     val newPostWithImages = createPostWithImage(urls)
-                    firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect {
-                            result ->
+                    firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
                         firestoreService.editPublicationForUser(
                             currentUserId!!,
                             id.value,

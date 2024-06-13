@@ -147,6 +147,7 @@ fun PublicationEditScreen(
         }
         is PublicationUiState.Success -> {
             // /mostramos el contenido principal
+
             Column(
                 modifier =
                     Modifier
@@ -155,6 +156,7 @@ fun PublicationEditScreen(
                         .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                Text(text = "$idPublication")
                 Carrousel(
                     listOfImage = imageBitmapList,
                     paddingValues = 10.dp,
@@ -306,9 +308,7 @@ fun PublicationEditScreen(
                                 .padding(top = 8.dp),
                     )
                 }
-
                 Spacer(modifier = Modifier.height(16.dp))
-
                 Row(
                     modifier =
                         Modifier
@@ -324,33 +324,24 @@ fun PublicationEditScreen(
                     ) {
                         Text("Cancelar")
                     }
-
                     Button(
                         onClick = {
-                            if (viewModel.validateForm()) {
+                            // /si nos da true significa que algun campo falta validar , si nos da false significa que todos los campos estan validados correctamente
+                            if (!viewModel.validateForm()) {
                                 if (viewModel.isEditing.value) {
                                     viewModel.addEditPublicationToFirestore()
                                 } else {
                                     viewModel.setNewId()
                                     viewModel.addNewPublication()
                                 }
-                                controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                                // sea que se crea una nueva publicacion o se edite te envia a la publication details
+                                controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(viewModel.id.value))
                             } else {
-                                viewModel.validateTitle()
-                                viewModel.validateDescription()
-                                viewModel.validateType()
-                                viewModel.validateLocation()
-                                viewModel.validateSex()
-                                viewModel.validateColor()
-                                viewModel.validateDateLost()
-                                viewModel.validateSpecies()
-                                viewModel.validateContact()
-                                viewModel.validateAge()
                                 viewModel.setSnackbar(true)
                             }
                         },
                     ) {
-                        if (idPublication.isNullOrBlank()) {
+                        if (idPublication.isNullOrEmpty()) {
                             Text(text = "Crear Publicacion")
                         } else {
                             Text(text = "Editar Publicacion")
@@ -418,7 +409,6 @@ fun PublicationEditScreen(
             viewModel.deleteImage(selectedItemForSetting!!)
         }
     }
-
     Box(
         modifier =
             Modifier

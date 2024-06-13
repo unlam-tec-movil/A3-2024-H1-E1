@@ -52,14 +52,18 @@ fun NavigationComponent(
             HomeScreen()
         }
 
+        composable(NavigationRoutes.PublicationEditScreen.route) {
+            PublicationEditScreen(controller = navigationController, idPublication = null)
+        }
+
         composable(
-            route = NavigationRoutes.PublicationEditScreen.route,
+            route = NavigationRoutes.PublicationEditScreen.route + "/{idPublication}",
             arguments =
                 listOf(
                     navArgument("idPublication") {
                         type = NavType.StringType
+                        defaultValue = ""
                         nullable = true
-                        defaultValue = null
                     },
                 ),
         ) { navBackStackEntry ->
@@ -78,7 +82,7 @@ fun NavigationComponent(
             val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
             PublicationDetailsScreen(
                 controller = navigationController,
-                publicationId = publicationId.toLong(),
+                publicationId = publicationId,
             )
         }
     }
