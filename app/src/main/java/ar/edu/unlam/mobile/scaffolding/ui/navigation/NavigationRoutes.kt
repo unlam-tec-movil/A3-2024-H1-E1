@@ -22,11 +22,10 @@ sealed class NavigationRoutes(
     object LoginScreen : NavigationRoutes("loginScreen")
 
     object PublicationEditScreen : NavigationRoutes("publicationEditScreen/{idPublication}") {
-        fun withPublicationId(idPublication: String? = null): String  {
-            if (idPublication.isNullOrEmpty())
-                {
-                    return "publicationEditScreen/"
-                } else {
+        fun withPublicationId(idPublication: String? = null): String {
+            if (idPublication.isNullOrEmpty()) {
+                return "publicationEditScreen/"
+            } else {
                 return "publicationEditScreen/$idPublication"
             }
         }
