@@ -146,8 +146,6 @@ fun PublicationEditScreen(
             LoadingComponent()
         }
         is PublicationUiState.Success -> {
-            // /mostramos el contenido principal
-
             Column(
                 modifier =
                     Modifier
@@ -156,7 +154,6 @@ fun PublicationEditScreen(
                         .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Text(text = "$idPublication")
                 Carrousel(
                     listOfImage = imageBitmapList,
                     paddingValues = 10.dp,
