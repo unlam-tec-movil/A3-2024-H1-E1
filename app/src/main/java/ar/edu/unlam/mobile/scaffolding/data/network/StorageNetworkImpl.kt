@@ -16,13 +16,9 @@ class StorageNetworkImpl
     constructor(
         private val storage: FirebaseStorage,
     ) : StorageNetworkInterface {
-        override suspend fun getStorageReference(userId: String): StorageReference {
-            return storage.getReference(userId)
-        }
+        override suspend fun getStorageReference(userId: String): StorageReference = storage.getReference(userId)
 
-        override suspend fun getStorageReferenceFromUrl(url: String): StorageReference {
-            return storage.getReferenceFromUrl(url)
-        }
+        override suspend fun getStorageReferenceFromUrl(url: String): StorageReference = storage.getReferenceFromUrl(url)
 
         override suspend fun uploadImage(
             image: Bitmap,
@@ -68,6 +64,23 @@ class StorageNetworkImpl
                 } catch (e: Exception) {
                     Log.e("Storage", "Failed get images for publication")
                     throw e
+                }
+            }
+
+        override suspend fun getAllImagesUserUrl(listImage: List<String>): Flow<List<Bitmap>> =
+            flow {
+                val listBitmap = mutableListOf<Bitmap>()
+                try {
+                    for (image in listImage) {
+                        val imageRef = getStorageReferenceFromUrl(image)
+                        val imageByte = imageRef.getBytes(Long.MAX_VALUE).await()
+                        val bitmap = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.size)
+                        listBitmap.add(bitmap)
+                    }
+                    emit(listBitmap)
+                } catch (e: Exception) {
+                    Log.e("image Storage", "get images from url failed")
+                    emit(emptyList())
                 }
             }
 

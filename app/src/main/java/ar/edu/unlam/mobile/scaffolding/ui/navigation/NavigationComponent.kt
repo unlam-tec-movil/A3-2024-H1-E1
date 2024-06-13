@@ -57,7 +57,7 @@ fun NavigationComponent(
         }
 
         composable(
-            route = NavigationRoutes.PublicationEditScreen.route + "/{idPublication}",
+            route = "publicationEditScreen/{idPublication}",
             arguments =
                 listOf(
                     navArgument("idPublication") {

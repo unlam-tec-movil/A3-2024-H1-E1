@@ -443,15 +443,13 @@ class PublicationEditViewModel
                     setColor(result.color)
                     setLocation(result.location)
                     setContact(result.contact.toString())
-                    storageService
-                        .getAllImagesForPublication(currentUserId!!, idPublication)
-                        .collect { result ->
-                            if (result.isEmpty()) {
-                                Log.e("Storage", "la lista esta vacia ")
-                            } else {
-                                _listImagesForUser.value = result
-                            }
+                    storageService.getAllImagesFromUrl(result.images).collect { result ->
+                        if (result.isEmpty()) {
+                            Log.e("Storage", "get imges from url faile")
+                        } else {
+                            _listImagesForUser.value = result
                         }
+                    }
                 }
             }
         }
@@ -504,6 +502,14 @@ class PublicationEditViewModel
                 } catch (e: Exception) {
                     Log.e("Edit Publication", "Failed upload to Firestore edit Publication")
                     _publicationUiState.value = PublicationUiState.Error
+                }
+            }
+        }
+
+        fun getAllImagesFromUrl(list: List<String>) {
+            viewModelScope.launch {
+                storageService.getAllImagesFromUrl(list).collect { list ->
+                    _listImagesForUser.value = list
                 }
             }
         }
