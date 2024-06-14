@@ -81,7 +81,10 @@ fun ProfileScreen(
             items(userPublications) { publication ->
                 PublicationCellEdit(
                     post = publication,
-                    onClick = {},
+                    onClick = {
+                        val publicationId = publication.id
+                        controller.navigate(NavigationRoutes.PublicationDetailsScreen.withPublicationId(publicationId))
+                    },
                     onViewClick = {
                         val publicationId = publication.id
                         controller.navigate(NavigationRoutes.PublicationDetailsScreen.withPublicationId(publicationId))
