@@ -95,6 +95,19 @@ class ProfileScreenViewModel
             }
         }
 
+        fun deletePublicationInAllPublications(publicationId: String) {
+            viewModelScope.launch {
+                firestoreService.deletePublicationInAllPublications(publicationId)
+                    .catch { e ->
+                        // Manejar errores si es necesario
+                        e.printStackTrace()
+                    }
+                    .collect { success ->
+                        _deleteSuccess.value = success
+                    }
+            }
+        }
+
         fun signOut() {
             viewModelScope.launch {
                 authService.signOut() // cierra sesión en Firebase

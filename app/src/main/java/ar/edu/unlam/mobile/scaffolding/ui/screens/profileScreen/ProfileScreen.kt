@@ -95,7 +95,9 @@ fun ProfileScreen(
                     },
                     onDeleteClick = {
                         userProfile?.let { profile ->
-                            viewModel.deletePublication(publication.id, profile.userId)
+
+                            viewModel.deletePublication(publicationId, profile.userId)
+                            viewModel.deletePublicationInAllPublications(publicationId)
                         }
                     },
                 )
