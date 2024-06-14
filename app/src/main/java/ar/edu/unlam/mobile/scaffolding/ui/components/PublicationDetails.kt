@@ -52,7 +52,7 @@ fun PublicationDetails(
                         .fillMaxWidth()
                         .height(300.dp),
             ) {
-               // Carrousel(listOfImage = , paddingValues = 10.dp)
+                Carrousel(listOfImage = listOf(), paddingValues = 10.dp)
             }
 
             Text(
