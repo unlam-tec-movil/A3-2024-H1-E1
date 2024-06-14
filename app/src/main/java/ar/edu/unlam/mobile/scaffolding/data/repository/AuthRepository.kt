@@ -22,4 +22,19 @@ class AuthRepository
         override suspend fun getCurrentUser(): FirebaseUser? {
             return authNetworkInterface.getCurrentUser()
         }
+
+        override suspend fun signInWithEmailAndPassword(
+            email: String,
+            password: String,
+        ): AuthRes<FirebaseUser> {
+            return authNetworkInterface.signInWithEmailAndPassword(email, password)
+        }
+
+        override suspend fun createUserWithEmailAndPassword(
+            name: String,
+            email: String,
+            password: String,
+        ): AuthRes<FirebaseUser> {
+            return authNetworkInterface.createUserWithEmailAndPassword(name, email, password)
+        }
     }
