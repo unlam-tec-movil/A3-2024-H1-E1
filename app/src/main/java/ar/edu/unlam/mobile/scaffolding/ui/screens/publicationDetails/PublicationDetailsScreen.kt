@@ -8,6 +8,6 @@ import androidx.navigation.NavHostController
 fun PublicationDetailsScreen(
     controller: NavHostController,
     viewModel: PublicationDetailsViewModel = hiltViewModel(),
-    publicationId: Long,
+    publicationId: String,
 ) {
 }

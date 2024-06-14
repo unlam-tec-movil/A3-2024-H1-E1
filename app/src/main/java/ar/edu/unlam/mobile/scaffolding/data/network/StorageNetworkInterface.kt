@@ -24,4 +24,6 @@ interface StorageNetworkInterface {
         idUser: String,
         idPublication: String,
     ): Flow<List<Bitmap>>
+
+    suspend fun getAllImagesUserUrl(listImage: List<String>): Flow<List<Bitmap>>
 }
