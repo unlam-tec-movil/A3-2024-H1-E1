@@ -52,14 +52,18 @@ fun NavigationComponent(
             HomeScreen()
         }
 
+        composable(NavigationRoutes.PublicationEditScreen.route) {
+            PublicationEditScreen(controller = navigationController, idPublication = null)
+        }
+
         composable(
-            route = NavigationRoutes.PublicationEditScreen.route,
+            route = "publicationEditScreen/{idPublication}",
             arguments =
                 listOf(
                     navArgument("idPublication") {
                         type = NavType.StringType
+                        defaultValue = ""
                         nullable = true
-                        defaultValue = null
                     },
                 ),
         ) { navBackStackEntry ->

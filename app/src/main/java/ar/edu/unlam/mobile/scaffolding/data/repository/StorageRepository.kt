@@ -14,9 +14,7 @@ class StorageRepository
             image: Bitmap,
             userId: String,
             publicationId: String,
-        ): String {
-            return storageNetwork.uploadImage(image, userId, publicationId)
-        }
+        ): String = storageNetwork.uploadImage(image, userId, publicationId)
 
         override suspend fun deletePublicationImages(
             idUser: String,
@@ -28,7 +26,8 @@ class StorageRepository
         override suspend fun getAllImagesForPublication(
             idUser: String,
             idPublication: String,
-        ): Flow<List<Bitmap>> {
-            return storageNetwork.getAllImagesForPublication(idUser, idPublication)
-        }
+        ): Flow<List<Bitmap>> = storageNetwork.getAllImagesForPublication(idUser, idPublication)
+
+        override suspend fun getAllImagesForUrl(listImages: List<String>): Flow<List<Bitmap>> =
+            storageNetwork.getAllImagesUserUrl(listImages)
     }
