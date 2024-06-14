@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,9 +25,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
@@ -35,6 +36,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.utils.capitalizeFirstLetter
 @Composable
 fun PublicationDetails(
     post: PostWithImages,
+    images: State<List<Bitmap>>,
     onBackClick: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -52,7 +54,7 @@ fun PublicationDetails(
                         .fillMaxWidth()
                         .height(300.dp),
             ) {
-                Carrousel(listOfImage = post.images)
+                Carrousel(listOfImage = images.value, paddingValues = 16.dp)
             }
 
             Text(
@@ -148,29 +150,29 @@ fun PublicationDetailItem(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PublicationDetailsPreview() {
-    val today = "12/02/2023"
-    val images =
-        listOf(
-            "https://i.pinimg.com/originals/46/19/87/461987941ab09bdca2ba86c7e34a3ded.jpg",
-            "https://i.pinimg.com/originals/46/19/87/461987941ab09bdca2ba86c7e34a3ded.jpg",
-        )
-    val postPreview =
-        PostWithImages(
-            "1",
-            "search",
-            "lost dog",
-            "description",
-            "$today",
-            "dog",
-            "female",
-            3,
-            "black",
-            "3",
-            1122334455,
-            images,
-        )
-    PublicationDetails(post = postPreview, onBackClick = {})
-}
+// @Preview(showBackground = true)
+// @Composable
+// fun PublicationDetailsPreview() {
+//    val today = "12/02/2023"
+//    val images =
+//        listOf(
+//            "https://i.pinimg.com/originals/46/19/87/461987941ab09bdca2ba86c7e34a3ded.jpg",
+//            "https://i.pinimg.com/originals/46/19/87/461987941ab09bdca2ba86c7e34a3ded.jpg",
+//        )
+//    val postPreview =
+//        PostWithImages(
+//            "1",
+//            "search",
+//            "lost dog",
+//            "description",
+//            today,
+//            "dog",
+//            "female",
+//            3,
+//            "black",
+//            "3",
+//            1122334455,
+//            images,
+//        )
+//    PublicationDetails(post = postPreview, onBackClick = {})
+// }
