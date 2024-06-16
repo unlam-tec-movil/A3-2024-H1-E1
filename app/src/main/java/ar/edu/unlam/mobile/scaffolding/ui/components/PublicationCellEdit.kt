@@ -25,7 +25,6 @@ import coil.transform.CircleCropTransformation
 
 @Composable
 fun PublicationCellEdit(
-    //  item: PublicationCellModel,
     post: PostWithImages,
     onClick: () -> Unit,
     onViewClick: () -> Unit,
