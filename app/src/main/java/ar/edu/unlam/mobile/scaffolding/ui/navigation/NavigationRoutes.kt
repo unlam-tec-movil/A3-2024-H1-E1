@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.ui.navigation
 
-sealed class NavigationRoutes(val route: String) {
+sealed class NavigationRoutes(
+    val route: String,
+) {
     object Splash : NavigationRoutes("splashScreen")
 
     object Home : NavigationRoutes("home")
@@ -12,20 +14,35 @@ sealed class NavigationRoutes(val route: String) {
     object FilterScreen : NavigationRoutes("filterScreen")
 
     object PublicationScreen : NavigationRoutes("publicationScreen/{publicationId}") {
-        //  fun withPublicationId(publicationId: String) = "publicationScreen/$publicationId"
+        fun withPublicationId(publicationId: String) = "publicationScreen/$publicationId"
+
     }
 
     object ProfileScreen : NavigationRoutes("profileScreen")
 
     object LoginScreen : NavigationRoutes("loginScreen")
 
-    object PublicationEditScreen : NavigationRoutes("publicationEditScreen/{publicationId}") {
-        fun withPublicationId(publicationId: String) = "publicationEditScreen/$publicationId"
-    }
+
 
     object PublicationDetailsScreen : NavigationRoutes("publicationDetailsScreen/{publicationId}") {
         fun withPublicationId(publicationId: String) = "publicationDetailsScreen/$publicationId"
     }
+    object PublicationEditScreen : NavigationRoutes("publicationEditScreen/{publicationId}") {
+        fun withPublicationId(publicationId: String) = "publicationEditScreen/$publicationId"
+    }
+
+  /*  object PublicationEditScreen : NavigationRoutes("publicationEditScreen/{idPublication}") {
+        fun withPublicationId(idPublication: String? = null): String {
+            if (idPublication.isNullOrEmpty()) {
+                return "publicationEditScreen/"
+            } else {
+                return "publicationEditScreen/idPublication"
+            }
+        }*/
+    
+
+    object CreateAccountScreen : NavigationRoutes("createAccountScreen")
+
 }
 /*
 For futures screens you can add here the new routes

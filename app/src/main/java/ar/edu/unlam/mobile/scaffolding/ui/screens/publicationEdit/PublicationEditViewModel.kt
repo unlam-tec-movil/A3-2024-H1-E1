@@ -13,6 +13,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,8 +23,6 @@ import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetCurrentUser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -32,7 +31,14 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
-// /problema con las imagenes , no las elimina
+sealed interface PublicationUiState {
+    object Success : PublicationUiState
+
+    object Loading : PublicationUiState
+
+    object Error : PublicationUiState
+}
+
 @HiltViewModel
 class PublicationEditViewModel
     @Inject
@@ -50,6 +56,12 @@ class PublicationEditViewModel
 
         private val _listBitmapToCameraX = mutableStateOf<List<Bitmap>>(emptyList())
         val listBitmapToCameraX: State<List<Bitmap>> = _listBitmapToCameraX
+
+        private val _publicationUiState = mutableStateOf<PublicationUiState>(PublicationUiState.Success)
+        val publicationUiState: State<PublicationUiState> = _publicationUiState
+
+        private val _snackbar = mutableStateOf(false)
+        val snackbar: State<Boolean> = _snackbar
 
         init {
             viewModelScope.launch {
@@ -109,27 +121,22 @@ class PublicationEditViewModel
             _listImagesForUser.value = _listImagesForUser.value.filterNot { it == imageBitmap }
         }
 
-        private suspend fun getCurrentUser(): String? {
-            return getUser.getCurrentUser()?.uid
-        }
+        private suspend fun getCurrentUser(): String? = getUser.getCurrentUser()?.uid
 
         fun hasRequirePermission(
             permisssion: Array<String>,
             context: Context,
-        ): Boolean {
-            return permisssion.all {
+        ): Boolean =
+            permisssion.all {
                 ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
             }
-        }
 
         fun resetListOfImages() {
             _listImagesForUser.value = emptyList()
         }
 
-        private val _publicationState = MutableStateFlow<Result<PostWithImages>?>(null)
-        val publicationState: StateFlow<Result<PostWithImages>?> get() = _publicationState
-
-        var isEditing = mutableStateOf(false)
+        private val _isEditing = mutableStateOf(false)
+        var isEditing: State<Boolean> = _isEditing
 
         private val _id = mutableStateOf("")
         val id: State<String> = _id
@@ -165,8 +172,48 @@ class PublicationEditViewModel
 
         private val dateFormat = SimpleDateFormat("dd/MM/yyyy")
 
-        fun setIsEditing() {
-            isEditing.value = !isEditing.value
+        private val _isErrorTitle = mutableStateOf(false)
+        val isErrorTitle: State<Boolean> get() = _isErrorTitle
+
+        private val _isErrorDescription = mutableStateOf(false)
+        val isErrorDescription: State<Boolean> get() = _isErrorDescription
+
+        private val _isErrorAge = mutableStateOf(false)
+        val isErrorAge: State<Boolean> get() = _isErrorAge
+
+        private val _isErrorSex = mutableStateOf(false)
+        val isErrorSex: State<Boolean> get() = _isErrorSex
+
+        private val _isErrorType = mutableStateOf(false)
+        val isErrorType: State<Boolean> get() = _isErrorType
+
+        private val _isErrorColor = mutableStateOf(false)
+        val isErrorColor: State<Boolean> get() = _isErrorColor
+
+        private val _isErrorSpecies = mutableStateOf(false)
+        val isErrorSpecies: State<Boolean> get() = _isErrorSpecies
+
+        private val _isErrorDateLost = mutableStateOf(false)
+        val isErrorDateLost: State<Boolean> get() = _isErrorDateLost
+
+        private val _isErrorContact = mutableStateOf(false)
+        val isErrorContact: State<Boolean> get() = _isErrorContact
+
+        private val _isErrorLocation = mutableStateOf(false)
+        val isErrorLocation: State<Boolean> get() = _isErrorLocation
+
+        fun setIsEditing(value: Boolean) {
+            _isEditing.value = value
+        }
+
+        fun setType(value: String) {
+            _type.value = value
+            validateType()
+            // clearErrorType()
+        }
+
+        private fun clearErrorType() {
+            _isErrorType.value = false
         }
 
         fun setId(value: String) {
@@ -177,16 +224,14 @@ class PublicationEditViewModel
             _id.value = UUID.randomUUID().toString()
         }
 
-        fun setType(value: String) {
-            _type.value = value
-        }
-
         fun setTitle(value: String) {
             _title.value = value
+            validateTitle()
         }
 
         fun setDescription(value: String) {
             _description.value = value
+            validateDescription()
         }
 
         fun setDateLost(value: String) {
@@ -198,33 +243,103 @@ class PublicationEditViewModel
                 }
             Log.d("PublicationViewModel", "Setting date lost to: $formattedDate")
             _dateLost.value = formattedDate
+            // clearErrorDateLost()
+            validateDateLost()
+        }
+
+        private fun clearErrorDateLost() {
+            _isErrorDateLost.value = false
         }
 
         fun setSpecies(value: String) {
             _species.value = value
+            validateSpecies()
         }
 
         fun setSex(value: String) {
             _sex.value = value
+            validateSex()
         }
 
         fun setAge(value: String) {
             _age.value = value
+            validateAge()
         }
 
         fun setColor(value: String) {
             _color.value = value
+            validateColor()
         }
 
         fun setLocation(value: String) {
             _location.value = value
+            validateLocation()
         }
 
         fun setContact(value: String) {
             _contact.value = value
+            validateContact()
         }
 
-        // /la funcion validateForm esta haciendo mas de 1 cosa,  valida el formulario, setea datos y llama al editar
+        fun validateTitle(): Boolean {
+            _isErrorTitle.value = title.value.isEmpty()
+            return isErrorTitle.value
+        }
+
+        fun setSnackbar(value: Boolean) {
+            _snackbar.value = value
+        }
+
+        fun validateDescription(): Boolean {
+            _isErrorDescription.value = description.value.isEmpty()
+            return isErrorDescription.value
+        }
+
+        fun validateType(): Boolean {
+            _isErrorType.value = type.value.isEmpty()
+            return isErrorType.value
+        }
+
+        var messageErrorAge = ""
+
+        fun validateAge(): Boolean {
+            _isErrorAge.value =
+                when {
+                    age.value.isEmpty() -> {
+                        messageErrorAge = "Campo requerido"
+                        true
+                    }
+
+                    !age.value.isDigitsOnly() -> {
+                        messageErrorAge = "Ingresar caracteres númericos"
+                        true
+                    }
+
+                    else -> false
+                }
+            return isErrorAge.value
+        }
+
+        var messageErrorContact = ""
+
+        fun validateContact(): Boolean {
+            _isErrorContact.value =
+                when {
+                    contact.value.isEmpty() -> {
+                        messageErrorContact = "Campo requerido"
+                        true
+                    }
+
+                    !contact.value.isDigitsOnly() -> {
+                        messageErrorContact = "Ingresar caracteres númericos"
+                        true
+                    }
+
+                    else -> false
+                }
+            return isErrorContact.value
+        }
+
         fun validateForm(): Boolean {
             return title.value.isNotEmpty() &&
                 description.value.isNotEmpty() &&
@@ -233,12 +348,51 @@ class PublicationEditViewModel
                 age.value.isNotEmpty() &&
                 contact.value.isNotEmpty() &&
                 (dateLost.value?.isNotEmpty() == true) // &&
-            //   species.value.isNotEmpty() &&
-            // sex.value.isNotEmpty() &&
-            // color.value.isNotEmpty()
+               species.value.isNotEmpty() &&
+             sex.value.isNotEmpty() &&
+             color.value.isNotEmpty()
+
+       /* fun validateLocation(): Boolean {
+            _isErrorLocation.value = location.value.isEmpty()
+            return isErrorLocation.value
+
+        }*/
+
+        fun validateDateLost(): Boolean {
+            _isErrorDateLost.value = dateLost.value.isNullOrBlank()
+            return isErrorDateLost.value
         }
 
+        fun validateSpecies(): Boolean {
+            _isErrorSpecies.value = species.value.isBlank()
+            return isErrorSpecies.value
+        }
+
+        fun validateSex(): Boolean {
+            _isErrorSex.value = sex.value.isBlank()
+            return isErrorSex.value
+        }
+
+        fun validateColor(): Boolean {
+            _isErrorColor.value = color.value.isBlank()
+            return isErrorColor.value
+        }
+
+        // /el validate form me esta dando problemas al validar los campos
+        fun validateForm(): Boolean =
+            validateTitle() ||
+                validateDescription() ||
+                validateType() ||
+                validateSpecies() ||
+                validateDateLost() ||
+                validateSex() ||
+                validateLocation() ||
+                validateContact() ||
+                validateColor() ||
+                validateAge()
+
         fun addNewPublication() {
+            _publicationUiState.value = PublicationUiState.Loading
             viewModelScope.launch {
                 try {
                     val imageUrls =
@@ -251,57 +405,64 @@ class PublicationEditViewModel
                     val postWithImages = createPostWithImage(imageUrls)
                     firestoreService.addPublicationToPublicationCollection(postWithImages).collect { result ->
                         firestoreService.addPublication(currentUserId!!, postWithImages)
-                            .collect { result ->
-                                _publicationState.value = Result.success(result)
-                            }
                     }
+                    _publicationUiState.value = PublicationUiState.Success
                 } catch (e: Exception) {
                     Log.e("PublicationEditViewModel", "Failed to add publication", e)
-                    _publicationState.value = Result.failure(e)
+                    _publicationUiState.value = PublicationUiState.Error
                 }
             }
         }
 
-        // manejar en caso de que traiga un null o que no pueda
-        suspend fun setPublication(idPublication: String) {
-            firestoreService.getPublicationById(idPublication).collect { result ->
-                isEditing.value = true
-                setId(result.id)
-                setType(result.type)
-                setTitle(result.title)
-                setDescription(result.description)
-                val dateLostString =
-                    when (val dateLost = result.dateLost) {
-                        is String -> {
-                            // Parsear la cadena de texto a un objeto Date
-                            val date =
-                                try {
-                                    dateFormat.parse(dateLost)
-                                } catch (e: ParseException) {
-                                    Date() // Si hay un error al analizar, devuelve la fecha actual
-                                }
-                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date) // Formatear Date como una cadena de texto
-                        }
-                        else -> dateFormat.format(Date()) // Valor predeterminado si no es una cadena de texto
-                    }
-                setDateLost(dateLostString)
-                setDateLost(dateLostString)
-                setSpecies(result.species)
-                setSex(result.sex)
-                setAge((result.age).toString())
-                setColor(result.color)
-                setLocation(result.location)
-                setContact(result.contact.toString())
-                // urlImages
-                viewModelScope.launch {
-                    storageService.getAllImagesForPublication(currentUserId!!, idPublication)
-                        .collect { result ->
-                            if (result.isEmpty()) {
-                                Log.e("Storage", "la lista esta vacia ")
-                            } else {
-                                _listImagesForUser.value = result
+        fun setPublication(idPublication: String) {
+            _publicationUiState.value = PublicationUiState.Loading
+            viewModelScope.launch {
+                try {
+                    fetchPublicationData(idPublication = idPublication)
+                    _publicationUiState.value = PublicationUiState.Success
+                } catch (e: Exception) {
+                    Log.e("SetPublication", "no se pudo setear la publicacion")
+                    _publicationUiState.value = PublicationUiState.Error
+                }
+            }
+        }
+
+        private fun fetchPublicationData(idPublication: String) {
+            viewModelScope.launch {
+                firestoreService.getPublicationById(idPublication).collect { result ->
+                    setId(result.id)
+                    setType(result.type)
+                    setTitle(result.title)
+                    setDescription(result.description)
+                    val dateLostString =
+                        when (val dateLost = result.dateLost) {
+                            is String -> {
+                                // Parsear la cadena de texto a un objeto Date
+                                val date =
+                                    try {
+                                        dateFormat.parse(dateLost)
+                                    } catch (e: ParseException) {
+                                        Date() // Si hay un error al analizar, devuelve la fecha actual
+                                    }
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
                             }
+
+                            else -> dateFormat.format(Date()) // Valor predeterminado si no es una cadena de texto
                         }
+                    setDateLost(dateLostString)
+                    setSpecies(result.species)
+                    setSex(result.sex)
+                    setAge((result.age).toString())
+                    setColor(result.color)
+                    setLocation(result.location)
+                    setContact(result.contact.toString())
+                    storageService.getAllImagesFromUrl(result.images).collect { result ->
+                        if (result.isEmpty()) {
+                            Log.e("Storage", "get imges from url faile")
+                        } else {
+                            _listImagesForUser.value = result
+                        }
+                    }
                 }
             }
         }
@@ -310,14 +471,13 @@ class PublicationEditViewModel
             images: List<Bitmap>,
             idUser: String,
             idPublication: String,
-        ): List<String> {
-            return images.map { imageBitmap ->
+        ): List<String> =
+            images.map { imageBitmap ->
                 storageService.uploadImage(image = imageBitmap, userId = idUser, publicationId = idPublication)
             }
-        }
 
-        private fun createPostWithImage(urls: List<String>): PostWithImages {
-            return PostWithImages(
+        private fun createPostWithImage(urls: List<String>): PostWithImages =
+            PostWithImages(
                 id = id.value,
                 type = type.value,
                 title = title.value,
@@ -329,12 +489,11 @@ class PublicationEditViewModel
                 color = color.value,
                 location = location.value,
                 contact = contact.value.toInt(),
-                images = urls, // Lista de URLs
+                images = urls,
             )
-        }
 
-        // /aca lo debemos eliminar la publicacion xq no se pisa , y luego añadir
         fun addEditPublicationToFirestore() {
+            _publicationUiState.value = PublicationUiState.Loading
             viewModelScope.launch {
                 try {
                     storageService.deletePublicationImages(currentUserId!!, id.value)
@@ -344,24 +503,27 @@ class PublicationEditViewModel
                             currentUserId!!,
                             id.value,
                         )
-                    resetListOfImages() // reseteamos devuelta las lista de imagenes para que luego
                     val newPostWithImages = createPostWithImage(urls)
-                    firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect {
-                            result ->
+                    firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
                         firestoreService.editPublicationForUser(
                             currentUserId!!,
                             id.value,
                             newPostWithImages,
-                        ).collect {
-                                result ->
-                            _publicationState.value = Result.success(result)
-                        }
+                        )
                     }
+                    _publicationUiState.value = PublicationUiState.Success
                 } catch (e: Exception) {
                     Log.e("Edit Publication", "Failed upload to Firestore edit Publication")
+                    _publicationUiState.value = PublicationUiState.Error
+                }
+            }
+        }
+
+        fun getAllImagesFromUrl(list: List<String>) {
+            viewModelScope.launch {
+                storageService.getAllImagesFromUrl(list).collect { list ->
+                    _listImagesForUser.value = list
                 }
             }
         }
     }
-// /usar el componente de loading
-// /manejar bien las excepciones por si no podemos subir , traer o editar publicaciones para que en la ui se muestre algun msj

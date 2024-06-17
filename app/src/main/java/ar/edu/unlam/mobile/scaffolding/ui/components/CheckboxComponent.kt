@@ -24,10 +24,13 @@ fun <T> CheckboxComponent(
     initialSelectedOption: T?,
     onOptionSelected: (T) -> Unit,
     optionToString: (T) -> String,
+    isError: Boolean,
+    errorMessage: String,
 ) {
     var selectedOption by remember { mutableStateOf(initialSelectedOption) }
 
     Column {
+        Text("Selecciona una opción:")
         options.forEach { option ->
             Row(
                 modifier =
@@ -54,6 +57,14 @@ fun <T> CheckboxComponent(
                     modifier = Modifier.padding(start = 16.dp),
                 )
             }
+        }
+
+        if (isError) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 

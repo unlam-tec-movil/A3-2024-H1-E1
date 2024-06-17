@@ -32,6 +32,7 @@ lottieVer = "6.1.0"
 lifecycleRuntimeComposeAndroid = "2.8.1"
 lifecycleRuntimeComposeDesktop = "2.8.1"
 
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -81,6 +82,7 @@ cameraView = { group = "androidx.camera", name = "camera-view", version.ref = "c
 cameraExtensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "cameraX" }
 androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
 androidx-lifecycle-runtime-compose-desktop = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-desktop", version.ref = "lifecycleRuntimeComposeDesktop" }
+
 
 
 [plugins]
