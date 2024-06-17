@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
@@ -76,7 +77,10 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Text(text = "Publications")
+        Text(
+            text = "Publications",
+            fontWeight = FontWeight.Bold,
+        )
 
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(userPublications) { publication ->
