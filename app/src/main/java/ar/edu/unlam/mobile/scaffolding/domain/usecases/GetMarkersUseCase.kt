@@ -4,5 +4,5 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow
 
 interface GetMarkersUseCase {
-    operator fun invoke(): Flow<List<LatLng>>
+    suspend operator fun invoke(): Flow<List<LatLng>>
 }

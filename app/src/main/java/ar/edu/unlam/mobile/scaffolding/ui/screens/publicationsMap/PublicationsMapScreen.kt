@@ -57,6 +57,7 @@ fun PublicationsMapScreen(
     val isUserLocationEnabled by viewModel.isUserLocationEnabled.collectAsState()
     val cameraCenterLocation by viewModel.cameraCenterLocation.collectAsState()
     val showRationaleAlert by viewModel.showRationaleAlert.collectAsState()
+    val markers by viewModel.markers.collectAsState()
 
     LaunchedEffect(cameraCenterLocation) {
         if (permissionState.allPermissionsGranted) {
@@ -65,14 +66,16 @@ fun PublicationsMapScreen(
             cameraCenterLocation?.let { cameraState.centerOnLocation(it) }
         }
     }
-
+    LaunchedEffect(Unit) {
+        viewModel.getMarkers()
+    }
     Box(
         modifier =
             Modifier
                 .fillMaxSize(),
     ) {
         MapsComponent(
-            markers = emptyList(),
+            markers = markers,
             cameraPositionState = cameraState,
             isUserLocationEnabled = viewModel.isUserLocationEnabled.collectAsState(),
         )

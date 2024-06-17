@@ -2,8 +2,11 @@ package ar.edu.unlam.mobile.scaffolding.domain.services
 
 import ar.edu.unlam.mobile.scaffolding.data.repository.FirestoreRepositoryInterface
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
+import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetMarkersUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.UseFirestore
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 // /deberia ir a buscar los datos al repositorio
@@ -11,7 +14,7 @@ class FirestoreService
     @Inject
     constructor(
         private val firestoreRepository: FirestoreRepositoryInterface,
-    ) : UseFirestore {
+    ) : UseFirestore, GetMarkersUseCase {
         override suspend fun addPublication(
             idUser: String,
             publication: PostWithImages,
@@ -48,5 +51,30 @@ class FirestoreService
             updatedPublication: PostWithImages,
         ): Flow<PostWithImages> {
             return firestoreRepository.editPublicationInAllPublications(idPublication, updatedPublication)
+        }
+
+        override suspend fun invoke(): Flow<List<LatLng>> {
+            return getAllPublications().map { posts ->
+                posts.map { post ->
+                    val parts = post.location.split(", ")
+                    LatLng(parts[0].toDouble(), parts[1].toDouble())
+                }
+            }
+        }
+
+        private fun parseLatLng(location: String): LatLng? {
+            // Assume location is in the format "latitude,longitude"
+            val parts = location.split(",")
+            return if (parts.size == 2) {
+                val latitude = parts[0].toDoubleOrNull()
+                val longitude = parts[1].toDoubleOrNull()
+                if (latitude != null && longitude != null) {
+                    LatLng(latitude, longitude)
+                } else {
+                    null
+                }
+            } else {
+                null
+            }
         }
     }

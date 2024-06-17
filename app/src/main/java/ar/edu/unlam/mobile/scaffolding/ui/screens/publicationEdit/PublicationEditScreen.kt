@@ -53,7 +53,6 @@ import ar.edu.unlam.mobile.scaffolding.domain.models.Species
 import ar.edu.unlam.mobile.scaffolding.ui.components.CheckboxComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
-import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SnackbarComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldComponent
@@ -302,7 +301,7 @@ fun PublicationEditScreen(
 //                                .clip(RoundedCornerShape(12.dp))
 //                                .padding(top = 8.dp),
 //                    )
-                    MapsComponent(markers = emptyList(), cameraPositionState = null, isUserLocationEnabled = )
+//                    MapsComponent(markers = emptyList(), cameraPositionState = null, isUserLocationEnabled = )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(

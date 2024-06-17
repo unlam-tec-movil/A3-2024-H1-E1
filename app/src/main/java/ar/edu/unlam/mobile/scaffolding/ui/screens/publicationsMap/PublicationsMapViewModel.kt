@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetLocationUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetMarkersUseCase
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ class PublicationsMapViewModel
     @Inject
     constructor(
         private val getLocationUseCase: GetLocationUseCase,
+        private val getMarkersUseCase: GetMarkersUseCase,
     ) : ViewModel() {
         private val _viewState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState.Loading)
         val viewState = _viewState.asStateFlow()
@@ -26,6 +28,9 @@ class PublicationsMapViewModel
         val showRationaleAlert = _showRationaleAlert.asStateFlow()
         private var _cameraCenterLocation = MutableStateFlow<LatLng?>(null)
         val cameraCenterLocation = _cameraCenterLocation.asStateFlow()
+
+        private val _markers = MutableStateFlow<List<LatLng>>(emptyList())
+        val markers = _markers.asStateFlow()
 
         fun handle(event: PermissionEvent) {
             when (event) {
@@ -47,6 +52,14 @@ class PublicationsMapViewModel
                 is PermissionEvent.ShouldShowRationale -> {
                     _showRationaleAlert.value = true
                     _viewState.value = ViewState.ShouldShowRationale
+                }
+            }
+        }
+
+        fun getMarkers() {
+            viewModelScope.launch {
+                getMarkersUseCase.invoke().collect { markers ->
+                    _markers.value = markers
                 }
             }
         }
