@@ -93,7 +93,6 @@ fun NavigationComponent(
             val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
             PublicationDetailsScreen(
                 controller = navigationController,
-        feature/perfilScreenEdit
                 publicationId = publicationId.toLong().toString(),
             )
         }
