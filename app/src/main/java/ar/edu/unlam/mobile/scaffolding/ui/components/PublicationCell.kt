@@ -14,11 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 
 @Composable
 fun PublicationCell(
@@ -29,9 +33,7 @@ fun PublicationCell(
         verticalArrangement = Arrangement.Center,
     ) {
         ListItem(
-            modifier =
-                Modifier
-                    .clickable(onClick = onClick),
+            modifier = Modifier.clickable(onClick = onClick),
             headlineContent = {
                 Text(
                     item.title,
@@ -46,12 +48,27 @@ fun PublicationCell(
                 )
             },
             leadingContent = {
+                val imagePainter =
+                    if (item.imageResourceId.isNotEmpty()) {
+                        rememberAsyncImagePainter(
+                            ImageRequest.Builder(LocalContext.current)
+                                .data(item.imageResourceId)
+                                .apply {
+                                    crossfade(true)
+                                    transformations(CircleCropTransformation())
+                                }
+                                .build(),
+                        )
+                    } else {
+                        painterResource(id = R.drawable.loading_image)
+                    }
+
                 Image(
-                    painter = painterResource(id = R.drawable.pichi),
-                    contentDescription = "",
+                    painter = imagePainter,
+                    contentDescription = null,
                     modifier =
                         Modifier
-                            .size(50.dp)
+                            .size(60.dp)
                             .clip(CircleShape),
                     contentScale = ContentScale.Crop,
                 )

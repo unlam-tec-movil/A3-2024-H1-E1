@@ -19,4 +19,6 @@ interface StorageRepositoryInterface {
         idUser: String,
         idPublication: String,
     ): Flow<List<Bitmap>>
+
+    suspend fun getAllImagesForUrl(listImages: List<String>): Flow<List<Bitmap>>
 }
