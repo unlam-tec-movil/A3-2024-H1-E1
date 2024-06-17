@@ -224,7 +224,6 @@ class PublicationEditViewModel
             _contact.value = value
         }
 
-        // /la funcion validateForm esta haciendo mas de 1 cosa,  valida el formulario, setea datos y llama al editar
         fun validateForm(): Boolean {
             return title.value.isNotEmpty() &&
                 description.value.isNotEmpty() &&
@@ -233,11 +232,17 @@ class PublicationEditViewModel
                 age.value.isNotEmpty() &&
                 contact.value.isNotEmpty() &&
                 (dateLost.value?.isNotEmpty() == true) // &&
-            //   species.value.isNotEmpty() &&
-            // sex.value.isNotEmpty() &&
-            // color.value.isNotEmpty()
+            species.value.isNotEmpty() &&
+                sex.value.isNotEmpty() &&
+                color.value.isNotEmpty()
         }
 
+/*
+        fun validateLocation(): Boolean {
+            _isErrorLocation.value = location.value.isEmpty()
+            return isErrorLocation.value
+        }
+*/
         fun addNewPublication() {
             viewModelScope.launch {
                 try {

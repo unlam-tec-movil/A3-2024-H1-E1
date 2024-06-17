@@ -12,7 +12,7 @@ sealed class NavigationRoutes(val route: String) {
     object FilterScreen : NavigationRoutes("filterScreen")
 
     object PublicationScreen : NavigationRoutes("publicationScreen/{publicationId}") {
-        //  fun withPublicationId(publicationId: String) = "publicationScreen/$publicationId"
+        fun withPublicationId(publicationId: String) = "publicationScreen/$publicationId"
     }
 
     object ProfileScreen : NavigationRoutes("profileScreen")
@@ -26,6 +26,8 @@ sealed class NavigationRoutes(val route: String) {
     object PublicationDetailsScreen : NavigationRoutes("publicationDetailsScreen/{publicationId}") {
         fun withPublicationId(publicationId: String) = "publicationDetailsScreen/$publicationId"
     }
+
+    object CreateAccountScreen : NavigationRoutes("createAccountScreen")
 }
 /*
 For futures screens you can add here the new routes
