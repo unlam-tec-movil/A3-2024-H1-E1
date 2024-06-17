@@ -26,7 +26,7 @@ fun PublicationDetailsScreen(
 
     Crossfade(targetState = selectedPublication) { publication ->
         publication?.let {
-            PublicationDetails(it, onBackClick = { controller.popBackStack() })
+            PublicationDetails(it, viewModel.images.value, onBackClick = { controller.popBackStack() })
         }
     }
 }
