@@ -1,10 +1,22 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
+import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationCell
+import ar.edu.unlam.mobile.scaffolding.ui.components.SearchBox
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
 @Composable
 fun PublicationsListScreen(
@@ -12,103 +24,35 @@ fun PublicationsListScreen(
     controller: NavHostController,
     viewModel: PublicationsListViewModel = hiltViewModel(),
 ) {
-    val list =
-        listOf(
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "2",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "3",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
-            PublicationCellModel(
-                id = "1",
-                title = "Title",
-                description = "Description",
-                distance = "Distance",
-                imageResourceId = "",
-                publicationType = "PublicationType",
-            ),
+    var query by remember {
+        mutableStateOf("")
+    }
+    LaunchedEffect(key1 = query) {
+        viewModel.filterPublicationByTittle(query)
+    }
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        SearchBox(
+            listForSearch = viewModel.publicatioFilter,
+            filterList = { query -> viewModel.filterPublicationByTittle(query) },
+            controller = controller,
         )
+        // /aca nos muestra toda la lista
+        LazyColumn {
+            items(viewModel.publications.value) { publication ->
+                PublicationCell(
+                    item = publication,
+                    onClick = {
+                        controller.navigate(
+                            NavigationRoutes.PublicationScreen.withPublicationId(publication.id),
+                        )
+                    },
+                )
+            }
+        }
+    }
 }
