@@ -40,7 +40,7 @@ fun ProfileScreen(
         userProfile?.userId?.let { userId ->
             viewModel.fetchPublications(userId)
             if (deleteSuccess) {
-                //  Toast.makeText(context, "Publication deleted", Toast.LENGTH_SHORT).show()
+                //    toast.show("Publication deleted")
             }
         }
     }
@@ -59,8 +59,8 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(text = "Name: ${profile.displayName}")
-                Text(text = "Email: ${profile.email}")
+                Text(text = "User Profile")
+                Spacer(modifier = Modifier.height(50.dp))
                 Image(
                     painter = rememberImagePainter(data = profile.photoUrl),
                     contentDescription = "",
@@ -70,6 +70,7 @@ fun ProfileScreen(
                             .clip(CircleShape),
                     contentScale = ContentScale.Crop,
                 )
+                Text(text = "  ${profile.displayName}")
             }
         } ?: Text("Profile is loading...")
 
