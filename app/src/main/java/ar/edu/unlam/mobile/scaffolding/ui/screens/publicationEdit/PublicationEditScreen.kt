@@ -37,6 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +65,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -75,7 +77,7 @@ fun PublicationEditScreen(
 ) {
     // /seteamos la variable isEditing
     viewModel.setIsEditing(!idPublication.isNullOrBlank())
-
+    val scope = rememberCoroutineScope()
     val openCameraX =
         remember {
             mutableStateOf(false)
@@ -242,7 +244,7 @@ fun PublicationEditScreen(
                     Sex.entries.map { it.name },
                     initialSelectedItem = viewModel.sex.value,
                     onItemSelected = { selectedSex ->
-                        viewModel.setSex(selectedSex.toString())
+                        viewModel.setSex(selectedSex)
                     },
                     isError = viewModel.isErrorSex.value,
                 )
@@ -326,13 +328,23 @@ fun PublicationEditScreen(
                             // /si nos da true significa que algun campo falta validar , si nos da false significa que todos los campos estan validados correctamente
                             if (!viewModel.validateForm()) {
                                 if (viewModel.isEditing.value) {
-                                    viewModel.addEditPublicationToFirestore()
+                                    scope.launch {
+                                        viewModel.addEditPublicationToFirestore()
+                                        if (viewModel.publicationUiState.value is PublicationUiState.Success)
+                                            {
+                                                controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                                            }
+                                    }
                                 } else {
                                     viewModel.setNewId()
-                                    viewModel.addNewPublication()
+                                    scope.launch {
+                                        viewModel.addNewPublication()
+                                        if (viewModel.publicationUiState.value is PublicationUiState.Success)
+                                            {
+                                                controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                                            }
+                                    }
                                 }
-                                // sea que se crea una nueva publicacion o se edite te envia a la publication details
-                                controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(viewModel.id.value))
                             } else {
                                 viewModel.setSnackbar(true)
                             }
