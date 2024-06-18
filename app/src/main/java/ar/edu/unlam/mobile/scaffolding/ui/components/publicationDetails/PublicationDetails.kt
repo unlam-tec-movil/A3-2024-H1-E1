@@ -32,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,10 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
-import ar.edu.unlam.mobile.scaffolding.ui.components.post.PageDot
 import ar.edu.unlam.mobile.scaffolding.ui.utils.capitalizeFirstLetter
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.rememberPagerState
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -53,8 +50,6 @@ fun PublicationDetails(
     images: List<Bitmap>,
     onBackClick: () -> Unit,
 ) {
-    val pagerState = rememberPagerState(initialPage = 0)
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showDialogContact by remember { mutableStateOf(false) }
 
@@ -65,18 +60,16 @@ fun PublicationDetails(
                     .fillMaxSize()
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
         ) {
             Box(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .height(300.dp),
+                        .height(400.dp),
             ) {
                 Carrousel(listOfImage = images, paddingValues = 10.dp)
-                PageDot(listSize = images.size, pagerState = pagerState, scope = scope)
             }
-
             Text(
                 text = post.title,
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
