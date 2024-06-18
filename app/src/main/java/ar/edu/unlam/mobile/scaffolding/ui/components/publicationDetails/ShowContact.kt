@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactDialog(
+fun ShowContact(
     phoneNumber: Int,
     onDismiss: () -> Unit,
 ) {

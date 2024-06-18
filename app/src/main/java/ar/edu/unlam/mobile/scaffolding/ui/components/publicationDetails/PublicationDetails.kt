@@ -152,7 +152,7 @@ fun PublicationDetails(
                     Log.d("CONTACTAR", "$showDialogContact")
                 }
                 if (showDialogContact) {
-                    ContactDialog(
+                    ShowContact(
                         phoneNumber = post.contact,
                         onDismiss = {},
                     )
