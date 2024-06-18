@@ -26,4 +26,10 @@ object FirestoreModule {
 
     @Provides
     fun firestoreRepository(firestoreNet: FirestoreNetworkInterface): FirestoreRepositoryInterface = FirestoreRepository(firestoreNet)
+
+ /*   @Provides
+    @Singleton
+    fun provideUseFirestore(repository: FirestoreRepository): UseFirestore {
+        return UseFirestoreImpl(repository) // Suponiendo que tienes una implementación de UseFirestore llamada UseFirestoreImpl
+    }*/
 }
