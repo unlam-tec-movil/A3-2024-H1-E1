@@ -37,7 +37,7 @@ PublicationDetailsViewModel
                         try {
                             getAllImagesFromUrl.getAllImagesFromUrl(publication.images).collect {
                                 _images.value = it
-                            } 
+                            }
                         } catch (e: Exception) {
                             Log.e("Error PDS", e.toString())
                         }

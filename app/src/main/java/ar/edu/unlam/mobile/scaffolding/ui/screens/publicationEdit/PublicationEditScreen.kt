@@ -330,19 +330,17 @@ fun PublicationEditScreen(
                                 if (viewModel.isEditing.value) {
                                     scope.launch {
                                         viewModel.addEditPublicationToFirestore()
-                                        if (viewModel.publicationUiState.value is PublicationUiState.Success)
-                                            {
-                                                controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
-                                            }
+                                        if (viewModel.publicationUiState.value is PublicationUiState.Success) {
+                                            controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                                        }
                                     }
                                 } else {
                                     viewModel.setNewId()
                                     scope.launch {
                                         viewModel.addNewPublication()
-                                        if (viewModel.publicationUiState.value is PublicationUiState.Success)
-                                            {
-                                                controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
-                                            }
+                                        if (viewModel.publicationUiState.value is PublicationUiState.Success) {
+                                            controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                                        }
                                     }
                                 }
                             } else {
