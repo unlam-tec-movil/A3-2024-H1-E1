@@ -8,8 +8,23 @@ import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetAllImagesFromUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
+
+@Immutable
+sealed interface PublicationState {
+    data object Success : PublicationState
+
+    data object Error : PublicationState
+
+    data object Loading : PublicationState
+}
+
+data class PublicationUiState(val publicationState: PublicationState = PublicationState.Loading)
 
 @HiltViewModel
 class
@@ -22,9 +37,14 @@ PublicationDetailsViewModel
         @Suppress("ktlint:standard:backing-property-naming")
         private val _publication = mutableStateOf<PostWithImages?>(null)
 
-        @Suppress("ktlint:standard:backing-property-naming")
         private val _images = mutableStateOf<List<Bitmap>>(emptyList())
         val images: State<List<Bitmap>> = _images
+
+        @Suppress("ktlint:standard:backing-property-naming")
+        private val _publicationState = MutableStateFlow(PublicationState.Loading)
+
+        private val _uiState = MutableStateFlow(PublicationUiState(_publicationState.value))
+        val uiState: StateFlow<PublicationUiState> = _uiState.asStateFlow()
 
         suspend fun getPublicationById(publicationId: String): PostWithImages? {
             return try {
@@ -37,6 +57,7 @@ PublicationDetailsViewModel
                             _images.value = it
                         }
                         _publication.value = publication
+                        _uiState.value = PublicationUiState(PublicationState.Success)
                     }
                 _publication.value
             } catch (e: Exception) {
