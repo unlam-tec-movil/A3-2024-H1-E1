@@ -70,24 +70,34 @@ fun NavigationComponent(
             val publicationId = navBackStackEntry.arguments?.getString("idPublication")
             PublicationEditScreen(controller = navigationController, idPublication = publicationId)
         }
-
-        composable(NavigationRoutes.FilterScreen.route) {
-            FilterSettingsScreen(controller = navigationController)
-        }
-        composable(NavigationRoutes.ProfileScreen.route) {
-            ProfileScreen(controller = navigationController)
-        }
-
-        composable(NavigationRoutes.PublicationScreen.route) { navBackStackEntry ->
+        composable(NavigationRoutes.PublicationDetailsScreen.route) { navBackStackEntry ->
             val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
             PublicationDetailsScreen(
                 controller = navigationController,
                 publicationId = publicationId,
             )
         }
+
+        composable(NavigationRoutes.FilterScreen.route) {
+            FilterSettingsScreen(controller = navigationController)
+        }
+        composable(NavigationRoutes.ProfileScreen.route) { navBackStackEntry ->
+            val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
+            ProfileScreen(
+                controller = navigationController,
+                publicationId = publicationId,
+            )
+        }
+
+        composable(NavigationRoutes.PublicationScreen.route) { navBackStackEntry ->
+            val publicationId = navBackStackEntry.arguments?.getString("publicationId") ?: ""
+            PublicationDetailsScreen(
+                controller = navigationController,
+                publicationId = publicationId.toLong().toString(),
+            )
+        }
     }
 }
-
 /*
 For futures implementation you can add here the composable functions for each screen
 Here is an example of how to add a new screen
