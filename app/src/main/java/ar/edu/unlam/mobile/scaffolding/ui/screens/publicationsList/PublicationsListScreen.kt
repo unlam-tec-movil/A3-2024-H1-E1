@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationCell
 import ar.edu.unlam.mobile.scaffolding.ui.components.SearchBox
@@ -30,16 +30,16 @@ fun PublicationsListScreen(
     viewModel: PublicationsListViewModel = hiltViewModel(),
 ) {
     val uiState: PublicationsUiState by viewModel.uiState.collectAsState()
-    val publications: List<PublicationCellModel> by viewModel.publications.collectAsState()
+    val publications by viewModel.publications
     Log.d("PUBLICATIONS", publications.toString())
     val context = LocalContext.current
-  var query by remember {
+    var query by remember {
         mutableStateOf("")
     }
     LaunchedEffect(key1 = query) {
         viewModel.filterPublicationByTittle(query)
     }
-    when (val publicationState = uiState.publicationsState) {
+    when (uiState.publicationsState) {
         PublicationsState.Loading -> {
             LoadingComponent()
         }
@@ -56,10 +56,10 @@ fun PublicationsListScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 SearchBox(
-            listForSearch = viewModel.publicatioFilter,
-            filterList = { query -> viewModel.filterPublicationByTittle(query) },
-            controller = controller,
-        )
+                    listForSearch = viewModel.publicationFilter,
+                    filterList = { query -> viewModel.filterPublicationByTittle(query) },
+                    controller = controller,
+                )
                 LazyColumn {
                     items(publications) { publication ->
                         PublicationCell(
@@ -75,7 +75,6 @@ fun PublicationsListScreen(
                         )
                     }
                 }
-
             }
         }
     }
