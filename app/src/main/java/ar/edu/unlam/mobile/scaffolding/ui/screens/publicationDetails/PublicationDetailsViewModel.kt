@@ -9,8 +9,24 @@ import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetAllImagesFromUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
+
+@Immutable
+sealed interface PublicationState {
+    data object Success : PublicationState
+
+    data object Error : PublicationState
+
+    data object Loading : PublicationState
+}
+
+data class PublicationUiState(
+    val publicationState: PublicationState = PublicationState.Loading,
+)
 
 @HiltViewModel
 class
@@ -23,26 +39,28 @@ PublicationDetailsViewModel
         @Suppress("ktlint:standard:backing-property-naming")
         private val _publication = mutableStateOf<PostWithImages?>(null)
 
-        @Suppress("ktlint:standard:backing-property-naming")
         private val _images = mutableStateOf<List<Bitmap>>(emptyList())
         val images: State<List<Bitmap>> = _images
 
+        @Suppress("ktlint:standard:backing-property-naming")
+        private val _publicationState = MutableStateFlow(PublicationState.Loading)
+
+        private val _uiState = MutableStateFlow(PublicationUiState(_publicationState.value))
+        val uiState: StateFlow<PublicationUiState> = _uiState.asStateFlow()
+
         suspend fun getPublicationById(publicationId: String): PostWithImages? =
             try {
-                firestoreService
-                    .getPublicationById(publicationId)
-                    .catch {
-                        // error
-                    }.collect { publication ->
-                        try {
-                            getAllImagesFromUrl.getAllImagesFromUrl(publication.images).collect {
-                                _images.value = it
-                            }
-                        } catch (e: Exception) {
-                            Log.e("Error PDS", e.toString())
+                firestoreService.getPublicationById(publicationId).collect { publication ->
+                    try {
+                        getAllImagesFromUrl.getAllImagesFromUrl(publication.images).collect {
+                            _images.value = it
                         }
-                        _publication.value = publication
+                    } catch (e: Exception) {
+                        Log.e("Error PDS", e.toString())
                     }
+                    _publication.value = publication
+                    _uiState.value = PublicationUiState(PublicationState.Success)
+                }
                 _publication.value
             } catch (e: Exception) {
                 null
