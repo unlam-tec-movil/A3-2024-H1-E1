@@ -368,21 +368,20 @@ class PublicationEditViewModel
         }
 
         fun validateSpecies(): Boolean {
-            _isErrorSpecies.value = species.value.isBlank()
+            _isErrorSpecies.value = species.value.isEmpty()
             return isErrorSpecies.value
         }
 
         fun validateSex(): Boolean {
-            _isErrorSex.value = sex.value.isBlank()
+            _isErrorSex.value = sex.value.isEmpty()
             return isErrorSex.value
         }
 
         fun validateColor(): Boolean {
-            _isErrorColor.value = color.value.isBlank()
+            _isErrorColor.value = color.value.isEmpty()
             return isErrorColor.value
         }
 
-        // /el validate form me esta dando problemas al validar los campos
         fun validateForm(): Boolean =
             validateTitle() ||
                 validateDescription() ||
@@ -407,9 +406,11 @@ class PublicationEditViewModel
                         )
 
                     val postWithImages = createPostWithImage(imageUrls)
-                    firestoreService.addPublicationToPublicationCollection(postWithImages).collect { result ->
-                        firestoreService.addPublication(currentUserId!!, postWithImages)
-                    }
+                    firestoreService
+                        .addPublicationToPublicationCollection(postWithImages)
+                        .collect { result ->
+                            firestoreService.addPublication(currentUserId!!, postWithImages)
+                        }
                     _publicationUiState.value = PublicationUiState.Success
                 } catch (e: Exception) {
                     Log.e("PublicationEditViewModel", "Failed to add publication", e)
@@ -491,14 +492,31 @@ class PublicationEditViewModel
             }
         }
 
+        // con este cambio esperariamos a que termine de subir las imagenes para luego mostrarlas en la pantalla
         private suspend fun uploadImagesToStorage(
             images: List<Bitmap>,
             idUser: String,
             idPublication: String,
-        ): List<String> =
-            images.map { imageBitmap ->
-                storageService.uploadImage(image = imageBitmap, userId = idUser, publicationId = idPublication)
+        ): List<String> {
+            _publicationUiState.value = PublicationUiState.Loading
+            var imageUrls = mutableListOf<String>()
+            try {
+                for (imageBitmap in images) {
+                    val url =
+                        storageService.uploadImage(
+                            image = imageBitmap,
+                            userId = idUser,
+                            publicationId = idPublication,
+                        )
+                    imageUrls.add(url)
+                }
+            } catch (e: Exception) {
+                Log.e("UploadImages", "Failed upload to Storage")
+                _publicationUiState.value = PublicationUiState.Error
             }
+
+            return imageUrls
+        }
 
         private fun createPostWithImage(urls: List<String>): PostWithImages =
             PostWithImages(
@@ -516,30 +534,26 @@ class PublicationEditViewModel
                 images = urls,
             )
 
-        fun addEditPublicationToFirestore() {
+        suspend fun addEditPublicationToFirestore() {
             _publicationUiState.value = PublicationUiState.Loading
-            viewModelScope.launch {
-                try {
-                    storageService.deletePublicationImages(currentUserId!!, id.value)
-                    val urls =
-                        uploadImagesToStorage(
-                            listImageUser.value,
-                            currentUserId!!,
-                            id.value,
-                        )
-                    val newPostWithImages = createPostWithImage(urls)
-                    firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
-                        firestoreService.editPublicationForUser(
-                            currentUserId!!,
-                            id.value,
-                            newPostWithImages,
-                        )
-                    }
-                    _publicationUiState.value = PublicationUiState.Success
-                } catch (e: Exception) {
-                    Log.e("Edit Publication", "Failed upload to Firestore edit Publication")
-                    _publicationUiState.value = PublicationUiState.Error
+
+            try {
+                storageService.deletePublicationImages(currentUserId!!, id.value)
+
+                val urls = uploadImagesToStorage(listImageUser.value, currentUserId!!, id.value)
+                Log.d("UploadImages", "Uploaded image URL: $urls")
+                val newPostWithImages = createPostWithImage(urls)
+                firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
+                    firestoreService.editPublicationForUser(
+                        currentUserId!!,
+                        id.value,
+                        newPostWithImages,
+                    )
                 }
+                _publicationUiState.value = PublicationUiState.Success
+            } catch (e: Exception) {
+                Log.e("Edit Publication", "Failed upload to Firestore edit Publication")
+                _publicationUiState.value = PublicationUiState.Error
             }
         }
 

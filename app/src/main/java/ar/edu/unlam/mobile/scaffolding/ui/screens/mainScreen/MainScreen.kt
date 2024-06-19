@@ -37,7 +37,7 @@ fun MainScreen() {
             if (currentRoute == NavigationRoutes.MapScreen.route || currentRoute == NavigationRoutes.ListScreen.route) {
                 FloatingActionButton(onClick = {
                     controller.navigate(NavigationRoutes.PublicationEditScreen.route)
-                    // controller.navigate(NavigationRoutes.PublicationEditScreen.withPublicationId("f2efa5d1-b0d6-4ef9-a847-12c6475404cb"))
+                    // controller.navigate(NavigationRoutes.PublicationEditScreen.withPublicationId("8c535ce2-66c5-4f81-8094-b30c9ec5f5fb"))
                 }) {
                     Icon(Icons.Filled.Add, "Floating action button.")
                 }

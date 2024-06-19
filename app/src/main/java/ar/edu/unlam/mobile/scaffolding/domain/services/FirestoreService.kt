@@ -50,7 +50,17 @@ class FirestoreService
             idPublication: String,
             updatedPublication: PostWithImages,
         ): Flow<PostWithImages> {
-            return firestoreRepository.editPublicationInAllPublications(idPublication, updatedPublication)
+            return firestoreRepository.editPublicationInAllPublications(
+                idPublication,
+                updatedPublication,
+            )
+        }
+
+        override suspend fun deletePublicationForUser(
+            userId: String,
+            publicationId: String,
+        ): Flow<Boolean> {
+            return firestoreRepository.deletePublicationForUser(userId, publicationId)
         }
 
         override suspend fun invoke(): Flow<List<LatLng>> {
@@ -60,6 +70,10 @@ class FirestoreService
                     LatLng(parts[0].toDouble(), parts[1].toDouble())
                 }
             }
+        }
+
+        suspend fun deletePublicationInAllPublications(publicationId: String): Flow<Boolean> {
+            return firestoreRepository.deletePublicationInAllPublications(publicationId)
         }
 
         private fun parseLatLng(location: String): LatLng? {
