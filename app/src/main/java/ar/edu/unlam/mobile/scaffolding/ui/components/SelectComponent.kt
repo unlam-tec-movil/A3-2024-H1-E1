@@ -10,9 +10,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
@@ -29,7 +31,12 @@ fun SelectComponent(
     var isExpanded by remember { mutableStateOf(false) }
 
     // Variable para manejar el estado del elemento seleccionado
+    val updateSelectedItem by rememberUpdatedState(initialSelectedItem)
     var selectedItem by remember { mutableStateOf(initialSelectedItem) }
+
+    LaunchedEffect(key1 = updateSelectedItem) {
+        selectedItem = updateSelectedItem
+    }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = title)

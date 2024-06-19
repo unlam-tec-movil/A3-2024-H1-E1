@@ -25,18 +25,15 @@ sealed class NavigationRoutes(
         fun withPublicationId(publicationId: String) = "publicationDetailsScreen/$publicationId"
     }
 
-    object PublicationEditScreen : NavigationRoutes("publicationEditScreen/{publicationId}") {
-        fun withPublicationId(publicationId: String) = "publicationEditScreen/$publicationId"
-    }
-
-  /*  object PublicationEditScreen : NavigationRoutes("publicationEditScreen/{idPublication}") {
+    object PublicationEditScreen : NavigationRoutes("publicationEditScreen") {
         fun withPublicationId(idPublication: String? = null): String {
             if (idPublication.isNullOrEmpty()) {
-                return "publicationEditScreen/"
+                return "publicationEditScreen"
             } else {
-                return "publicationEditScreen/idPublication"
+                return "publicationEditScreen/$idPublication"
             }
-        }*/
+        }
+    }
 
     object CreateAccountScreen : NavigationRoutes("createAccountScreen")
 }
