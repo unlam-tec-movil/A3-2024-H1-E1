@@ -36,7 +36,6 @@ class StorageNetworkImpl
             return try {
                 imgReference.putBytes(imageData).await()
                 val downloadUrl = imgReference.downloadUrl.await().toString()
-                Log.d("StorageService", "Image uploaded successfully: $downloadUrl")
                 downloadUrl
             } catch (e: Exception) {
                 // Qué hacemos si no pudo subir la imagen, por alguna razón

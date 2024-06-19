@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationDetails
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -48,20 +49,19 @@ PublicationDetailsViewModel
 
         suspend fun getPublicationById(publicationId: String): PostWithImages? {
             return try {
-                firestoreService.getPublicationById(publicationId)
-                    .catch {
-                        // error
-                    }
-                    .collect { publication ->
-                        getAllImagesFromUrl.getAllImagesFromUrl(publication.images).collect {
-                            _images.value = it
+                firestoreService.getPublicationById(publicationId).collect { publication ->
+                        try {
+                            getAllImagesFromUrl.getAllImagesFromUrl(publication.images).collect {
+                                _images.value = it
+                            }
+                        } catch (e: Exception) {
+                            Log.e("Error PDS", e.toString())
                         }
                         _publication.value = publication
                         _uiState.value = PublicationUiState(PublicationState.Success)
                     }
                 _publication.value
             } catch (e: Exception) {
-                // Manejar error
                 null
             }
         }
