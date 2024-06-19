@@ -3,8 +3,6 @@ package ar.edu.unlam.mobile.scaffolding
 import android.graphics.Bitmap
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
@@ -32,7 +30,6 @@ class CarrouselTest {
         }
         // /verificamos que el carrousel se muestra correctamente
         images.forEachIndexed { index, bitmap ->
-            composeTestRule.onRoot().printToLog("CARROUSEL_TEST") // Useful for debugging
             composeTestRule
                 .onNodeWithContentDescription("Image $index")
                 .assertExists()
