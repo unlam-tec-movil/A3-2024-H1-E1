@@ -24,7 +24,9 @@ sealed interface PublicationState {
     data object Loading : PublicationState
 }
 
-data class PublicationUiState(val publicationState: PublicationState = PublicationState.Loading)
+data class PublicationUiState(
+    val publicationState: PublicationState = PublicationState.Loading,
+)
 
 @HiltViewModel
 class
@@ -46,22 +48,21 @@ PublicationDetailsViewModel
         private val _uiState = MutableStateFlow(PublicationUiState(_publicationState.value))
         val uiState: StateFlow<PublicationUiState> = _uiState.asStateFlow()
 
-        suspend fun getPublicationById(publicationId: String): PostWithImages? {
-            return try {
+        suspend fun getPublicationById(publicationId: String): PostWithImages? =
+            try {
                 firestoreService.getPublicationById(publicationId).collect { publication ->
                     try {
                         getAllImagesFromUrl.getAllImagesFromUrl(publication.images).collect {
-                                _images.value = it
+                            _images.value = it
                         }
                     } catch (e: Exception) {
-                            Log.e("Error PDS", e.toString())
-                        }
-                        _publication.value = publication
-                        _uiState.value = PublicationUiState(PublicationState.Success)
+                        Log.e("Error PDS", e.toString())
                     }
+                    _publication.value = publication
+                    _uiState.value = PublicationUiState(PublicationState.Success)
+                }
                 _publication.value
             } catch (e: Exception) {
                 null
             }
-        }
     }
