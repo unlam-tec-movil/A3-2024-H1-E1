@@ -340,6 +340,19 @@ class PublicationEditViewModel
             return isErrorContact.value
         }
 
+        fun validateForm(): Boolean {
+            return title.value.isNotEmpty() &&
+                description.value.isNotEmpty() &&
+                location.value.isNotEmpty() &&
+                type.value.isNotEmpty() &&
+                age.value.isNotEmpty() &&
+                contact.value.isNotEmpty() &&
+                (dateLost.value?.isNotEmpty() == true) // &&
+            species.value.isNotEmpty() &&
+                sex.value.isNotEmpty() &&
+                color.value.isNotEmpty()
+        }
+
         fun validateLocation(): Boolean {
             _isErrorLocation.value = location.value.isEmpty()
             return isErrorLocation.value
