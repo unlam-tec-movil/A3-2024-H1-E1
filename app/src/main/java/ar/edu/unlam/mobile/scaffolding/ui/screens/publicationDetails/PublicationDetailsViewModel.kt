@@ -12,7 +12,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
@@ -50,11 +49,11 @@ PublicationDetailsViewModel
         suspend fun getPublicationById(publicationId: String): PostWithImages? {
             return try {
                 firestoreService.getPublicationById(publicationId).collect { publication ->
-                        try {
-                            getAllImagesFromUrl.getAllImagesFromUrl(publication.images).collect {
+                    try {
+                        getAllImagesFromUrl.getAllImagesFromUrl(publication.images).collect {
                                 _images.value = it
-                            }
-                        } catch (e: Exception) {
+                        }
+                    } catch (e: Exception) {
                             Log.e("Error PDS", e.toString())
                         }
                         _publication.value = publication
