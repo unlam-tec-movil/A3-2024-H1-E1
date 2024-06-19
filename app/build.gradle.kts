@@ -131,12 +131,12 @@ dependencies {
     implementation(libs.cameraExtensions)
 
     // test
-    testImplementation("org.mockito:mockito-core:4.3.1")
-    testImplementation("org.mockito:mockito-inline:4.3.1")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.6.10")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     // coil
     implementation("io.coil-kt:coil-compose:1.4.0")
