@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
@@ -37,6 +38,11 @@ object DataStoreManager {
             preferences[key] ?: defaultValue
         }
 
+    suspend fun readShowTooltipFromDataStore(): Boolean {
+        val preferences = dataStore.data.first()
+        return preferences[Keys.SHOW_TOOLTIP] ?: true // Si no existe el valor, por defecto es true
+    }
+
     suspend fun clearDataStore() {
         dataStore.edit { preferences ->
             preferences.clear()
@@ -50,6 +56,7 @@ object DataStoreManager {
         val IS_DARK_MODE_ENABLED = booleanPreferencesKey("dark_mode")
         val NOTIFICATION_ENABLED = booleanPreferencesKey("notifications_enabled")
         val LAST_LOGIN_TIMESTAMP = longPreferencesKey("last_login_timestamp")
+        val SHOW_TOOLTIP = booleanPreferencesKey("show_tooltip")
         // Add other keys as needed
     }
 }
