@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,6 +87,7 @@ fun PublicationEditScreen(
     val address by viewModel.address.collectAsState()
     val geocodedLocation by viewModel.geocodedLocation.collectAsState()
     val cameraState = rememberCameraPositionState()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(geocodedLocation) {
         geocodedLocation?.let {
@@ -314,10 +316,13 @@ fun PublicationEditScreen(
                         isError = viewModel.isErrorLocation.value,
                         errorMessage = "Campo requerido",
                         onTextChange = { viewModel.validateLocation() },
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                         keyboardActions =
-                            KeyboardActions(onDone = {
-                                viewModel.geocodeAddress(address)
+                            KeyboardActions(onNext = {
+                                keyboardController?.hide()
+                                scope.launch {
+                                    viewModel.geocodeAddress(address)
+                                }
                             }),
                         singleLine = true,
                     )
