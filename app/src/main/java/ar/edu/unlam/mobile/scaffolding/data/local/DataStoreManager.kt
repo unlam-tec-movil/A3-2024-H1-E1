@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
@@ -37,11 +36,6 @@ object DataStoreManager {
         dataStore.data.map { preferences ->
             preferences[key] ?: defaultValue
         }
-
-    suspend fun readShowTooltipFromDataStore(): Boolean {
-        val preferences = dataStore.data.first()
-        return preferences[Keys.SHOW_TOOLTIP] ?: true // Si no existe el valor, por defecto es true
-    }
 
     suspend fun clearDataStore() {
         dataStore.edit { preferences ->

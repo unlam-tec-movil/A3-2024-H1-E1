@@ -44,15 +44,23 @@ fun PublicationDetailsScreen(
 
     val scope = rememberCoroutineScope()
 
-    // inicializa el tooltip en true
-    var showTooltip by remember { mutableStateOf(true) }
-    // Escucha si cambio en el dataStore
-    LaunchedEffect(Unit) {
-        showTooltip = dataStoreManager.readShowTooltipFromDataStore()
+    var showTooltip by remember {
+        mutableStateOf(true)
     }
+
+    LaunchedEffect(Unit) {
+        dataStoreManager.readFromDataStore(
+            DataStoreManager.Keys.SHOW_TOOLTIP,
+            true,
+        ).collect { value ->
+            showTooltip = value
+        }
+    }
+
     LaunchedEffect(publicationId) {
         selectedPublication = viewModel.getPublicationById(publicationId)
     }
+
     when (val publicationState = uiState.publicationState) {
         PublicationState.Loading -> {
             LoadingComponent()
