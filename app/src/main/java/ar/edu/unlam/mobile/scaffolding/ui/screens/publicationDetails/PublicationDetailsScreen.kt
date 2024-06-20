@@ -18,21 +18,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.data.local.DataStoreManager
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.ui.components.GyroscopeSplash
 import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
-import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationDetails
+import ar.edu.unlam.mobile.scaffolding.ui.components.publicationDetails.PublicationDetails
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 import kotlinx.coroutines.launch
 
 private const val GIROSCOPIO_UMBRAL = 1.5f // Define el umbral para el giro hacia atrás
-
-import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
-import ar.edu.unlam.mobile.scaffolding.ui.components.publicationDetails.PublicationDetails
 
 @Composable
 fun PublicationDetailsScreen(
