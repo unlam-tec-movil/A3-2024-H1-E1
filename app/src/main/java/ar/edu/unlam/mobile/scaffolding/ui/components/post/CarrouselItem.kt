@@ -15,6 +15,7 @@ import androidx.compose.ui.util.lerp
 fun CarrouselItem(
     item: Bitmap,
     pageOffset: Float,
+    index: Int,
     onItemClick: (Bitmap) -> Unit = {},
 ) {
     Card(
@@ -26,25 +27,23 @@ fun CarrouselItem(
                         start = 0.85f,
                         stop = 1f,
                         fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                    )
-                        .also { scale ->
-                            scaleX = scale
-                            scaleY = scale
-                        }
+                    ).also { scale ->
+                        scaleX = scale
+                        scaleY = scale
+                    }
                     alpha =
                         lerp(
                             start = 0.5f,
                             stop = 1f,
                             fraction = 1f - pageOffset.coerceIn(0f, 1f),
                         )
-                }
-                .clickable {
+                }.clickable {
                     onItemClick(item)
                 },
     ) {
         DisplayImageBitmap(
             data = item,
-            contentDescription = null,
+            contentDescription = "${index - 1}",
             modifier =
                 Modifier
                     .fillMaxSize(),
