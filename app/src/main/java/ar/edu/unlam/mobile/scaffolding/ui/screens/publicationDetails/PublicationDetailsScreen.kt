@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationDetails
 
+import android.widget.Toast
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.data.local.DataStoreManager
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.ui.components.GyroscopeSplash
+import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationDetails
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 import kotlinx.coroutines.launch
@@ -34,6 +36,7 @@ fun PublicationDetailsScreen(
     viewModel: PublicationDetailsViewModel = hiltViewModel(),
     publicationId: String,
 ) {
+    val uiState: PublicationUiState by viewModel.uiState.collectAsState()
     var selectedPublication by remember { mutableStateOf<PostWithImages?>(null) }
     val context = LocalContext.current
     val dataStoreManager = remember { DataStoreManager }
@@ -47,41 +50,54 @@ fun PublicationDetailsScreen(
     LaunchedEffect(Unit) {
         showTooltip = dataStoreManager.readShowTooltipFromDataStore()
     }
-
-    // Leer el valor del DataStore de manera asíncrona
     LaunchedEffect(publicationId) {
         selectedPublication = viewModel.getPublicationById(publicationId)
     }
+    when (val publicationState = uiState.publicationState) {
+        PublicationState.Loading -> {
+            LoadingComponent()
+        }
 
-    Crossfade(targetState = selectedPublication) { publication ->
-        publication?.let {
-            PublicationDetails(it, viewModel.images.value, onBackClick = { controller.popBackStack() })
+        PublicationState.Error -> {
+            Toast.makeText(context, "Error al buscar la informacion", Toast.LENGTH_SHORT).show()
         }
-    }
-    if (showTooltip) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            GyroscopeSplash(
-                onDismiss = {
-                    showTooltip = false
-                },
-                onNeverShowAgain = {
-                    scope.launch {
-                        dataStoreManager.writeToDataStore(DataStoreManager.Keys.SHOW_TOOLTIP, false)
-                    }
-                },
-                modifier = Modifier.padding(16.dp),
-            )
-        }
-    }
-    // Escuche los cambios del sensor de giroscopio para navegar hacia atrás
-    val rotationY by viewModel.rotationY.collectAsState(initial = 0f)
-    LaunchedEffect(rotationY) {
-        if (rotationY > GIROSCOPIO_UMBRAL) {
-            controller.navigate(NavigationRoutes.ListScreen.route)
+
+        PublicationState.Success -> {
+            Crossfade(targetState = selectedPublication, label = "") { publication ->
+                publication?.let {
+                    PublicationDetails(
+                        it,
+                        viewModel.images.value,
+                        onBackClick = { controller.popBackStack() },
+                    )
+                }
+            }
+            if (showTooltip) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    GyroscopeSplash(
+                        onDismiss = {
+                            showTooltip = false
+                        },
+                        onNeverShowAgain = {
+                            scope.launch {
+                                dataStoreManager.writeToDataStore(DataStoreManager.Keys.SHOW_TOOLTIP, false)
+                            }
+                        },
+                        modifier = Modifier.padding(16.dp),
+                    )
+                }
+            }
+            // Escuche los cambios del sensor de giroscopio para navegar hacia atrás
+            val rotationY by viewModel.rotationY.collectAsState(initial = 0f)
+            LaunchedEffect(rotationY) {
+                if (rotationY > GIROSCOPIO_UMBRAL) {
+                    controller.navigate(NavigationRoutes.ListScreen.route)
+                }
+            }
         }
     }
 }
