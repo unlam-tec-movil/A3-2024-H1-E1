@@ -477,23 +477,6 @@ class PublicationEditViewModel
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         suspend fun geocodeAddress(address: String) {
             Log.d("PublicationEditViewModel", "Geocoding address: $address")
-//            viewModelScope.launch {
-//                try {
-//                    val geocoder = Geocoder(context)
-//                    geocoder.getFromLocationName(address, 1) { addresses ->
-//                        if (addresses.isNotEmpty()) {
-//                            val location = addresses[0]
-//                            _geocodedLocation.value = LatLng(location.latitude, location.longitude)
-//                            Log.d("PublicationEditViewModel", "Geocoded location: ${_geocodedLocation.value}")
-//                        } else {
-//                            _geocodedLocation.value = null
-//                            Log.d("PublicationEditViewModel", "Geocoded location is null")
-//                        }
-//                    }
-//                } catch (e: Exception) {
-//                    Log.e("PublicationEditViewModel", "Failed to geocode address", e)
-//                }
-//            }
             withContext(Dispatchers.IO) {
                 try {
                     val geocoder = Geocoder(context)
