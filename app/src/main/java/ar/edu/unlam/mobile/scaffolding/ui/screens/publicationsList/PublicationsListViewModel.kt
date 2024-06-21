@@ -64,6 +64,8 @@ class PublicationsListViewModel
                                 distance = "",
                                 imageResourceId = (it.images.firstOrNull() ?: ""),
                                 publicationType = it.type,
+                                species = "",
+                                dateLost = "",
                             )
                         }
                     }.catch { e ->

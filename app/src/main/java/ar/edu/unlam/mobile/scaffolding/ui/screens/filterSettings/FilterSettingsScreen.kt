@@ -35,17 +35,17 @@ fun FilterSettingsScreen(
     controller: NavHostController,
     viewModel: FilterSettingsViewModel = hiltViewModel(),
 ) {
-    val list = listOf("Avistamiento", "Busqueda", "Dar en adopcion")
-    var selectedText by remember {
-        mutableStateOf(list[0])
+    val listaTipos = listOf("Avistamiento", "Búsqueda", "Dar en adopción")
+    var tipoSeleccionado by remember {
+        mutableStateOf(listaTipos[0])
     }
-    val list1 = listOf("Perro", "Gato", "Pajaro", "Tortuga", "Otros Especies")
-    var selectedText1 by remember {
-        mutableStateOf(list1[0])
+    val listaEspecies = listOf("Perro", "Gato", "Pájaro", "Tortuga", "Otras Especies")
+    var especieSeleccionada by remember {
+        mutableStateOf(listaEspecies[0])
     }
 
-    val distanceSliderState = remember { mutableFloatStateOf(0f) }
-    var dateLost by remember { mutableStateOf("") }
+    val distanciaSliderState = remember { mutableFloatStateOf(0f) }
+    var fechaPerdida by remember { mutableStateOf("") }
 
     Column(
         modifier =
@@ -61,10 +61,10 @@ fun FilterSettingsScreen(
                     .fillMaxWidth()
                     .padding(top = 30.dp),
         ) {
-            Text("Distancia: ${distanceSliderState.floatValue} km")
+            Text("Distancia: ${distanciaSliderState.floatValue} km")
             Slider(
-                value = distanceSliderState.floatValue,
-                onValueChange = { newValue -> distanceSliderState.floatValue = newValue },
+                value = distanciaSliderState.floatValue,
+                onValueChange = { nuevoValor -> distanciaSliderState.floatValue = nuevoValor },
                 valueRange = 0f..20f,
                 steps = 20,
             )
@@ -72,9 +72,10 @@ fun FilterSettingsScreen(
         Column(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Fecha de perdida:")
+            Text("Fecha de pérdida:")
             DatePickerComponent(
-                onDateSelected = { selectedDate ->
+                onDateSelected = { fechaSeleccionada ->
+                    fechaPerdida = fechaSeleccionada
                 },
             )
         }
@@ -86,9 +87,9 @@ fun FilterSettingsScreen(
         ) {
             SelectComponent(
                 title = "Especie",
-                list = list1,
-                onItemSelected = { selectedItem ->
-                    selectedText1 = selectedItem
+                list = listaEspecies,
+                onItemSelected = { itemSeleccionado ->
+                    especieSeleccionada = itemSeleccionado
                 },
             )
         }
@@ -98,12 +99,11 @@ fun FilterSettingsScreen(
                 Modifier
                     .fillMaxWidth(),
         ) {
-            Text("Tipo de publicacion")
             SelectComponent(
-                title = "Tipo de publicacion",
-                list = list,
-                onItemSelected = { selectedItem ->
-                    selectedText = selectedItem
+                title = "Tipo de publicación",
+                list = listaTipos,
+                onItemSelected = { itemSeleccionado ->
+                    tipoSeleccionado = itemSeleccionado
                 },
             )
         }
@@ -123,6 +123,12 @@ fun FilterSettingsScreen(
             }
             Button(
                 onClick = {
+                    viewModel.selectedSpecies = especieSeleccionada
+                    viewModel.selectedPublicationType = tipoSeleccionado
+                    viewModel.selectedDistance = distanciaSliderState.floatValue
+                    viewModel.selectedDateLost = fechaPerdida
+
+                    // Volver a la pantalla anterior
                     controller.popBackStack()
                 },
                 modifier = Modifier,
