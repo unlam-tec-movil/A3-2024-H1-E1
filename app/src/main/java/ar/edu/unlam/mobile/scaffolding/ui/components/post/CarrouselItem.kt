@@ -43,7 +43,7 @@ fun CarrouselItem(
     ) {
         DisplayImageBitmap(
             data = item,
-            contentDescription = "${index - 1}",
+            contentDescription = "$index",
             modifier =
                 Modifier
                     .fillMaxSize(),
