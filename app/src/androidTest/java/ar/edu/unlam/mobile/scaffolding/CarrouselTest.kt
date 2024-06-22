@@ -1,9 +1,12 @@
 package ar.edu.unlam.mobile.scaffolding
 
 import android.graphics.Bitmap
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AtomicReference
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -30,11 +33,12 @@ class CarrouselTest {
                 paddingValues = 80.dp,
             )
         }
+        composeTestRule.onRoot().printToLog("CarrouselTest")
         // /verificamos que el carrousel se muestra correctamente
         images.forEachIndexed { index, bitmap ->
             composeTestRule
                 .onNodeWithContentDescription("$index")
-                .assertExists()
+                .assertIsDisplayed()
         }
     }
 
