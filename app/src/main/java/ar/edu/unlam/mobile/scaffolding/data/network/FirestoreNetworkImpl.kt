@@ -39,6 +39,8 @@ class FirestoreNetworkImpl
                                 location = publicationData["location"] as String,
                                 contact = (publicationData["contact"] as Long).toInt(),
                                 images = (publicationData["images"] as List<String>),
+                                locationLng = publicationData["locationLng"] as? Double ?: 0.0,
+                                locationLat = publicationData["locationLat"] as? Double ?: 0.0,
                             )
                         } ?: emptyList()
 
@@ -74,6 +76,8 @@ class FirestoreNetworkImpl
                                 location = it["location"] as String,
                                 contact = (it["contact"] as Long).toInt(),
                                 images = (it["images"] as? List<String>) ?: emptyList(),
+                                locationLng = it["locationLng"] as Double,
+                                locationLat = it["locationLat"] as Double,
                             )
                         } ?: emptyList()
 
@@ -116,6 +120,8 @@ class FirestoreNetworkImpl
                                 location = it["location"] as String,
                                 contact = (it["contact"] as Long).toInt(),
                                 images = (it["images"] as? List<String>) ?: emptyList(),
+                                locationLat = it["locationLat"] as Double,
+                                locationLng = it["locationLng"] as Double,
                             )
                         }
 
@@ -215,6 +221,8 @@ class FirestoreNetworkImpl
                                     location = publicationData["location"] as String,
                                     contact = (publicationData["contact"] as Long).toInt(),
                                     images = (publicationData["images"] as List<String>),
+                                    locationLat = publicationData["locationLat"] as Double,
+                                    locationLng = publicationData["locationLng"] as Double,
                                 )
                             }
                         }
@@ -268,6 +276,8 @@ class FirestoreNetworkImpl
                                     location = publicationData["location"] as String,
                                     contact = (publicationData["contact"] as Long).toInt(),
                                     images = (publicationData["images"] as List<String>),
+                                    locationLat = publicationData["locationLat"] as Double,
+                                    locationLng = publicationData["locationLng"] as Double,
                                 )
                             }
                         }

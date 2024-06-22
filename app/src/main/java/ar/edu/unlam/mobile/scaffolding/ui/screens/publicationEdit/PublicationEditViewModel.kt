@@ -360,7 +360,7 @@ class PublicationEditViewModel
         }
 
         fun validateLocation(): Boolean {
-            _isErrorLocation.value = location.value.isEmpty()
+            _isErrorLocation.value = geocodedLocation.value == null
             return isErrorLocation.value
         }
 
@@ -394,7 +394,8 @@ class PublicationEditViewModel
                 validateLocation() ||
                 validateContact() ||
                 validateColor() ||
-                validateAge()
+                validateAge() ||
+                validateLocation()
 
         fun addNewPublication() {
             _publicationUiState.value = PublicationUiState.Loading
@@ -536,6 +537,8 @@ class PublicationEditViewModel
                 location = location.value,
                 contact = contact.value.toInt(),
                 images = urls,
+                locationLat = geocodedLocation.value?.latitude ?: 0.0,
+                locationLng = geocodedLocation.value?.longitude ?: 0.0,
             )
 
         suspend fun addEditPublicationToFirestore() {

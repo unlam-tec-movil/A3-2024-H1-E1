@@ -67,7 +67,7 @@ fun PublicationsMapScreen(
         }
     }
     LaunchedEffect(Unit) {
-//        viewModel.getMarkers()
+        viewModel.getMarkers()
     }
     Box(
         modifier =

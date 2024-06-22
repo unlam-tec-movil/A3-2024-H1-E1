@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.domain.services
 
 import ar.edu.unlam.mobile.scaffolding.data.repository.FirestoreRepositoryInterface
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
+import ar.edu.unlam.mobile.scaffolding.domain.models.SimplifiedPublicationMarker
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetMarkersUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.UseFirestore
 import com.google.android.gms.maps.model.LatLng
@@ -63,11 +64,21 @@ class FirestoreService
             return firestoreRepository.deletePublicationForUser(userId, publicationId)
         }
 
-        override suspend fun invoke(): Flow<List<LatLng>> {
+        override suspend fun invoke(): Flow<List<SimplifiedPublicationMarker>> {
             return getAllPublications().map { posts ->
                 posts.map { post ->
-                    val parts = post.location.split(", ")
-                    LatLng(parts[0].toDouble(), parts[1].toDouble())
+//                    val parts = post.location.split(", ")
+//                    LatLng(parts[0].toDouble(), parts[1].toDouble())
+                    SimplifiedPublicationMarker(
+                        id = post.id,
+                        type = post.type,
+                        title = post.title,
+                        description = post.description,
+                        dateLost = post.dateLost,
+                        species = post.species,
+                        locationCoordinates = LatLng(post.locationLat, post.locationLng),
+                        images = post.images,
+                    )
                 }
             }
         }

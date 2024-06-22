@@ -1,7 +1,9 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.domain.models.SimplifiedPublicationMarker
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetLocationUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetMarkersUseCase
 import com.google.android.gms.maps.model.LatLng
@@ -32,6 +34,9 @@ class PublicationsMapViewModel
         private val _markers = MutableStateFlow<List<LatLng>>(emptyList())
         val markers = _markers.asStateFlow()
 
+        private val _publicationMarkers = MutableStateFlow<List<SimplifiedPublicationMarker>>(emptyList())
+        val publicationMarkers = _publicationMarkers.asStateFlow()
+
         fun handle(event: PermissionEvent) {
             when (event) {
                 is PermissionEvent.Granted -> {
@@ -58,8 +63,11 @@ class PublicationsMapViewModel
 
         fun getMarkers() {
             viewModelScope.launch {
-                getMarkersUseCase.invoke().collect { markers ->
-                    _markers.value = markers
+                getMarkersUseCase.invoke().collect { publicationMarkers ->
+                    publicationMarkers.forEach { publicationMarker ->
+                        Log.d("PublicationMarker", publicationMarker.toString())
+                    }
+                    _publicationMarkers.value = publicationMarkers
                 }
             }
         }
