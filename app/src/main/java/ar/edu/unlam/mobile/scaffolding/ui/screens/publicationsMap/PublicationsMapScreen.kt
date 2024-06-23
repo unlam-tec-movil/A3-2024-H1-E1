@@ -57,7 +57,7 @@ fun PublicationsMapScreen(
     val isUserLocationEnabled by viewModel.isUserLocationEnabled.collectAsState()
     val cameraCenterLocation by viewModel.cameraCenterLocation.collectAsState()
     val showRationaleAlert by viewModel.showRationaleAlert.collectAsState()
-    val markers by viewModel.markers.collectAsState()
+    val publicationMarkers by viewModel.publicationMarkers.collectAsState()
 
     LaunchedEffect(cameraCenterLocation) {
         if (permissionState.allPermissionsGranted) {
@@ -75,7 +75,7 @@ fun PublicationsMapScreen(
                 .fillMaxSize(),
     ) {
         MapsComponent(
-            markers = markers,
+            markers = publicationMarkers,
             cameraPositionState = cameraState,
             isUserLocationEnabled = viewModel.isUserLocationEnabled.collectAsState(),
         )

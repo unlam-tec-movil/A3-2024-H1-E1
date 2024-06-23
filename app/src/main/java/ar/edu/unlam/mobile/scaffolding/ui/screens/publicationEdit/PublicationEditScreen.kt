@@ -331,9 +331,10 @@ fun PublicationEditScreen(
                         modifier =
                             Modifier
                                 .height(250.dp),
-                        markers = geocodedLocation?.let { listOf(it) } ?: emptyList(),
+                        markers = emptyList(),
                         cameraPositionState = cameraState,
                         isUserLocationEnabled = remember { mutableStateOf(false) },
+                        userMarker = geocodedLocation,
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
