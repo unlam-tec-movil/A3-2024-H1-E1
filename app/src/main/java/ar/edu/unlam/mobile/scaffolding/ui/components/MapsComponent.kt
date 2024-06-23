@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
@@ -12,12 +13,13 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.MarkerState
 
 @Composable
 fun MapsComponent(
     modifier: Modifier = Modifier,
-    markers: List<SimplifiedPublicationMarker>,
+    markers: State<List<SimplifiedPublicationMarker>>,
     cameraPositionState: CameraPositionState,
     isUserLocationEnabled: State<Boolean>,
     userMarker: LatLng? = null,
@@ -41,8 +43,14 @@ fun MapsComponent(
         properties = properties,
         cameraPositionState = cameraPositionState,
     ) {
-        markers.forEach { location ->
-            Marker(state = MarkerState(position = location.locationCoordinates))
+        markers.value.forEach { publication ->
+//            Marker(state = MarkerState(position = publication.locationCoordinates))
+            MarkerComposable(
+                state = MarkerState(position = publication.locationCoordinates),
+            ) {
+                val speciesIcon: String = publication.species.getEmoji()
+                Text(text = speciesIcon)
+            }
         }
         if (userMarker != null) {
             Marker(state = MarkerState(position = userMarker))

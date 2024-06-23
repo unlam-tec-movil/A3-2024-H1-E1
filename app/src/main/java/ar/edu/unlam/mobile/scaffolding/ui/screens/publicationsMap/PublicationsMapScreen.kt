@@ -75,7 +75,7 @@ fun PublicationsMapScreen(
                 .fillMaxSize(),
     ) {
         MapsComponent(
-            markers = publicationMarkers,
+            markers = viewModel.publicationMarkers.collectAsState(),
             cameraPositionState = cameraState,
             isUserLocationEnabled = viewModel.isUserLocationEnabled.collectAsState(),
         )
