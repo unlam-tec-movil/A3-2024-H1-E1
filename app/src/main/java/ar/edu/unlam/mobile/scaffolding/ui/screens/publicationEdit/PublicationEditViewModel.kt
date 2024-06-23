@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.location.Geocoder
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -22,8 +25,13 @@ import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetCurrentUser
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -46,6 +54,7 @@ class PublicationEditViewModel
         private val storageService: StorageService,
         private val getUser: GetCurrentUser,
         private val firestoreService: FirestoreService,
+        private val context: Context,
     ) : ViewModel() {
         private var currentUserId: String? = null
 
@@ -202,6 +211,15 @@ class PublicationEditViewModel
         private val _isErrorLocation = mutableStateOf(false)
         val isErrorLocation: State<Boolean> get() = _isErrorLocation
 
+        private val _address = MutableStateFlow("")
+        val address = _address.asStateFlow()
+
+        private val _geocodedLocation = MutableStateFlow<LatLng?>(null)
+        val geocodedLocation = _geocodedLocation.asStateFlow()
+
+        private var _cameraCenterLocation = MutableStateFlow<LatLng?>(null)
+        val cameraCenterLocation = _cameraCenterLocation.asStateFlow()
+
         fun setIsEditing(value: Boolean) {
             _isEditing.value = value
         }
@@ -271,8 +289,9 @@ class PublicationEditViewModel
             validateColor()
         }
 
-        fun setLocation(value: String) {
-            _location.value = value
+        fun onAddressChange(value: String) {
+            _address.value = value
+//            geocodeAddress(value)
             validateLocation()
         }
 
@@ -341,7 +360,7 @@ class PublicationEditViewModel
         }
 
         fun validateLocation(): Boolean {
-            _isErrorLocation.value = location.value.isEmpty()
+            _isErrorLocation.value = geocodedLocation.value == null
             return isErrorLocation.value
         }
 
@@ -375,7 +394,8 @@ class PublicationEditViewModel
                 validateLocation() ||
                 validateContact() ||
                 validateColor() ||
-                validateAge()
+                validateAge() ||
+                validateLocation()
 
         suspend fun addNewPublication() {
             _publicationUiState.value = PublicationUiState.Loading
@@ -434,7 +454,7 @@ class PublicationEditViewModel
                     setSex(result.sex)
                     setAge((result.age).toString())
                     setColor(result.color)
-                    setLocation(result.location)
+                    onAddressChange(result.location)
                     setContact(result.contact.toString())
                     storageService.getAllImagesFromUrl(result.images).collect { result ->
                         if (result.isEmpty()) {
@@ -443,6 +463,28 @@ class PublicationEditViewModel
                             _listImagesForUser.value = result
                         }
                     }
+                }
+            }
+        }
+
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+        suspend fun geocodeAddress(address: String) {
+            Log.d("PublicationEditViewModel", "Geocoding address: $address")
+            withContext(Dispatchers.IO) {
+                try {
+                    val geocoder = Geocoder(context)
+                    geocoder.getFromLocationName(address, 1) { addresses ->
+                        if (addresses.isNotEmpty()) {
+                            val location = addresses[0]
+                            _geocodedLocation.value = LatLng(location.latitude, location.longitude)
+                            Log.d("PublicationEditViewModel", "Geocoded location: ${_geocodedLocation.value}")
+                        } else {
+                            _geocodedLocation.value = null
+                            Log.d("PublicationEditViewModel", "Geocoded location is null")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("PublicationEditViewModel", "Failed to geocode address", e)
                 }
             }
         }
@@ -487,6 +529,8 @@ class PublicationEditViewModel
                 location = location.value,
                 contact = contact.value.toInt(),
                 images = urls,
+                locationLat = geocodedLocation.value?.latitude ?: 0.0,
+                locationLng = geocodedLocation.value?.longitude ?: 0.0,
             )
 
         suspend fun addEditPublicationToFirestore() {

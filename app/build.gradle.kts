@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId = "ar.edu.unlam.mobile.scaffolding"
-        minSdk = 24
+        minSdk = 33
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -82,6 +82,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
     testImplementation(libs.junit)
@@ -93,6 +95,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     // Map
     implementation(libs.google.maps)
+    implementation(libs.google.play.services.location)
+    implementation(libs.google.play.services.maps)
+    // Permisions
+    implementation(libs.accompanistPermissions)
     // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
     ksp(libs.google.dagger.hilt.android.compiler)
