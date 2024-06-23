@@ -19,16 +19,15 @@ fun PublicationsMapScreen(
     controller: NavHostController,
     viewModel: PublicationsMapViewModel = hiltViewModel(),
 ) {
+    // Assume viewModel provides a State<List<PublicationCellModel>>
+    val listForSearch = viewModel.publicationsListState
+
     Box(
-        modifier =
-            Modifier
-                .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) {
         MapsComponent()
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             SearchBox(
@@ -38,11 +37,14 @@ fun PublicationsMapScreen(
                 onTrailingIconClick = {
                     controller.navigate(NavigationRoutes.ProfileScreen.route)
                 },
+                listForSearch = listForSearch,
+                filterList = { query ->
+                    viewModel.filterPublications(query)
+                },
+                controller = controller,
             )
             Spacer(
-                modifier =
-                    Modifier
-                        .weight(1f),
+                modifier = Modifier.weight(1f),
             )
         }
     }

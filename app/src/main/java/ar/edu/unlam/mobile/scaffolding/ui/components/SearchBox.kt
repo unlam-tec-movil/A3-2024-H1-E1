@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -58,7 +56,6 @@ fun SearchBox(
         query = text,
         onQueryChange = { newText ->
             text = newText
-            // filterList(newText)
             onQueryChange(newText)
         },
         onSearch = {
@@ -70,62 +67,46 @@ fun SearchBox(
             active = isActive
             onActiveChange(isActive)
         },
-        placeholder = {
-            Text(placeholderText)
-        },
+        placeholder = { Text(placeholderText) },
         leadingIcon = {
-            if (active) {
-                Icon(
-                    modifier =
-                        Modifier.clickable {
+            Icon(
+                modifier =
+                    Modifier.clickable {
+                        if (active) {
                             active = false
-                        },
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back Icon",
-                )
-            } else {
-                Icon(
-                    modifier = Modifier.clickable(onClick = onLeadingIconClick),
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Filter Icon",
-                )
-            }
+                        } else {
+                            onLeadingIconClick()
+                        }
+                    },
+                imageVector = if (active) Icons.Filled.ArrowBack else Icons.Filled.Menu,
+                contentDescription = if (active) "Back Icon" else "Filter Icon",
+            )
         },
         trailingIcon = {
-            if (active) {
-                Icon(
-                    modifier =
-                        Modifier
-                            .clickable {
-                                if (text.isNotEmpty()) {
-                                    text = ""
-                                } else {
-                                    active = false
-                                }
-                            },
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Filter Icon",
-                )
-            } else {
-                Icon(
-                    modifier = Modifier.clickable(onClick = onTrailingIconClick),
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Profile Icon",
-                )
-            }
+            Icon(
+                modifier =
+                    Modifier.clickable {
+                        if (text.isNotEmpty()) {
+                            text = ""
+                        } else {
+                            active = false
+                        }
+                    },
+                imageVector = if (active) Icons.Default.Close else Icons.Default.AccountCircle,
+                contentDescription = if (active) "Close Icon" else "Profile Icon",
+            )
         },
         shadowElevation = 4.dp,
     ) {
-        // /aca deberia poner el resultado de la busqueda
         LaunchedEffect(key1 = text) {
             filterList(text)
         }
         LazyColumn {
-            items(listForSearch!!.value) { publication ->
+            items(listForSearch?.value ?: emptyList()) { publication ->
                 PublicationCell(
                     item = publication,
                     onClick = {
-                        controller!!.navigate(
+                        controller?.navigate(
                             NavigationRoutes.PublicationScreen.withPublicationId(publication.id),
                         )
                     },
