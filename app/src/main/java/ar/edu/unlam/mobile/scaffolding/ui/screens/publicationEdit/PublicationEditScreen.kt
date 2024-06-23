@@ -339,7 +339,11 @@ fun PublicationEditScreen(
                                     scope.launch {
                                         viewModel.addNewPublication()
                                         if (viewModel.publicationUiState.value is PublicationUiState.Success) {
-                                            controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                                            controller.navigate(
+                                                NavigationRoutes.PublicationScreen.withPublicationId(
+                                                    viewModel.id.value,
+                                                ),
+                                            )
                                         }
                                     }
                                 }

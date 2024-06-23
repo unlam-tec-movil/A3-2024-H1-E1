@@ -377,28 +377,20 @@ class PublicationEditViewModel
                 validateColor() ||
                 validateAge()
 
-        fun addNewPublication() {
+        suspend fun addNewPublication() {
             _publicationUiState.value = PublicationUiState.Loading
-            viewModelScope.launch {
-                try {
-                    val imageUrls =
-                        uploadImagesToStorage(
-                            listImageUser.value,
-                            currentUserId!!,
-                            id.value,
-                        )
-
-                    val postWithImages = createPostWithImage(imageUrls)
-                    firestoreService
-                        .addPublicationToPublicationCollection(postWithImages)
-                        .collect { result ->
-                            firestoreService.addPublication(currentUserId!!, postWithImages)
-                        }
-                    _publicationUiState.value = PublicationUiState.Success
-                } catch (e: Exception) {
-                    Log.e("PublicationEditViewModel", "Failed to add publication", e)
-                    _publicationUiState.value = PublicationUiState.Error
-                }
+            try {
+                val imageUrls = uploadImagesToStorage(listImageUser.value, currentUserId!!, id.value)
+                val postWithImages = createPostWithImage(imageUrls)
+                firestoreService
+                    .addPublicationToPublicationCollection(postWithImages)
+                    .collect { result ->
+                        firestoreService.addPublication(currentUserId!!, postWithImages)
+                    }
+                _publicationUiState.value = PublicationUiState.Success
+            } catch (e: Exception) {
+                Log.e("PublicationEditViewModel", "Failed to add publication", e)
+                _publicationUiState.value = PublicationUiState.Error
             }
         }
 
