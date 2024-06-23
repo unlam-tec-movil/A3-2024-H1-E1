@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.location.Geocoder
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -22,8 +25,13 @@ import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.services.StorageService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetCurrentUser
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -46,6 +54,7 @@ class PublicationEditViewModel
         private val storageService: StorageService,
         private val getUser: GetCurrentUser,
         private val firestoreService: FirestoreService,
+        private val context: Context,
     ) : ViewModel() {
         private var currentUserId: String? = null
 
@@ -202,6 +211,15 @@ class PublicationEditViewModel
         private val _isErrorLocation = mutableStateOf(false)
         val isErrorLocation: State<Boolean> get() = _isErrorLocation
 
+        private val _address = MutableStateFlow("")
+        val address = _address.asStateFlow()
+
+        private val _geocodedLocation = MutableStateFlow<LatLng?>(null)
+        val geocodedLocation = _geocodedLocation.asStateFlow()
+
+        private var _cameraCenterLocation = MutableStateFlow<LatLng?>(null)
+        val cameraCenterLocation = _cameraCenterLocation.asStateFlow()
+
         fun setIsEditing(value: Boolean) {
             _isEditing.value = value
         }
@@ -271,8 +289,9 @@ class PublicationEditViewModel
             validateColor()
         }
 
-        fun setLocation(value: String) {
-            _location.value = value
+        fun onAddressChange(value: String) {
+            _address.value = value
+//            geocodeAddress(value)
             validateLocation()
         }
 
@@ -341,7 +360,7 @@ class PublicationEditViewModel
         }
 
         fun validateLocation(): Boolean {
-            _isErrorLocation.value = location.value.isEmpty()
+            _isErrorLocation.value = geocodedLocation.value == null
             return isErrorLocation.value
         }
 
@@ -351,21 +370,20 @@ class PublicationEditViewModel
         }
 
         fun validateSpecies(): Boolean {
-            _isErrorSpecies.value = species.value.isBlank()
+            _isErrorSpecies.value = species.value.isEmpty()
             return isErrorSpecies.value
         }
 
         fun validateSex(): Boolean {
-            _isErrorSex.value = sex.value.isBlank()
+            _isErrorSex.value = sex.value.isEmpty()
             return isErrorSex.value
         }
 
         fun validateColor(): Boolean {
-            _isErrorColor.value = color.value.isBlank()
+            _isErrorColor.value = color.value.isEmpty()
             return isErrorColor.value
         }
 
-        // /el validate form me esta dando problemas al validar los campos
         fun validateForm(): Boolean =
             validateTitle() ||
                 validateDescription() ||
@@ -376,28 +394,23 @@ class PublicationEditViewModel
                 validateLocation() ||
                 validateContact() ||
                 validateColor() ||
-                validateAge()
+                validateAge() ||
+                validateLocation()
 
-        fun addNewPublication() {
+        suspend fun addNewPublication() {
             _publicationUiState.value = PublicationUiState.Loading
-            viewModelScope.launch {
-                try {
-                    val imageUrls =
-                        uploadImagesToStorage(
-                            listImageUser.value,
-                            currentUserId!!,
-                            id.value,
-                        )
-
-                    val postWithImages = createPostWithImage(imageUrls)
-                    firestoreService.addPublicationToPublicationCollection(postWithImages).collect { result ->
+            try {
+                val imageUrls = uploadImagesToStorage(listImageUser.value, currentUserId!!, id.value)
+                val postWithImages = createPostWithImage(imageUrls)
+                firestoreService
+                    .addPublicationToPublicationCollection(postWithImages)
+                    .collect { result ->
                         firestoreService.addPublication(currentUserId!!, postWithImages)
                     }
-                    _publicationUiState.value = PublicationUiState.Success
-                } catch (e: Exception) {
-                    Log.e("PublicationEditViewModel", "Failed to add publication", e)
-                    _publicationUiState.value = PublicationUiState.Error
-                }
+                _publicationUiState.value = PublicationUiState.Success
+            } catch (e: Exception) {
+                Log.e("PublicationEditViewModel", "Failed to add publication", e)
+                _publicationUiState.value = PublicationUiState.Error
             }
         }
 
@@ -441,7 +454,7 @@ class PublicationEditViewModel
                     setSex(result.sex)
                     setAge((result.age).toString())
                     setColor(result.color)
-                    setLocation(result.location)
+                    onAddressChange(result.location)
                     setContact(result.contact.toString())
                     storageService.getAllImagesFromUrl(result.images).collect { result ->
                         if (result.isEmpty()) {
@@ -454,14 +467,53 @@ class PublicationEditViewModel
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+        suspend fun geocodeAddress(address: String) {
+            Log.d("PublicationEditViewModel", "Geocoding address: $address")
+            withContext(Dispatchers.IO) {
+                try {
+                    val geocoder = Geocoder(context)
+                    geocoder.getFromLocationName(address, 1) { addresses ->
+                        if (addresses.isNotEmpty()) {
+                            val location = addresses[0]
+                            _geocodedLocation.value = LatLng(location.latitude, location.longitude)
+                            Log.d("PublicationEditViewModel", "Geocoded location: ${_geocodedLocation.value}")
+                        } else {
+                            _geocodedLocation.value = null
+                            Log.d("PublicationEditViewModel", "Geocoded location is null")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("PublicationEditViewModel", "Failed to geocode address", e)
+                }
+            }
+        }
+
+        // con este cambio esperariamos a que termine de subir las imagenes para luego mostrarlas en la pantalla
         private suspend fun uploadImagesToStorage(
             images: List<Bitmap>,
             idUser: String,
             idPublication: String,
-        ): List<String> =
-            images.map { imageBitmap ->
-                storageService.uploadImage(image = imageBitmap, userId = idUser, publicationId = idPublication)
+        ): List<String> {
+            _publicationUiState.value = PublicationUiState.Loading
+            var imageUrls = mutableListOf<String>()
+            try {
+                for (imageBitmap in images) {
+                    val url =
+                        storageService.uploadImage(
+                            image = imageBitmap,
+                            userId = idUser,
+                            publicationId = idPublication,
+                        )
+                    imageUrls.add(url)
+                }
+            } catch (e: Exception) {
+                Log.e("UploadImages", "Failed upload to Storage")
+                _publicationUiState.value = PublicationUiState.Error
             }
+
+            return imageUrls
+        }
 
         private fun createPostWithImage(urls: List<String>): PostWithImages =
             PostWithImages(
@@ -477,32 +529,30 @@ class PublicationEditViewModel
                 location = location.value,
                 contact = contact.value.toInt(),
                 images = urls,
+                locationLat = geocodedLocation.value?.latitude ?: 0.0,
+                locationLng = geocodedLocation.value?.longitude ?: 0.0,
             )
 
-        fun addEditPublicationToFirestore() {
+        suspend fun addEditPublicationToFirestore() {
             _publicationUiState.value = PublicationUiState.Loading
-            viewModelScope.launch {
-                try {
-                    storageService.deletePublicationImages(currentUserId!!, id.value)
-                    val urls =
-                        uploadImagesToStorage(
-                            listImageUser.value,
-                            currentUserId!!,
-                            id.value,
-                        )
-                    val newPostWithImages = createPostWithImage(urls)
-                    firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
-                        firestoreService.editPublicationForUser(
-                            currentUserId!!,
-                            id.value,
-                            newPostWithImages,
-                        )
-                    }
-                    _publicationUiState.value = PublicationUiState.Success
-                } catch (e: Exception) {
-                    Log.e("Edit Publication", "Failed upload to Firestore edit Publication")
-                    _publicationUiState.value = PublicationUiState.Error
+
+            try {
+                storageService.deletePublicationImages(currentUserId!!, id.value)
+
+                val urls = uploadImagesToStorage(listImageUser.value, currentUserId!!, id.value)
+                Log.d("UploadImages", "Uploaded image URL: $urls")
+                val newPostWithImages = createPostWithImage(urls)
+                firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
+                    firestoreService.editPublicationForUser(
+                        currentUserId!!,
+                        id.value,
+                        newPostWithImages,
+                    )
                 }
+                _publicationUiState.value = PublicationUiState.Success
+            } catch (e: Exception) {
+                Log.e("Edit Publication", "Failed upload to Firestore edit Publication")
+                _publicationUiState.value = PublicationUiState.Error
             }
         }
 
