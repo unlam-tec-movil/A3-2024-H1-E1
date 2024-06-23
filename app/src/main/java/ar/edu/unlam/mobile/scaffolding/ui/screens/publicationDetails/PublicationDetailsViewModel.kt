@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.domain.services.FirestoreService
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetAllImagesFromUrl
+import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetGyroscopeDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +36,7 @@ PublicationDetailsViewModel
     constructor(
         private val firestoreService: FirestoreService,
         private val getAllImagesFromUrl: GetAllImagesFromUrl,
+        private val getGyroscopeDataUseCase: GetGyroscopeDataUseCase,
     ) : ViewModel() {
         @Suppress("ktlint:standard:backing-property-naming")
         private val _publication = mutableStateOf<PostWithImages?>(null)
@@ -47,6 +49,8 @@ PublicationDetailsViewModel
 
         private val _uiState = MutableStateFlow(PublicationUiState(_publicationState.value))
         val uiState: StateFlow<PublicationUiState> = _uiState.asStateFlow()
+
+        val rotationY: StateFlow<Float> = getGyroscopeDataUseCase.rotationY
 
         suspend fun getPublicationById(publicationId: String): PostWithImages? =
             try {

@@ -50,6 +50,7 @@ object DataStoreManager {
         val IS_DARK_MODE_ENABLED = booleanPreferencesKey("dark_mode")
         val NOTIFICATION_ENABLED = booleanPreferencesKey("notifications_enabled")
         val LAST_LOGIN_TIMESTAMP = longPreferencesKey("last_login_timestamp")
+        val SHOW_TOOLTIP = booleanPreferencesKey("show_tooltip")
         // Add other keys as needed
     }
 }
