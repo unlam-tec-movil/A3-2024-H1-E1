@@ -24,26 +24,36 @@ fun PublicationsListScreen(
     controller: NavHostController,
     viewModel: PublicationsListViewModel = hiltViewModel(),
 ) {
-    var query by remember {
-        mutableStateOf("")
-    }
+    var query by remember { mutableStateOf("") }
+
     LaunchedEffect(key1 = query) {
         viewModel.filterPublicationByTittle(query)
     }
+
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SearchBox(
-            listForSearch = viewModel.publicatioFilter,
-            filterList = { query -> viewModel.filterPublicationByTittle(query) },
+            listForSearch = viewModel.publicationFilter,
+            filterList = { query ->
+                viewModel.filterPublicationByTittle(query)
+            },
+            onSearch = {
+                // Aquí puedes realizar una acción específica al hacer la búsqueda
+            },
+            onLeadingIconClick = {
+                controller.navigate(NavigationRoutes.FilterScreen.route)
+            },
+            onTrailingIconClick = {
+                controller.navigate(NavigationRoutes.ProfileScreen.route)
+            },
             controller = controller,
         )
-        // /aca nos muestra toda la lista
+
+        // Muestra la lista filtrada de publicaciones
         LazyColumn {
-            items(viewModel.publications.value) { publication ->
+            items(viewModel.publicationFilter.value) { publication ->
                 PublicationCell(
                     item = publication,
                     onClick = {

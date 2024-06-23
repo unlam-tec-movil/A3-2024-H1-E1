@@ -31,6 +31,7 @@ import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBox(
     initialText: String = "",
