@@ -22,16 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ar.edu.unlam.mobile.scaffolding.R
-import coil.compose.AsyncImage
 
 @Composable
-fun <T> SettingImage(
-    item: T,
+fun SettingImage(
+    item: Bitmap,
     onDissmissButon: () -> Unit,
     onDeletePhoto: () -> Unit,
 ) {
@@ -67,20 +65,11 @@ fun <T> SettingImage(
                             .padding(10.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    if (item is Bitmap) {
-                        DisplayImageBitmap(
-                            data = item,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    } else {
-                        AsyncImage(
-                            model = item,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop,
-                        )
-                    }
+                    DisplayImageBitmap(
+                        data = item,
+                        contentDescription = "1",
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
