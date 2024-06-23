@@ -56,6 +56,7 @@ fun SearchBox(
         query = text,
         onQueryChange = { newText ->
             text = newText
+            // filterList(newText)
             onQueryChange(newText)
         },
         onSearch = {
@@ -67,46 +68,62 @@ fun SearchBox(
             active = isActive
             onActiveChange(isActive)
         },
-        placeholder = { Text(placeholderText) },
+        placeholder = {
+            Text(placeholderText)
+        },
         leadingIcon = {
-            Icon(
-                modifier =
-                    Modifier.clickable {
-                        if (active) {
+            if (active) {
+                Icon(
+                    modifier =
+                        Modifier.clickable {
                             active = false
-                        } else {
-                            onLeadingIconClick()
-                        }
-                    },
-                imageVector = if (active) Icons.Filled.ArrowBack else Icons.Filled.Menu,
-                contentDescription = if (active) "Back Icon" else "Filter Icon",
-            )
+                        },
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back Icon",
+                )
+            } else {
+                Icon(
+                    modifier = Modifier.clickable(onClick = onLeadingIconClick),
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Filter Icon",
+                )
+            }
         },
         trailingIcon = {
-            Icon(
-                modifier =
-                    Modifier.clickable {
-                        if (text.isNotEmpty()) {
-                            text = ""
-                        } else {
-                            active = false
-                        }
-                    },
-                imageVector = if (active) Icons.Default.Close else Icons.Default.AccountCircle,
-                contentDescription = if (active) "Close Icon" else "Profile Icon",
-            )
+            if (active) {
+                Icon(
+                    modifier =
+                        Modifier
+                            .clickable {
+                                if (text.isNotEmpty()) {
+                                    text = ""
+                                } else {
+                                    active = false
+                                }
+                            },
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Filter Icon",
+                )
+            } else {
+                Icon(
+                    modifier = Modifier.clickable(onClick = onTrailingIconClick),
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Profile Icon",
+                )
+            }
         },
         shadowElevation = 4.dp,
     ) {
+        // /aca deberia poner el resultado de la busqueda
         LaunchedEffect(key1 = text) {
             filterList(text)
         }
         LazyColumn {
-            items(listForSearch?.value ?: emptyList()) { publication ->
+            items(listForSearch!!.value) { publication ->
                 PublicationCell(
                     item = publication,
                     onClick = {
-                        controller?.navigate(
+                        controller!!.navigate(
                             NavigationRoutes.PublicationScreen.withPublicationId(publication.id),
                         )
                     },
