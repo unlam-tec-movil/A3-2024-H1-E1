@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,8 +29,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
 import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
@@ -67,6 +70,11 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SelectedFormUpdateImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.SettingImage
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
+import com.example.compose.inverseOnSurfaceLight
+import com.example.compose.onPrimaryDark
+import com.example.compose.outlineVariantLight
+import com.example.compose.primaryDark
+import com.example.compose.primaryLight
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
@@ -76,7 +84,6 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun PublicationEditScreen(
-    modifier: Modifier = Modifier,
     controller: NavHostController,
     viewModel: PublicationEditViewModel = hiltViewModel(),
     idPublication: String? = null,
@@ -135,19 +142,16 @@ fun PublicationEditScreen(
                         ImageDecoder.createSource(context.contentResolver, img)
                     }
                 source?.let {
-                    val bitmap =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            ImageDecoder.decodeBitmap(it)
-                        } else {
-                            null
-                        }
-                    if (bitmap != null) {
-                        if (imageBitmapList.size == 3) {
-                            // /solo vamos a dejar que suba 3 imagenes
-                            Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
-                        } else {
-                            viewModel.addImage(bitmap)
-                        }
+                    val bitmap = ImageDecoder.decodeBitmap(it)
+                    if (imageBitmapList.size == 3) {
+                        Toast
+                            .makeText(
+                                context,
+                                "Solo se permite subir 3 imagenes",
+                                Toast.LENGTH_LONG,
+                            ).show()
+                    } else {
+                        viewModel.addImage(bitmap)
                     }
                 }
             } else {
@@ -166,226 +170,249 @@ fun PublicationEditScreen(
             LoadingComponent()
         }
         is PublicationUiState.Success -> {
-            Column(
+            Box(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .verticalScroll(scrollState)
-                        .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                        .background(inverseOnSurfaceLight),
             ) {
-                Carrousel(
-                    listOfImage = imageBitmapList,
-                    paddingValues = 10.dp,
-                ) { imageSelected ->
-                    selectedItemForSetting = imageSelected
-                    showDialogForSettingImage = true
-                }
-                Button(
-                    onClick = {
-                        showDialogSelectedUpdateImage = true
-                    },
-                    modifier =
-                        Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 5.dp),
-                ) {
-                    Text(text = "Añadir Foto")
-                }
-
-                // RADIO GROUPS
-                CheckboxComponent(
-                    options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
-                    initialSelectedOption = viewModel.type.value,
-                    onOptionSelected = { selectedOption ->
-                        viewModel.setType(selectedOption)
-                    },
-                    optionToString = { it },
-                    isError = viewModel.isErrorType.value,
-                    errorMessage = "campo requerido",
-                )
-
-                // DATE PICKER COMPONENT
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text("Fecha de perdida:")
-                    DatePickerComponent(
-                        initialDate = viewModel.dateLost.value,
-                        onDateSelected = { selectedDate ->
-                            viewModel.setDateLost(selectedDate)
-                        },
-                    )
-                    if (viewModel.isErrorDateLost.value) {
-                        Text(
-                            text = "Campo requerido",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
-                }
-                // /textField para el titulo
-                TextFieldComponent(
-                    title = "titulo",
-                    value = viewModel.title.value,
-                    onValueChange = { viewModel.setTitle(it) },
-                    placeholder = "Ingrese el titulo",
-                    isError = viewModel.isErrorTitle.value,
-                    errorMessage = "Campo requerido",
-                    onTextChange = { viewModel.validateTitle() },
-                    singleLine = true,
-                )
-
-                TextFieldComponent(
-                    title = "Descripcion",
-                    value = viewModel.description.value,
-                    onValueChange = { viewModel.setDescription(it) },
-                    placeholder = "Ingrese la descripcion",
-                    isError = viewModel.isErrorDescription.value,
-                    errorMessage = "Campo requerido",
-                    onTextChange = { viewModel.validateDescription() },
-                    maxLines = 4,
-                )
-
-                SelectComponent(
-                    title = "Especie",
-                    list = Species.entries.map { it.name },
-                    initialSelectedItem = viewModel.species.value,
-                    onItemSelected = { selectedSpecies ->
-                        viewModel.setSpecies(selectedSpecies)
-                    },
-                    isError = viewModel.isErrorSpecies.value,
-                )
-
-                SelectComponent(
-                    title = "Sexo",
-                    Sex.entries.map { it.name },
-                    initialSelectedItem = viewModel.sex.value,
-                    onItemSelected = { selectedSex ->
-                        viewModel.setSex(selectedSex)
-                    },
-                    isError = viewModel.isErrorSex.value,
-                )
-
-                TextFieldComponent(
-                    title = "Edad",
-                    value = viewModel.age.value,
-                    onValueChange = { viewModel.setAge(it) },
-                    placeholder = "Ingrese la edad",
-                    isError = viewModel.isErrorAge.value,
-                    errorMessage = viewModel.messageErrorAge,
-                    onTextChange = { viewModel.validateAge() },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                )
-
-                SelectComponent(
-                    title = "Color",
-                    PetColors.entries.map { it.name },
-                    initialSelectedItem = viewModel.color.value,
-                    onItemSelected = { selectedColor ->
-                        viewModel.setColor(selectedColor)
-                    },
-                    isError = viewModel.isErrorColor.value,
-                )
-
-                TextFieldComponent(
-                    title = "Numero de contacto",
-                    value = viewModel.contact.value,
-                    onValueChange = { viewModel.setContact(it) },
-                    placeholder = "Ingrese el numero de contacto",
-                    isError = viewModel.isErrorContact.value,
-                    errorMessage = viewModel.messageErrorContact,
-                    onTextChange = { viewModel.validateContact() },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                )
-
                 Column(
                     modifier =
                         Modifier
-                            .fillMaxWidth(),
+                            .fillMaxSize()
+                            .verticalScroll(scrollState)
+                            .padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    TextFieldComponent(
-                        title = "Ubicacion",
-                        value = address,
-                        onValueChange = {
-                            viewModel.onAddressChange(it)
-                        },
-                        placeholder = "Ingrese la ubicacion",
-                        isError = viewModel.isErrorLocation.value,
-                        errorMessage = "Campo requerido",
-                        onTextChange = { viewModel.validateLocation() },
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                        keyboardActions =
-                            KeyboardActions(onNext = {
-                                keyboardController?.hide()
-                                scope.launch {
-                                    viewModel.geocodeAddress(address)
-                                }
-                            }),
-                        singleLine = true,
-                    )
-
-                    MapsComponent(
-                        modifier =
-                            Modifier
-                                .height(250.dp),
-                        markers = emptyList(),
-                        cameraPositionState = cameraState,
-                        isUserLocationEnabled = remember { mutableStateOf(false) },
-                        userMarker = geocodedLocation,
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    TextButton(
-                        onClick = {
-                            viewModel.resetListOfImages()
-                            controller.popBackStack()
-                        },
-                    ) {
-                        Text("Cancelar")
+                    Carrousel(
+                        listOfImage = imageBitmapList,
+                        paddingValues = 5.dp,
+                    ) { imageSelected ->
+                        selectedItemForSetting = imageSelected
+                        showDialogForSettingImage = true
                     }
                     Button(
                         onClick = {
-                            // /si nos da true significa que algun campo falta validar , si nos da false significa que todos los campos estan validados correctamente
-                            if (!viewModel.validateForm()) {
-                                if (viewModel.isEditing.value) {
+                            showDialogSelectedUpdateImage = true
+                        },
+                        modifier =
+                            Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 5.dp),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = primaryDark,
+                                contentColor = onPrimaryDark,
+                            ),
+                    ) {
+                        Text(text = "Añadir Foto")
+                    }
+
+                    // RADIO GROUPS
+                    CheckboxComponent(
+                        options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
+                        initialSelectedOption = viewModel.type.value,
+                        onOptionSelected = { selectedOption ->
+                            viewModel.setType(selectedOption)
+                        },
+                        optionToString = { it },
+                        isError = viewModel.isErrorType.value,
+                        errorMessage = "campo requerido",
+                    )
+
+                    // DATE PICKER COMPONENT
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Fecha de perdida:")
+                        DatePickerComponent(
+                            initialDate = viewModel.dateLost.value,
+                            onDateSelected = { selectedDate ->
+                                viewModel.setDateLost(selectedDate)
+                            },
+                        )
+                        if (viewModel.isErrorDateLost.value) {
+                            Text(
+                                text = "Campo requerido",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
+                    }
+                    // /textField para el titulo
+                    TextFieldComponent(
+                        title = "Titulo",
+                        value = viewModel.title.value,
+                        onValueChange = { viewModel.setTitle(it) },
+                        placeholder = "Ingrese el titulo",
+                        isError = viewModel.isErrorTitle.value,
+                        errorMessage = "Campo requerido",
+                        onTextChange = { viewModel.validateTitle() },
+                        singleLine = true,
+                    )
+
+                    TextFieldComponent(
+                        title = "Descripcion",
+                        value = viewModel.description.value,
+                        onValueChange = { viewModel.setDescription(it) },
+                        placeholder = "Ingrese la descripcion",
+                        isError = viewModel.isErrorDescription.value,
+                        errorMessage = "Campo requerido",
+                        onTextChange = { viewModel.validateDescription() },
+                        maxLines = 4,
+                    )
+
+                    SelectComponent(
+                        title = "Especie",
+                        list = Species.entries.map { it.name },
+                        initialSelectedItem = viewModel.species.value,
+                        onItemSelected = { selectedSpecies ->
+                            viewModel.setSpecies(selectedSpecies)
+                        },
+                        isError = viewModel.isErrorSpecies.value,
+                    )
+
+                    SelectComponent(
+                        title = "Sexo",
+                        Sex.entries.map { it.name },
+                        initialSelectedItem = viewModel.sex.value,
+                        onItemSelected = { selectedSex ->
+                            viewModel.setSex(selectedSex)
+                        },
+                        isError = viewModel.isErrorSex.value,
+                    )
+
+                    TextFieldComponent(
+                        title = "Edad",
+                        value = viewModel.age.value,
+                        onValueChange = { viewModel.setAge(it) },
+                        placeholder = "Ingrese la edad",
+                        isError = viewModel.isErrorAge.value,
+                        errorMessage = viewModel.messageErrorAge,
+                        onTextChange = { viewModel.validateAge() },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                    )
+
+                    SelectComponent(
+                        title = "Color",
+                        PetColors.entries.map { it.name },
+                        initialSelectedItem = viewModel.color.value,
+                        onItemSelected = { selectedColor ->
+                            viewModel.setColor(selectedColor)
+                        },
+                        isError = viewModel.isErrorColor.value,
+                    )
+
+                    TextFieldComponent(
+                        title = "Numero de contacto",
+                        value = viewModel.contact.value,
+                        onValueChange = { viewModel.setContact(it) },
+                        placeholder = "Ingrese el numero de contacto",
+                        isError = viewModel.isErrorContact.value,
+                        errorMessage = viewModel.messageErrorContact,
+                        onTextChange = { viewModel.validateContact() },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                    )
+
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                    ) {
+                        TextFieldComponent(
+                            title = "Ubicacion",
+                            value = address,
+                            onValueChange = {
+                                viewModel.onAddressChange(it)
+                            },
+                            placeholder = "Ingrese la ubicacion",
+                            isError = viewModel.isErrorLocation.value,
+                            errorMessage = "Campo requerido",
+                            onTextChange = { viewModel.validateLocation() },
+                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                            keyboardActions =
+                                KeyboardActions(onNext = {
+                                    keyboardController?.hide()
                                     scope.launch {
-                                        viewModel.addEditPublicationToFirestore()
-                                        if (viewModel.publicationUiState.value is PublicationUiState.Success) {
-                                            controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
-                                        }
+                                        viewModel.geocodeAddress(address)
                                     }
-                                } else {
-                                    viewModel.setNewId()
-                                    scope.launch {
-                                        viewModel.addNewPublication()
-                                        if (viewModel.publicationUiState.value is PublicationUiState.Success) {
+                                }),
+                            singleLine = true,
+                        )
+
+                        MapsComponent(
+                            modifier =
+                                Modifier
+                                    .height(250.dp),
+                            markers = emptyList(),
+                            cameraPositionState = cameraState,
+                            isUserLocationEnabled = remember { mutableStateOf(false) },
+                            userMarker = geocodedLocation,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        TextButton(
+                            onClick = {
+                                viewModel.resetListOfImages()
+                                controller.popBackStack()
+                            },
+                        ) {
+                            Text(
+                                text = "Cancelar",
+                                fontWeight = FontWeight.SemiBold,
+                                color = onPrimaryDark,
+                            )
+                        }
+                        Button(
+                            onClick = {
+                                if (!viewModel.validateForm()) {
+                                    val handlePublicationSuccess: (String) -> Unit =
+                                        { publicationId ->
                                             controller.navigate(
                                                 NavigationRoutes.PublicationScreen.withPublicationId(
-                                                    viewModel.id.value,
+                                                    publicationId,
                                                 ),
                                             )
                                         }
+
+                                    scope.launch {
+                                        if (viewModel.isEditing.value) {
+                                            viewModel.addEditPublicationToFirestore()
+                                            if (viewModel.publicationUiState.value is PublicationUiState.Success) {
+                                                handlePublicationSuccess(idPublication!!)
+                                            }
+                                        } else {
+                                            viewModel.setNewId()
+                                            viewModel.addNewPublication()
+                                            if (viewModel.publicationUiState.value is PublicationUiState.Success) {
+                                                handlePublicationSuccess(viewModel.id.value)
+                                            }
+                                        }
                                     }
+                                } else {
+                                    viewModel.setSnackbar(true)
                                 }
+                            },
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    containerColor = primaryDark,
+                                    contentColor = onPrimaryDark,
+                                ),
+                        ) {
+                            if (idPublication.isNullOrEmpty()) {
+                                Text(text = "Crear Publicacion")
                             } else {
-                                viewModel.setSnackbar(true)
+                                Text(text = "Editar Publicacion")
                             }
-                        },
-                    ) {
-                        if (idPublication.isNullOrEmpty()) {
-                            Text(text = "Crear Publicacion")
-                        } else {
-                            Text(text = "Editar Publicacion")
                         }
                     }
                 }
@@ -470,8 +497,35 @@ fun PublicationEditScreen(
 @Preview(showBackground = true)
 @Composable
 fun PublicationEditPreview() {
-    val navHostController = rememberNavController()
-    PublicationEditScreen(idPublication = null, controller = navHostController)
+    Surface(
+        modifier =
+            Modifier
+                .background(primaryLight)
+                .fillMaxSize(),
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .background(inverseOnSurfaceLight)
+                    .fillMaxSize(),
+        ) {
+            Button(
+                onClick = {
+                },
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 5.dp),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = primaryDark,
+                        contentColor = onPrimaryDark,
+                    ),
+            ) {
+                Text(text = "Añadir Foto")
+            }
+        }
+    }
 }
 
 private suspend fun CameraPositionState.centerOnLocation(location: LatLng) =

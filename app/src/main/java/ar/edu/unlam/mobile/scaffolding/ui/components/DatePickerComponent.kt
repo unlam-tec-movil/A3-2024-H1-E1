@@ -1,9 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
@@ -22,7 +24,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.compose.onPrimaryDark
+import com.example.compose.primaryDark
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -50,9 +55,7 @@ fun DatePickerComponent(
             initialSelectedDateMillis = initialDateMillis,
             selectableDates =
                 object : SelectableDates {
-                    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                        return utcTimeMillis <= System.currentTimeMillis()
-                    }
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean = utcTimeMillis <= System.currentTimeMillis()
                 },
         )
 
@@ -61,7 +64,9 @@ fun DatePickerComponent(
 
     Column {
         TextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
             value = selectedDate ?: initialDate ?: "",
             placeholder = { Text("Ingrese la fecha") },
             onValueChange = { /* No hacer nada, ya que es de solo lectura */ },
@@ -74,8 +79,10 @@ fun DatePickerComponent(
                         Modifier.clickable {
                             showDialog = true
                         },
+                    tint = onPrimaryDark,
                 )
             },
+            shape = RoundedCornerShape(10.dp),
         )
 
         if (showDialog) {
@@ -115,4 +122,12 @@ fun MinimalDialog(
     ) {
         DatePicker(state = datePickerState)
     }
+}
+@Preview(showBackground = true)
+@Composable
+fun DatePickerComponentPreview() {
+    DatePickerComponent(
+        initialDate = "01/01/2023",
+        onDateSelected = { /* No hacer nada */ },
+    )
 }

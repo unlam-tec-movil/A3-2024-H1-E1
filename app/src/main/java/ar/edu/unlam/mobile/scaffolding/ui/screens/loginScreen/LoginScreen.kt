@@ -5,6 +5,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.loginScreen
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,18 +37,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.models.AuthRes
 import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldOwn
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldPassword
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
-import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueMarine
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.compose.errorDark
+import com.example.compose.inverseOnSurfaceLight
+import com.example.compose.primaryDark
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
@@ -67,16 +71,15 @@ fun LoginScreen(navHostController: NavHostController) {
                     )
             ) {
                 is AuthRes.Error -> {
-                    Toast.makeText(context, "Error: ${account.errorMessage}", Toast.LENGTH_SHORT)
+                    Toast
+                        .makeText(context, "Error: ${account.errorMessage}", Toast.LENGTH_SHORT)
                         .show()
                 }
 
                 is AuthRes.Success -> {
                     val credential = GoogleAuthProvider.getCredential(account?.data?.idToken, null)
                     scope.launch {
-                        val user = loginViewModel.signInWithGoogleCredential(credential)
-
-                        Toast.makeText(context, "Bienvenido $user", Toast.LENGTH_SHORT).show()
+                        loginViewModel.signInWithGoogleCredential(credential)
                         navHostController.navigate(NavigationRoutes.MapScreen.route) {
                             popUpTo(NavigationRoutes.MapScreen.route) {
                                 inclusive = true
@@ -88,8 +91,6 @@ fun LoginScreen(navHostController: NavHostController) {
                 null -> {
                     Toast.makeText(context, "Error Desconocido", Toast.LENGTH_SHORT).show()
                 }
-
-                else -> {}
             }
         }
     // /aca vamos a implementar la login screen con animacion
@@ -103,116 +104,128 @@ fun LoginScreen(navHostController: NavHostController) {
             LoadingComponent()
         }
         is LoginUiState.Succes -> {
-            Column(
+            Box(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 25.dp, vertical = 20.dp),
+                        .background(inverseOnSurfaceLight),
             ) {
-                Box(
+                Column(
                     modifier =
+                    Modifier
+                        .fillMaxSize()
+                            .padding(horizontal = 25.dp, vertical = 20.dp),
+                ) {
+                    Box(
+                        modifier =
                         Modifier
                             .fillMaxWidth()
                             .height(250.dp),
-                ) {
-                    LottieAnimation(
-                        modifier =
+                    ) {
+                        LottieAnimation(
+                            modifier =
                             Modifier
                                 .fillMaxSize(),
-                        composition = composition,
-                        progress = progress,
-                    )
-                }
-
-                Column(
-                    modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
-                ) {
-                    Text(
-                        text = "Inicio de Sesion",
-                        fontSize = 30.sp,
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Start,
-                    )
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    TextFieldOwn(
-                        tittle = "Email",
-                        placeholder = "abcd@gmail.com",
-                    ) { email ->
-                        loginViewModel.setEmail(email)
+                            composition = composition,
+                            progress = progress,
+                        )
                     }
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    TextFieldPassword(
-                        tittle = "Password",
-                        placeholder = "password",
-                    ) { password ->
-                        loginViewModel.setPassword(password)
-                    }
-                    Text(
-                        text = "minimo 8 caracteres, una mayuscula y un numero",
-                        fontSize = 12.sp,
-                        color = Color.Red,
-                    )
-                }
 
-                Row(
-                    modifier =
+                    Column(
+                        modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
+                    ) {
+                        Text(
+                            text = "Inicio de Sesion",
+                            fontSize = 30.sp,
+                            fontFamily = FontFamily.SansSerif,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Start,
+                        )
+                        Spacer(modifier = Modifier.padding(10.dp))
+                        TextFieldOwn(
+                            tittle = "Email",
+                            placeholder = "abcd@gmail.com",
+                        ) { email ->
+                            loginViewModel.setEmail(email)
+                        }
+                        Spacer(modifier = Modifier.padding(10.dp))
+                        TextFieldPassword(
+                            tittle = "Contraseña",
+                            placeholder = "contraseña",
+                        ) { password ->
+                            loginViewModel.setPassword(password)
+                        }
+                        Text(
+                            text = "minimo 8 caracteres, una mayuscula y un numero",
+                            fontSize = 12.sp,
+                            color = errorDark,
+                        )
+                    }
+
+                    Row(
+                        modifier =
                         Modifier
                             .fillMaxWidth()
                             .height(80.dp)
                             .padding(top = 25.dp, bottom = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround,
-                ) {
-                    IconButton(onClick = {
-                        loginViewModel.signInWithGoogle(googleSignInLauncher = googleSignInLauncher)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.icon_google),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(100.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceAround,
+                    ) {
+                        IconButton(onClick = {
+                            loginViewModel.signInWithGoogle(googleSignInLauncher = googleSignInLauncher)
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.icon_google),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(100.dp),
+                            )
+                        }
+                    }
+                    // boton de inicio de sesion
+                    ExtendedFloatingActionButton(
+                        onClick = {
+                            if (loginViewModel.validateEmail(loginViewModel.email.value) &&
+                                loginViewModel.validatePassword(loginViewModel.password.value)
+                            ) {
+                                loginViewModel.sigInWithEmailAndPassword()
+                                navHostController.navigate(NavigationRoutes.MapScreen.route)
+                            } else {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "email o contraseña incorrecto",
+                                        Toast.LENGTH_LONG,
+                                    ).show()
+                            }
+                        },
+                        modifier =
+                        Modifier
+                            .fillMaxWidth()
+                                .padding(top = 35.dp, bottom = 5.dp),
+                        containerColor = primaryDark,
+                    ) {
+                        Text(
+                            text = "iniciar sesion",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White,
+                            fontSize = 18.sp,
                         )
                     }
-                }
-                // boton de inicio de sesion
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        if (loginViewModel.validateEmail(loginViewModel.email.value) &&
-                            loginViewModel.validatePassword(loginViewModel.password.value)
-                        ) {
-                            loginViewModel.sigInWithEmailAndPassword()
-                            navHostController.navigate(NavigationRoutes.MapScreen.route)
-                        } else {
-                            Toast.makeText(context, "email o contraseña incorrecto", Toast.LENGTH_LONG).show()
+                    Row(
+                        modifier =
+                        Modifier
+                            .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        Text(text = "¿No tienes cuenta? ")
+                        TextButton(onClick = {
+                            navHostController.navigate(NavigationRoutes.CreateAccountScreen.route)
+                        }) {
+                            Text(text = "Registrate")
                         }
-                    },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(top = 35.dp, bottom = 5.dp),
-                    containerColor = BlueMarine,
-                ) {
-                    Text(
-                        text = "iniciar sesion",
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White,
-                        fontSize = 18.sp,
-                    )
-                }
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Text(text = "¿No tienes cuenta? ")
-                    TextButton(onClick = {
-                        navHostController.navigate(NavigationRoutes.CreateAccountScreen.route)
-                    }) {
-                        Text(text = "Registrate")
                     }
                 }
             }
@@ -220,43 +233,12 @@ fun LoginScreen(navHostController: NavHostController) {
         is LoginUiState.Error -> {
             Toast.makeText(context, "Failed login", Toast.LENGTH_SHORT).show()
         }
-
-        else -> {}
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    Column(
-        modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
-    ) {
-        Text(
-            text = "Inicio de Sesion",
-            fontSize = 30.sp,
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Start,
-        )
-        Spacer(modifier = Modifier.padding(10.dp))
-        TextFieldOwn(
-            tittle = "Email",
-            placeholder = "abcd@gmail.com",
-        ) { email ->
-            // /manejamos el resultado del email, lo validamos
-        }
-        Spacer(modifier = Modifier.padding(10.dp))
-        TextFieldPassword(
-            tittle = "Password",
-            placeholder = "password",
-        ) { password ->
-            // manejamos el resultado de la contraseña aca
-            // tenemos que validar la contraseña
-        }
-        Text(
-            text = "minimo 8 caracteres, una mayuscula y un numero",
-            fontSize = 12.sp,
-            color = Color.Red,
-        )
-    }
+    val navHostController = rememberNavController()
+    LoginScreen(navHostController = navHostController)
 }

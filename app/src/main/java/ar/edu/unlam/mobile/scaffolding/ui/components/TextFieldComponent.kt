@@ -1,7 +1,9 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -9,6 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.compose.onPrimaryDark
+import com.example.compose.primaryDark
 
 @Composable
 fun TextFieldComponent(
@@ -26,7 +33,11 @@ fun TextFieldComponent(
     maxLines: Int = Int.MAX_VALUE,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Text(title)
+        Text(
+            text = title,
+            fontWeight = FontWeight.SemiBold,
+            color = onPrimaryDark,
+        )
         TextField(
             value = value,
             onValueChange = {
@@ -42,9 +53,11 @@ fun TextFieldComponent(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .border(3.dp, primaryDark, RoundedCornerShape(10.dp))
                     .semantics {
                         if (isError) error(errorMessage)
                     },
+            shape = RoundedCornerShape(10.dp)
         )
         if (isError) {
             Text(
@@ -55,4 +68,18 @@ fun TextFieldComponent(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TextFieldComponentPreview() {
+    TextFieldComponent(
+        title = "Descripcion",
+        value = "",
+        onValueChange = {},
+        placeholder = "descripcion",
+        isError = false,
+        errorMessage = "",
+        onTextChange = {},
+    )
 }

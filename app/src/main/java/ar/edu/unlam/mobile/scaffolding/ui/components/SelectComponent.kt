@@ -1,7 +1,9 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -17,6 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.compose.onPrimaryDark
+import com.example.compose.primaryDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +46,11 @@ fun SelectComponent(
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = title)
+        Text(
+            text = title,
+            fontWeight = FontWeight.SemiBold,
+            color = onPrimaryDark,
+        )
         ExposedDropdownMenuBox(
             expanded = isExpanded,
             onExpandedChange = { isExpanded = it },
@@ -52,8 +63,13 @@ fun SelectComponent(
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
                 },
-                modifier = Modifier.menuAnchor().fillMaxWidth(),
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+                    .border(3.dp, primaryDark, RoundedCornerShape(10.dp))
+                ,
                 placeholder = { Text(placeholder) },
+                shape = RoundedCornerShape(10.dp),
             )
             ExposedDropdownMenu(
                 expanded = isExpanded,
@@ -80,4 +96,9 @@ fun SelectComponent(
             )
         }
     }
+}
+@Preview(showBackground = true)
+@Composable
+fun SelectComponentPreview(){
+    SelectComponent(title = "Especie",list = emptyList(), onItemSelected = {})
 }

@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueMarine
+import com.example.compose.primaryDark
 
 @Composable
 fun TextFieldPassword(
@@ -63,7 +63,7 @@ fun TextFieldPassword(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .border(3.dp, BlueMarine, RoundedCornerShape(10.dp)),
+                    .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
             placeholder = {
                 Text(
                     text = placeholder,
