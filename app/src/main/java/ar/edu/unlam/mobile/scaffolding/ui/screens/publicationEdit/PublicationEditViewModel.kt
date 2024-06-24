@@ -406,12 +406,13 @@ class PublicationEditViewModel
                     .addPublicationToPublicationCollection(postWithImages)
                     .collect { result ->
                         try {
-                            firestoreService.addPublication(currentUserId!!, postWithImages)
+                            firestoreService.addPublication(currentUserId!!, postWithImages).collect { result ->
+                                Log.d("AddPublication", "Publication added to user collection successfully")
+                            }
                         } catch (e: Exception) {
                             Log.e("AddPublication", "Failed to add publication in user collection")
                         }
                     }
-
                 _publicationUiState.value = PublicationUiState.Success
             } catch (e: Exception) {
                 Log.e("PublicationEditViewModel", "Failed to add publication", e)
