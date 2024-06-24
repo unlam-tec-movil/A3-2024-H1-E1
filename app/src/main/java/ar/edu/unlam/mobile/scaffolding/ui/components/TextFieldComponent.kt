@@ -57,7 +57,7 @@ fun TextFieldComponent(
                     .semantics {
                         if (isError) error(errorMessage)
                     },
-            shape = RoundedCornerShape(10.dp)
+            shape = RoundedCornerShape(10.dp),
         )
         if (isError) {
             Text(

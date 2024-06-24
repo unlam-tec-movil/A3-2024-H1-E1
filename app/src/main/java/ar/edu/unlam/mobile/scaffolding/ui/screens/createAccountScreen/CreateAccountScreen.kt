@@ -37,7 +37,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldPassword
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 import com.example.compose.errorLight
 import com.example.compose.inverseOnSurfaceLight
-import com.example.compose.outlineVariantLight
 import com.example.compose.primaryContainerLight
 import com.example.compose.primaryDark
 
@@ -45,23 +44,25 @@ import com.example.compose.primaryDark
 fun CreateAccountScreen(navHostController: NavHostController) {
     val createAccountVM: CreateAccountViewModel = hiltViewModel()
     val context = LocalContext.current
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(inverseOnSurfaceLight)
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(inverseOnSurfaceLight),
     ) {
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(start = 25.dp, end = 25.dp),
+                Modifier
+                    .fillMaxSize()
+                    .padding(start = 25.dp, end = 25.dp),
         ) {
             IconButton(
                 onClick = {
                     navHostController.navigate(NavigationRoutes.LoginScreen.route)
                 },
                 modifier =
-                Modifier
-                    .align(Alignment.Start),
+                    Modifier
+                        .align(Alignment.Start),
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowLeft,
@@ -73,8 +74,8 @@ fun CreateAccountScreen(navHostController: NavHostController) {
 
             Column(
                 modifier =
-                Modifier
-                    .padding(top = 15.dp, bottom = 15.dp),
+                    Modifier
+                        .padding(top = 15.dp, bottom = 15.dp),
             ) {
                 Text(
                     text = "Crea una cuenta",
@@ -125,9 +126,9 @@ fun CreateAccountScreen(navHostController: NavHostController) {
                     }
                 },
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 35.dp, bottom = 5.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 35.dp, bottom = 5.dp),
                 containerColor = primaryDark,
             ) {
                 Text(
@@ -139,9 +140,9 @@ fun CreateAccountScreen(navHostController: NavHostController) {
             }
             Row(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 5.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 5.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
             ) {
