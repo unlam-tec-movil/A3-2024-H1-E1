@@ -15,17 +15,13 @@ class PublicationsMapViewModel
         val publicationsListState: State<List<PublicationCellModel>> = _publicationsListState
 
         init {
-            // Load initial data here or use a repository
+
             loadPublications()
         }
 
         private fun loadPublications() {
-            // Load your data here, for example:
-            // _publicationsListState.value = repository.getPublications()
         }
 
         fun filterPublications(query: String) {
-            // Implement your filtering logic here, for example:
-            // _publicationsListState.value = repository.filterPublications(query)
         }
     }
