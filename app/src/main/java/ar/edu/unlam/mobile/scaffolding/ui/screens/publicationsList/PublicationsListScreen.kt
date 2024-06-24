@@ -29,7 +29,6 @@ fun PublicationsListScreen(
     controller: NavHostController,
     viewModel: PublicationsListViewModel = hiltViewModel(),
 ) {
-
     val uiState: PublicationsUiState by viewModel.uiState.collectAsState()
     val publications by viewModel.publications
     Log.d("PUBLICATIONS", publications.toString())
@@ -37,47 +36,41 @@ fun PublicationsListScreen(
     var query by remember {
         mutableStateOf("")
     }
+
     LaunchedEffect(key1 = query) {
         viewModel.filterPublicationByTittle(query)
     }
+
     when (uiState.publicationsState) {
         PublicationsState.Loading -> {
             LoadingComponent()
         }
-
         PublicationsState.Error -> {
-            Toast.makeText(context, "Error al buscar la informacion", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Error al buscar la información", Toast.LENGTH_SHORT).show()
         }
-
         PublicationsState.Success -> {
             Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 SearchBox(
                     listForSearch = viewModel.publicationFilter,
-                    filterList = { query -> viewModel.filterPublicationByTittle(query)
-                    },
+                    filterList = { query -> viewModel.filterPublicationByTittle(query) },
                     onLeadingIconClick = {
-                controller.navigate(NavigationRoutes.FilterScreen.route)
-            },
-            onTrailingIconClick = {
-                controller.navigate(NavigationRoutes.ProfileScreen.route)
-            },
-            controller = controller,
-        )
+                        controller.navigate(NavigationRoutes.FilterScreen.route)
+                    },
+                    onTrailingIconClick = {
+                        controller.navigate(NavigationRoutes.ProfileScreen.route)
+                    },
                     controller = controller,
-
                 )
+
                 LazyColumn {
                     items(publications) { publication ->
                         PublicationCell(
                             item = publication,
                             onClick = {
                                 Log.d("PUBLICATION", publication.toString())
-
                                 controller.navigate(
                                     NavigationRoutes.PublicationScreen.withPublicationId(publication.id),
                                 )
