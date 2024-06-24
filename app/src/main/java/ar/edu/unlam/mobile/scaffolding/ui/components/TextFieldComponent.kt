@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ fun TextFieldComponent(
     errorMessage: String,
     onTextChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier,
     singleLine: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
@@ -33,6 +35,7 @@ fun TextFieldComponent(
             },
             placeholder = { Text(placeholder) },
             keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
             isError = isError,
             singleLine = singleLine,
             maxLines = maxLines,
