@@ -100,7 +100,6 @@ fun CheckboxComponentPreview() {
         options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
         initialSelectedOption = "",
         onOptionSelected = { selectedOption ->
-
         },
         optionToString = { it },
         isError = false,

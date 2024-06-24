@@ -64,9 +64,10 @@ fun DatePickerComponent(
 
     Column {
         TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
             value = selectedDate ?: initialDate ?: "",
             placeholder = { Text("Ingrese la fecha") },
             onValueChange = { /* No hacer nada, ya que es de solo lectura */ },
@@ -123,6 +124,7 @@ fun MinimalDialog(
         DatePicker(state = datePickerState)
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun DatePickerComponentPreview() {

@@ -63,11 +63,11 @@ fun SelectComponent(
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
                 },
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
-                    .border(3.dp, primaryDark, RoundedCornerShape(10.dp))
-                ,
+                modifier =
+                    Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                        .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
                 placeholder = { Text(placeholder) },
                 shape = RoundedCornerShape(10.dp),
             )
@@ -97,8 +97,9 @@ fun SelectComponent(
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
-fun SelectComponentPreview(){
-    SelectComponent(title = "Especie",list = emptyList(), onItemSelected = {})
+fun SelectComponentPreview() {
+    SelectComponent(title = "Especie", list = emptyList(), onItemSelected = {})
 }
