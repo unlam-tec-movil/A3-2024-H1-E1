@@ -477,7 +477,10 @@ class PublicationEditViewModel
                         if (addresses.isNotEmpty()) {
                             val location = addresses[0]
                             _geocodedLocation.value = LatLng(location.latitude, location.longitude)
-                            Log.d("PublicationEditViewModel", "Geocoded location: ${_geocodedLocation.value}")
+                            Log.d(
+                                "PublicationEditViewModel",
+                                "Geocoded location: ${_geocodedLocation.value}",
+                            )
                         } else {
                             _geocodedLocation.value = null
                             Log.d("PublicationEditViewModel", "Geocoded location is null")
@@ -542,13 +545,14 @@ class PublicationEditViewModel
                 val urls = uploadImagesToStorage(listImageUser.value, currentUserId!!, id.value)
                 Log.d("UploadImages", "Uploaded image URL: $urls")
                 val newPostWithImages = createPostWithImage(urls)
-                firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
-                    firestoreService.editPublicationForUser(
-                        currentUserId!!,
-                        id.value,
-                        newPostWithImages,
-                    )
-                }
+                firestoreService.editPublicationInAllPublications(id.value, newPostWithImages)
+                    .collect { result ->
+                        firestoreService.editPublicationForUser(
+                            currentUserId!!,
+                            id.value,
+                            newPostWithImages,
+                        )
+                    }
                 _publicationUiState.value = PublicationUiState.Success
             } catch (e: Exception) {
                 Log.e("Edit Publication", "Failed upload to Firestore edit Publication")

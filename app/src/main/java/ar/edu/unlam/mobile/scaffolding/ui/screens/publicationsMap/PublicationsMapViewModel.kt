@@ -1,16 +1,15 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import ar.edu.unlam.mobile.scaffolding.domain.models.SimplifiedPublicationMarker
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetLocationUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetMarkersUseCase
 import com.google.android.gms.maps.model.LatLng
-
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +19,6 @@ import javax.inject.Inject
 @HiltViewModel
 class PublicationsMapViewModel
     @Inject
-
     constructor(
         private val getLocationUseCase: GetLocationUseCase,
         private val getMarkersUseCase: GetMarkersUseCase,
@@ -35,20 +33,24 @@ class PublicationsMapViewModel
         val showRationaleAlert = _showRationaleAlert.asStateFlow()
         private var _cameraCenterLocation = MutableStateFlow<LatLng?>(null)
         val cameraCenterLocation = _cameraCenterLocation.asStateFlow()
-            private val _publicationsListState = mutableStateOf<List<PublicationCellModel>>(emptyList())
+        private val _publicationsListState = mutableStateOf<List<PublicationCellModel>>(emptyList())
         val publicationsListState: State<List<PublicationCellModel>> = _publicationsListState
 
         init {
             loadPublications()
         }
+
         private fun loadPublications() {
         }
+
         fun filterPublications(query: String) {
         }
+
         private val _markers = MutableStateFlow<List<LatLng>>(emptyList())
         val markers = _markers.asStateFlow()
 
-        private val _publicationMarkers = MutableStateFlow<List<SimplifiedPublicationMarker>>(emptyList())
+        private val _publicationMarkers =
+            MutableStateFlow<List<SimplifiedPublicationMarker>>(emptyList())
         val publicationMarkers = _publicationMarkers.asStateFlow()
 
         fun handle(event: PermissionEvent) {
@@ -118,4 +120,3 @@ sealed interface PermissionEvent {
 
     object ShouldShowRationale : PermissionEvent
 }
-

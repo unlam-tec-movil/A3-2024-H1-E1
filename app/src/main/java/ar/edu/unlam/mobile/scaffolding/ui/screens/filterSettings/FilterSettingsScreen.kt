@@ -41,12 +41,18 @@ fun FilterSettingsScreen(
     var fechaPerdida by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(top = 30.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp),
         ) {
             Text("Distancia: ${distanciaSliderState.value.roundToInt()} km")
             Slider(
@@ -88,7 +94,10 @@ fun FilterSettingsScreen(
         }
         Spacer(modifier = Modifier.weight(1f))
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             horizontalArrangement = Arrangement.End,
         ) {
             TextButton(onClick = { controller.popBackStack() }) {

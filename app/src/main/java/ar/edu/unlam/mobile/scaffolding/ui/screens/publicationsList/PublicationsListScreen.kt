@@ -45,9 +45,11 @@ fun PublicationsListScreen(
         PublicationsState.Loading -> {
             LoadingComponent()
         }
+
         PublicationsState.Error -> {
             Toast.makeText(context, "Error al buscar la información", Toast.LENGTH_SHORT).show()
         }
+
         PublicationsState.Success -> {
             Column(
                 modifier = Modifier.fillMaxSize(),

@@ -1,7 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList
 
-
-import android.media.Image
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +41,6 @@ class PublicationsListViewModel
         private val _publicationFilter = mutableStateOf<List<PublicationCellModel>>(emptyList())
         val publicationFilter: State<List<PublicationCellModel>> = _publicationFilter
 
-
         @Suppress("ktlint:standard:backing-property-naming")
         private val _publicationsState = MutableStateFlow(PublicationsState.Loading)
 
@@ -65,42 +62,45 @@ class PublicationsListViewModel
                                 id = it.id,
                                 title = it.title,
                                 description = it.description,
-                                distance = "", 
+                                distance = "",
                                 imageResourceId = (it.images.firstOrNull() ?: ""),
                                 publicationType = it.type,
-                                species = it.species, 
-                                dateLost = it.dateLost, 
+                                species = it.species,
+                                dateLost = it.dateLost,
                             )
                         }
-
                     }.catch {
                         _uiState.value = PublicationsUiState(PublicationsState.Error)
                         // error
                     }.collect { publicationCellModelsList ->
                         _publications.value = publicationCellModelsList
                         _uiState.value = PublicationsUiState(PublicationsState.Success)
-                         applyCurrentFilters()
+                        applyCurrentFilters()
                     }
             }
         }
 
-
         fun filterPublicationByTittle(query: String) {
-            _publicationFilter.value = _publications.value.filter { it.title.contains(query, ignoreCase = true) }
+            _publicationFilter.value =
+                _publications.value.filter { it.title.contains(query, ignoreCase = true) }
             Log.d("PublicationsListViewModel", "Filtered by title: ${_publicationFilter.value}")
         }
 
         fun applyFilters(filters: FilterSettings) {
             _publicationFilter.value =
                 _publications.value.filter { publication ->
-                    val speciesMatch = filters.selectedSpecies.isEmpty() || publication.species == filters.selectedSpecies
+                    val speciesMatch =
+                        filters.selectedSpecies.isEmpty() || publication.species == filters.selectedSpecies
 
                     @Suppress("ktlint:standard:max-line-length")
-                    val typeMatch = filters.selectedPublicationType.isEmpty() || publication.publicationType == filters.selectedPublicationType
+                    val typeMatch =
+                        filters.selectedPublicationType.isEmpty() || publication.publicationType == filters.selectedPublicationType
 
                     @Suppress("ktlint:standard:max-line-length")
-                    val distanceMatch = filters.selectedDistance == 0f || publication.distance.toFloatOrNull() ?: 0f <= filters.selectedDistance
-                    val dateMatch = filters.selectedDateLost.isEmpty() || publication.dateLost == filters.selectedDateLost
+                    val distanceMatch =
+                        filters.selectedDistance == 0f || publication.distance.toFloatOrNull() ?: 0f <= filters.selectedDistance
+                    val dateMatch =
+                        filters.selectedDateLost.isEmpty() || publication.dateLost == filters.selectedDateLost
 
                     Log.d("PublicationsListViewModel", "Checking publication: $publication")
                     Log.d("PublicationsListViewModel", "Species match: $speciesMatch")
@@ -117,7 +117,7 @@ class PublicationsListViewModel
         private fun applyCurrentFilters() {
             val currentFilters =
                 FilterSettings(
-                    selectedSpecies = "", 
+                    selectedSpecies = "",
                     selectedPublicationType = "",
                     selectedDistance = 0f,
                     selectedDateLost = "",

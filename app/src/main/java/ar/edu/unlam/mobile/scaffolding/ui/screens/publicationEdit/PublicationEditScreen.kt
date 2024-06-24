@@ -144,7 +144,11 @@ fun PublicationEditScreen(
                     if (bitmap != null) {
                         if (imageBitmapList.size == 3) {
                             // /solo vamos a dejar que suba 3 imagenes
-                            Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                context,
+                                "Solo se permite subir 3 imagenes",
+                                Toast.LENGTH_LONG,
+                            ).show()
                         } else {
                             viewModel.addImage(bitmap)
                         }
@@ -165,6 +169,7 @@ fun PublicationEditScreen(
         is PublicationUiState.Loading -> {
             LoadingComponent()
         }
+
         is PublicationUiState.Success -> {
             Column(
                 modifier =
@@ -361,7 +366,11 @@ fun PublicationEditScreen(
                                     scope.launch {
                                         viewModel.addEditPublicationToFirestore()
                                         if (viewModel.publicationUiState.value is PublicationUiState.Success) {
-                                            controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                                            controller.navigate(
+                                                NavigationRoutes.PublicationScreen.withPublicationId(
+                                                    idPublication!!,
+                                                ),
+                                            )
                                         }
                                     }
                                 } else {
@@ -391,6 +400,7 @@ fun PublicationEditScreen(
                 }
             }
         }
+
         is PublicationUiState.Error -> {
             Box(
                 modifier =
