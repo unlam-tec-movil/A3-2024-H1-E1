@@ -112,20 +112,20 @@ fun LoginScreen(navHostController: NavHostController) {
             ) {
                 Column(
                     modifier =
-                    Modifier
-                        .fillMaxSize()
+                        Modifier
+                            .fillMaxSize()
                             .padding(horizontal = 25.dp, vertical = 20.dp),
                 ) {
                     Box(
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(250.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .height(250.dp),
                     ) {
                         LottieAnimation(
                             modifier =
-                            Modifier
-                                .fillMaxSize(),
+                                Modifier
+                                    .fillMaxSize(),
                             composition = composition,
                             progress = progress,
                         )
@@ -164,10 +164,10 @@ fun LoginScreen(navHostController: NavHostController) {
 
                     Row(
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(80.dp)
-                            .padding(top = 25.dp, bottom = 5.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .height(80.dp)
+                                .padding(top = 25.dp, bottom = 5.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceAround,
                     ) {
@@ -200,8 +200,8 @@ fun LoginScreen(navHostController: NavHostController) {
                             }
                         },
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
+                            Modifier
+                                .fillMaxWidth()
                                 .padding(top = 35.dp, bottom = 5.dp),
                         containerColor = primaryDark,
                     ) {
@@ -214,8 +214,8 @@ fun LoginScreen(navHostController: NavHostController) {
                     }
                     Row(
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
+                            Modifier
+                                .fillMaxWidth()
                                 .padding(top = 10.dp, bottom = 5.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
