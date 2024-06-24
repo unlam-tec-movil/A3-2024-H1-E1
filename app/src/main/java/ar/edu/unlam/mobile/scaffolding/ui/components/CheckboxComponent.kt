@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,9 +36,9 @@ fun <T> CheckboxComponent(
 
     Column {
         Text(
-            text ="Selecciona una opción:",
+            text = "Selecciona una opción:",
             fontWeight = FontWeight.SemiBold,
-            color = onPrimaryDark
+            color = onPrimaryDark,
         )
         options.forEach { option ->
             Row(
@@ -59,17 +58,19 @@ fun <T> CheckboxComponent(
                         selectedOption = option
                         onOptionSelected(option)
                     },
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = primaryDark,
-                        unselectedColor = MaterialTheme.colorScheme.onSurface
-                    ),
+                    colors =
+                        RadioButtonDefaults
+                            .colors(
+                                selectedColor = primaryDark,
+                                unselectedColor = MaterialTheme.colorScheme.onSurface,
+                            ),
                 )
                 Text(
                     text = optionToString(option),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 16.dp),
                     color = onPrimaryDark,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
         }
@@ -94,8 +95,7 @@ fun <T> CheckboxComponent(
 
 @Preview(showBackground = true)
 @Composable
-fun CheckboxComponentPreview(){
-
+fun CheckboxComponentPreview() {
     CheckboxComponent(
         options = listOf("Busqueda", "Avistamiento", "Dar en adopcion"),
         initialSelectedOption = "",
