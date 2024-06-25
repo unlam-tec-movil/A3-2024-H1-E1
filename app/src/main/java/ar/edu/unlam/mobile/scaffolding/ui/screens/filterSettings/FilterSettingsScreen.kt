@@ -64,15 +64,15 @@ fun FilterSettingsScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                .padding(24.dp),
+                    .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 30.dp),
             ) {
                 Text("Distancia: ${distanceSliderState.floatValue} km")
                 Slider(
@@ -133,7 +133,7 @@ fun FilterSettingsScreen(
             Spacer(modifier = Modifier.weight(1f))
             Row(
                 modifier =
-                Modifier
+                    Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
                 horizontalArrangement = Arrangement.End,
@@ -155,13 +155,12 @@ fun FilterSettingsScreen(
                         ButtonDefaults.buttonColors(
                             containerColor = onPrimaryDark,
                         ),
-                        ) {
+                ) {
                     Text("Aplicar Filtros")
                 }
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)
