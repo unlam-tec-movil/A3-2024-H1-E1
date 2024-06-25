@@ -541,7 +541,6 @@ class PublicationEditViewModel
 
         suspend fun addEditPublicationToFirestore() {
             _publicationUiState.value = PublicationUiState.Loading
-
             try {
                 storageService.deletePublicationImages(currentUserId!!, id.value)
 
@@ -549,11 +548,14 @@ class PublicationEditViewModel
                 Log.d("UploadImages", "Uploaded image URL: $urls")
                 val newPostWithImages = createPostWithImage(urls)
                 firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
-                    firestoreService.editPublicationForUser(
-                        currentUserId!!,
-                        id.value,
-                        newPostWithImages,
-                    )
+                    firestoreService
+                        .editPublicationForUser(
+                            currentUserId!!,
+                            id.value,
+                            newPostWithImages,
+                        ).collect { result ->
+                            Log.d("Edit Publication", "Publication edited successfully")
+                        }
                 }
                 _publicationUiState.value = PublicationUiState.Success
             } catch (e: Exception) {

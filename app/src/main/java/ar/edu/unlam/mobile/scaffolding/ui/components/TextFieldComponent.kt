@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.compose.onPrimaryDark
 import com.example.compose.primaryDark
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldComponent(
     title: String,
@@ -58,6 +60,13 @@ fun TextFieldComponent(
                         if (isError) error(errorMessage)
                     },
             shape = RoundedCornerShape(10.dp),
+            colors = TextFieldDefaults.colors(
+                // Configura los colores del TextField
+                focusedIndicatorColor = Color.Transparent, // Subrayado cuando está enfocado
+                unfocusedIndicatorColor = Color.Transparent, // Subrayado cuando no está enfocado
+                disabledIndicatorColor = Color.Transparent, // Subrayado cuando está deshabilitado
+                errorIndicatorColor = Color.Transparent // Subrayado cuando hay un error
+            )
         )
         if (isError) {
             Text(

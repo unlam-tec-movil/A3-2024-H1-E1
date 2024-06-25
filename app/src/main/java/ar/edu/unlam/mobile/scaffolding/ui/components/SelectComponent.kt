@@ -11,6 +11,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,6 +72,13 @@ fun SelectComponent(
                         .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
                 placeholder = { Text(placeholder) },
                 shape = RoundedCornerShape(10.dp),
+                colors = TextFieldDefaults.colors(
+                    // Configura los colores del TextField
+                    focusedIndicatorColor = Color.Transparent, // Subrayado cuando está enfocado
+                    unfocusedIndicatorColor = Color.Transparent, // Subrayado cuando no está enfocado
+                    disabledIndicatorColor = Color.Transparent, // Subrayado cuando está deshabilitado
+                    errorIndicatorColor = Color.Transparent // Subrayado cuando hay un error
+                ),
             )
             ExposedDropdownMenu(
                 expanded = isExpanded,

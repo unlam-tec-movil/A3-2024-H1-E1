@@ -361,7 +361,7 @@ fun PublicationEditScreen(
                         TextButton(
                             onClick = {
                                 viewModel.resetListOfImages()
-                                controller.popBackStack()
+                                controller.navigate(NavigationRoutes.MapScreen.route)
                             },
                         ) {
                             Text(
@@ -379,7 +379,17 @@ fun PublicationEditScreen(
                                                 NavigationRoutes.PublicationScreen.withPublicationId(
                                                     publicationId,
                                                 ),
-                                            )
+                                            ) {
+                                                if (viewModel.isEditing.value) {
+                                                    popUpTo(NavigationRoutes.ProfileScreen.route) {
+                                                        inclusive = false
+                                                    }
+                                                } else {
+                                                    popUpTo(NavigationRoutes.MapScreen.route) {
+                                                        inclusive = false
+                                                    }
+                                                }
+                                            }
                                         }
 
                                     scope.launch {
@@ -480,7 +490,6 @@ fun PublicationEditScreen(
                 if (viewModel.hasRequirePermission(cameraXPermission, context)) {
                     openCameraX.value = true
                 } else {
-                    // ActivityCompat.requestPermissions(context as Activity, cameraXPermission, 0)
                     requestCameraPermission.launch(Manifest.permission.CAMERA)
                 }
             },
@@ -531,7 +540,6 @@ fun PublicationEditScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
 @Preview(showBackground = true)
 @Composable
 fun PublicationEditPreview() {

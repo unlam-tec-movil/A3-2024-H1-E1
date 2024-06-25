@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -28,6 +29,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.RationaleAlert
 import ar.edu.unlam.mobile.scaffolding.ui.components.SearchBox
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
+import com.example.compose.onPrimaryDark
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -172,7 +174,11 @@ fun PublicationsMapScreen(
                     .padding(bottom = 16.dp, start = 16.dp)
                     .size(42.dp),
         ) {
-            Icon(painter = painterResource(R.drawable.baseline_my_location_24), contentDescription = "Center map on user location")
+            Icon(
+                painter = painterResource(R.drawable.baseline_my_location_24),
+                contentDescription = "Center map on user location",
+                tint = onPrimaryDark,
+            )
         }
     }
 }
@@ -186,3 +192,9 @@ private suspend fun CameraPositionState.centerOnLocation(location: LatLng) =
             ),
         durationMs = 1500,
     )
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    PublicationsMapScreen(controller = NavHostController(LocalContext.current))
+}

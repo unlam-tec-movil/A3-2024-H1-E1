@@ -32,6 +32,8 @@ import androidx.compose.ui.zIndex
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.CameraPreview
 import ar.edu.unlam.mobile.scaffolding.ui.components.PhotoBottomSheetContent
+import com.example.compose.inverseOnSurfaceLight
+import com.example.compose.onPrimaryDark
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,6 +65,7 @@ fun CameraXComponent(
                     onDissmissButton()
                 }
             },
+            contentColor = inverseOnSurfaceLight
         ) { padding ->
             Box(
                 modifier =
@@ -82,7 +85,7 @@ fun CameraXComponent(
                         imageVector = Icons.Default.Close,
                         contentDescription = null,
                         modifier = Modifier.size(50.dp),
-                        tint = Color.Red,
+                        tint = Color.Black,
                     )
                 }
                 IconButton(
@@ -100,6 +103,7 @@ fun CameraXComponent(
                         painter = painterResource(id = R.drawable.outline_flip_camera_ios_24),
                         contentDescription = null,
                         modifier = Modifier.size(50.dp),
+                        tint = onPrimaryDark
                     )
                 }
                 Row(
@@ -120,17 +124,18 @@ fun CameraXComponent(
                             painter = painterResource(id = R.drawable.baseline_photo_library_24),
                             contentDescription = null,
                             modifier = Modifier.size(50.dp),
+                            tint = onPrimaryDark,
                         )
                     }
                     // icono de tomar una foto
                     IconButton(onClick = {
-                        // /esta funcion en el viewModel
                         takePicture()
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.outline_photo_camera_24),
                             contentDescription = null,
                             modifier = Modifier.size(50.dp),
+                            tint = onPrimaryDark,
                         )
                     }
                 }

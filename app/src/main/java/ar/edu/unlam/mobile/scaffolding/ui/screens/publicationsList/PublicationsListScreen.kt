@@ -66,10 +66,11 @@ fun PublicationsListScreen(
                             item = publication,
                             onClick = {
                                 Log.d("PUBLICATION", publication.toString())
-
                                 controller.navigate(
                                     NavigationRoutes.PublicationScreen.withPublicationId(publication.id),
-                                )
+                                ) {
+                                    popUpTo(NavigationRoutes.ListScreen.route) { inclusive = false }
+                                }
                                 Log.d("ROUTE", "DETAILS SCREEN")
                             },
                         )

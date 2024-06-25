@@ -9,15 +9,22 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
+import com.example.compose.inverseOnSurfaceLight
+import com.example.compose.onPrimaryDark
+import com.example.compose.primaryDark
 
 @Composable
 fun BottomBar(controller: NavHostController) {
     val navBackStackEntry by controller.currentBackStackEntryAsState()
-    NavigationBar {
+    NavigationBar(
+        containerColor = inverseOnSurfaceLight,
+    ) {
         NavigationBarItem(
             selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == NavigationRoutes.MapScreen.route } == true,
             onClick = { controller.navigate(NavigationRoutes.MapScreen.route) },
@@ -30,9 +37,9 @@ fun BottomBar(controller: NavHostController) {
                                 it.route == NavigationRoutes.MapScreen.route
                             } == true
                         ) {
-                            MaterialTheme.colorScheme.primary
+                            primaryDark
                         } else {
-                            MaterialTheme.colorScheme.onSurface
+                            onPrimaryDark
                         },
                 )
             },
@@ -49,12 +56,18 @@ fun BottomBar(controller: NavHostController) {
                                 it.route == NavigationRoutes.ListScreen.route
                             } == true
                         ) {
-                            MaterialTheme.colorScheme.primary
+                            primaryDark
                         } else {
-                            MaterialTheme.colorScheme.onSurface
+                            onPrimaryDark
                         },
                 )
             },
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomBarPreview() {
+    BottomBar(controller = NavHostController(LocalContext.current))
 }

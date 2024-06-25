@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -92,6 +93,13 @@ fun TextFieldPassword(
                     )
                 }
             },
+            colors = TextFieldDefaults.colors(
+                // Configura los colores del TextField
+                focusedIndicatorColor = Color.Transparent, // Subrayado cuando está enfocado
+                unfocusedIndicatorColor = Color.Transparent, // Subrayado cuando no está enfocado
+                disabledIndicatorColor = Color.Transparent, // Subrayado cuando está deshabilitado
+                errorIndicatorColor = Color.Transparent // Subrayado cuando hay un error
+            )
         )
     }
 }

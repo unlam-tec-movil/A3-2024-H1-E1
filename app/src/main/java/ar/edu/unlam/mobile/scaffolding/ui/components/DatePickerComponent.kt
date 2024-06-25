@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
@@ -17,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.compose.onPrimaryDark
@@ -84,6 +87,13 @@ fun DatePickerComponent(
                 )
             },
             shape = RoundedCornerShape(10.dp),
+            colors = TextFieldDefaults.colors(
+                // Configura los colores del TextField
+                focusedIndicatorColor = Color.Transparent, // Subrayado cuando está enfocado
+                unfocusedIndicatorColor = Color.Transparent, // Subrayado cuando no está enfocado
+                disabledIndicatorColor = Color.Transparent, // Subrayado cuando está deshabilitado
+                errorIndicatorColor = Color.Transparent // Subrayado cuando hay un error
+            )
         )
 
         if (showDialog) {
@@ -116,6 +126,10 @@ fun MinimalDialog(
                     onDismissRequest()
                 },
                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 3.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = primaryDark,
+                    contentColor = onPrimaryDark,
+                ),
             ) {
                 Text("Confirmar")
             }

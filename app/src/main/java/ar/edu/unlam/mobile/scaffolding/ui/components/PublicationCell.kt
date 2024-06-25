@@ -17,12 +17,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
+import com.example.compose.onPrimaryDark
 
 @Composable
 fun PublicationCell(
@@ -38,6 +40,7 @@ fun PublicationCell(
                 Text(
                     item.title,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = onPrimaryDark
                 )
             },
             supportingContent = {
@@ -60,7 +63,7 @@ fun PublicationCell(
                                 .build(),
                         )
                     } else {
-                        painterResource(id = R.drawable.loading_image)
+                        painterResource(id = R.drawable.default_carrousel_image)
                     }
 
                 Image(
@@ -78,6 +81,7 @@ fun PublicationCell(
                     Text(
                         item.publicationType,
                         style = MaterialTheme.typography.labelSmall,
+                        color = onPrimaryDark,
                     )
                     Text(
                         item.distance,
@@ -86,6 +90,21 @@ fun PublicationCell(
                 }
             },
         )
-        HorizontalDivider()
+        HorizontalDivider(color = onPrimaryDark)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PublicationCellPreview(){
+    PublicationCell(item = PublicationCellModel(
+        id = "1",
+        title = "Title",
+        description = "Description",
+        distance = "10km",
+        imageResourceId = "",
+        publicationType = "Avistamiento"
+    )){
+
     }
 }
