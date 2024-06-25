@@ -120,9 +120,10 @@ fun SearchBox(
             }
         },
         shadowElevation = 4.dp,
-        colors = SearchBarDefaults.colors(
-            containerColor = inverseOnSurfaceLight
-        )
+        colors =
+            SearchBarDefaults.colors(
+                containerColor = inverseOnSurfaceLight,
+            ),
     ) {
         // /aca deberia poner el resultado de la busqueda
         LaunchedEffect(key1 = text) {
@@ -145,6 +146,6 @@ fun SearchBox(
 
 @Preview(showBackground = true)
 @Composable
-fun SearchBoxPreview(){
+fun SearchBoxPreview() {
     SearchBox()
 }

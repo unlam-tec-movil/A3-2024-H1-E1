@@ -70,9 +70,9 @@ fun PublicationCell(
                     painter = imagePainter,
                     contentDescription = null,
                     modifier =
-                    Modifier
-                        .size(60.dp)
-                        .clip(CircleShape),
+                        Modifier
+                            .size(60.dp)
+                            .clip(CircleShape),
                     contentScale = ContentScale.Crop,
                 )
             },
@@ -106,7 +106,7 @@ fun PublicationCellPreview() {
                 distance = "10km",
                 imageResourceId = "",
                 publicationType = "Avistamiento",
-        ),
+            ),
     ) {
     }
 }

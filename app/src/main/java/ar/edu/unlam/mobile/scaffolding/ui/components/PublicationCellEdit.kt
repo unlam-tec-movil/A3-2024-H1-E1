@@ -17,7 +17,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
@@ -129,36 +128,4 @@ fun PublicationCellEdit(
         )
         HorizontalDivider(color = onPrimaryDark)
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PublicationCellEditPreview() {
-    PublicationCellEdit(
-        post =
-            PostWithImages(
-                id = "",
-                type = "",
-                title = "Michico",
-                description = "El perro se perdio mucho tiempo atras",
-                dateLost = "",
-                sex = "Macho",
-                age = 20,
-                species = "Perro",
-                color = "Black",
-                location = "",
-                contact = 123456789,
-                images =
-                    listOf(
-                        @Suppress("ktlint:standard:max-line-length")
-                        "https://firebasestorage.googleapis.com/v0/b/scaffolding-h1.appspot.com/o/Gc87rhdQDqU5OzoYoYxS8dDFkp33%2F758a46c8-fa08-41e8-b778-a123c7f47742%2Fimage_1719240810169.jpg?alt=media&token=48b49036-62dc-4052-807a-dc659451b131",
-                    ),
-                locationLat = 0.0,
-                locationLng = 0.0,
-            ),
-        onClick = {},
-        onViewClick = {},
-        onEditClick = {},
-        onDeleteClick = {},
-    )
 }
