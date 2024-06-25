@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,10 +36,14 @@ fun MainScreen() {
         },
         floatingActionButton = {
             if (currentRoute == NavigationRoutes.MapScreen.route || currentRoute == NavigationRoutes.ListScreen.route) {
-                FloatingActionButton(onClick = {
-                    controller.navigate(NavigationRoutes.PublicationEditScreen.route)
-                    // controller.navigate(NavigationRoutes.PublicationEditScreen.withPublicationId("8c535ce2-66c5-4f81-8094-b30c9ec5f5fb"))
-                }) {
+                FloatingActionButton(
+                    onClick = {
+                        controller.navigate(NavigationRoutes.PublicationEditScreen.route)
+                        // controller.navigate(NavigationRoutes.PublicationEditScreen.withPublicationId("8c535ce2-66c5-4f81-8094-b30c9ec5f5fb"))
+                    },
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                ) {
                     Icon(Icons.Filled.Add, "Floating action button.")
                 }
             }
