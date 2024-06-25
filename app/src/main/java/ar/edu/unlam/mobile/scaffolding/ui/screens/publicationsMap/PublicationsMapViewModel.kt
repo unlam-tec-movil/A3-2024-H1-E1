@@ -30,12 +30,10 @@ class PublicationsMapViewModel
         val showRationaleAlert = _showRationaleAlert.asStateFlow()
         private var _cameraCenterLocation = MutableStateFlow<LatLng?>(null)
         val cameraCenterLocation = _cameraCenterLocation.asStateFlow()
-
-        private val _markers = MutableStateFlow<List<LatLng>>(emptyList())
-        val markers = _markers.asStateFlow()
-
         private val _publicationMarkers = MutableStateFlow<List<SimplifiedPublicationMarker>>(emptyList())
         val publicationMarkers = _publicationMarkers.asStateFlow()
+        private val _selectedMarker = MutableStateFlow<SimplifiedPublicationMarker?>(null)
+        val selectedMarker = _selectedMarker.asStateFlow()
 
         fun handle(event: PermissionEvent) {
             when (event) {
@@ -63,6 +61,7 @@ class PublicationsMapViewModel
 
         fun getMarkers() {
             viewModelScope.launch {
+                _viewState.value = ViewState.Loading
                 getMarkersUseCase.invoke().collect { publicationMarkers ->
                     publicationMarkers.forEach { publicationMarker ->
                         Log.d("PublicationMarker", publicationMarker.toString())
@@ -84,6 +83,10 @@ class PublicationsMapViewModel
 
         fun dismissRationaleAlert() {
             _showRationaleAlert.value = false
+        }
+
+        fun setSelectedMarker(marker: SimplifiedPublicationMarker) {
+            _selectedMarker.value = marker
         }
     }
 

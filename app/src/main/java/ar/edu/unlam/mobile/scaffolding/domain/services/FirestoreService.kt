@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.domain.services
 import ar.edu.unlam.mobile.scaffolding.data.repository.FirestoreRepositoryInterface
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import ar.edu.unlam.mobile.scaffolding.domain.models.SimplifiedPublicationMarker
+import ar.edu.unlam.mobile.scaffolding.domain.models.Species
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetMarkersUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.UseFirestore
 import com.google.android.gms.maps.model.LatLng
@@ -75,7 +76,7 @@ class FirestoreService
                         title = post.title,
                         description = post.description,
                         dateLost = post.dateLost,
-                        species = post.species,
+                        species = Species.fromString(post.species),
                         locationCoordinates = LatLng(post.locationLat, post.locationLng),
                         images = post.images,
                     )
