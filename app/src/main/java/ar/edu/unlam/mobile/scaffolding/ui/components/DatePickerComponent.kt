@@ -126,10 +126,11 @@ fun MinimalDialog(
                     onDismissRequest()
                 },
                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 3.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = primaryDark,
-                    contentColor = onPrimaryDark,
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = primaryDark,
+                        contentColor = onPrimaryDark,
+                    ),
             ) {
                 Text("Confirmar")
             }

@@ -56,13 +56,13 @@ fun TextFieldOwn(
                     modifier = Modifier.padding(start = 3.dp),
                 )
             },
-            colors = TextFieldDefaults.colors(
-                // Configura los colores del TextField
-                focusedIndicatorColor = Color.Transparent, // Subrayado cuando está enfocado
-                unfocusedIndicatorColor = Color.Transparent, // Subrayado cuando no está enfocado
-                disabledIndicatorColor = Color.Transparent, // Subrayado cuando está deshabilitado
-                errorIndicatorColor = Color.Transparent // Subrayado cuando hay un error
-            ),
+            colors =
+                TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent, // Subrayado cuando está enfocado
+                    unfocusedIndicatorColor = Color.Transparent, // Subrayado cuando no está enfocado
+                    disabledIndicatorColor = Color.Transparent, // Subrayado cuando está deshabilitado
+                    errorIndicatorColor = Color.Transparent,
+                ),
         )
     }
 }

@@ -66,19 +66,21 @@ fun SelectComponent(
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
                 },
                 modifier =
-                    Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                        .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
-                placeholder = { Text(placeholder) },
+                Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+                    .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
+                placeholder = {
+                    Text(placeholder)
+                },
                 shape = RoundedCornerShape(10.dp),
-                colors = TextFieldDefaults.colors(
-                    // Configura los colores del TextField
-                    focusedIndicatorColor = Color.Transparent, // Subrayado cuando está enfocado
-                    unfocusedIndicatorColor = Color.Transparent, // Subrayado cuando no está enfocado
-                    disabledIndicatorColor = Color.Transparent, // Subrayado cuando está deshabilitado
-                    errorIndicatorColor = Color.Transparent // Subrayado cuando hay un error
-                ),
+                colors =
+                    TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent, // Subrayado cuando está enfocado
+                        unfocusedIndicatorColor = Color.Transparent, // Subrayado cuando no está enfocado
+                        disabledIndicatorColor = Color.Transparent, // Subrayado cuando está deshabilitado
+                        errorIndicatorColor = Color.Transparent,
+                    ),
             )
             ExposedDropdownMenu(
                 expanded = isExpanded,
