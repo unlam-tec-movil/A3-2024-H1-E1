@@ -40,7 +40,7 @@ fun PublicationCell(
                 Text(
                     item.title,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = onPrimaryDark
+                    color = onPrimaryDark,
                 )
             },
             supportingContent = {
@@ -54,13 +54,13 @@ fun PublicationCell(
                 val imagePainter =
                     if (item.imageResourceId.isNotEmpty()) {
                         rememberAsyncImagePainter(
-                            ImageRequest.Builder(LocalContext.current)
+                            ImageRequest
+                                .Builder(LocalContext.current)
                                 .data(item.imageResourceId)
                                 .apply {
                                     crossfade(true)
                                     transformations(CircleCropTransformation())
-                                }
-                                .build(),
+                                }.build(),
                         )
                     } else {
                         painterResource(id = R.drawable.default_carrousel_image)
@@ -70,9 +70,9 @@ fun PublicationCell(
                     painter = imagePainter,
                     contentDescription = null,
                     modifier =
-                        Modifier
-                            .size(60.dp)
-                            .clip(CircleShape),
+                    Modifier
+                        .size(60.dp)
+                        .clip(CircleShape),
                     contentScale = ContentScale.Crop,
                 )
             },
@@ -96,15 +96,17 @@ fun PublicationCell(
 
 @Preview(showBackground = true)
 @Composable
-fun PublicationCellPreview(){
-    PublicationCell(item = PublicationCellModel(
-        id = "1",
-        title = "Title",
-        description = "Description",
-        distance = "10km",
-        imageResourceId = "",
-        publicationType = "Avistamiento"
-    )){
-
+fun PublicationCellPreview() {
+    PublicationCell(
+        item =
+            PublicationCellModel(
+                id = "1",
+                title = "Title",
+                description = "Description",
+                distance = "10km",
+                imageResourceId = "",
+                publicationType = "Avistamiento",
+        ),
+    ) {
     }
 }
