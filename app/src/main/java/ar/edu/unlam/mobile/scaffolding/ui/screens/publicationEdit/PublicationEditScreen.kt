@@ -48,7 +48,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -168,10 +167,10 @@ fun PublicationEditScreen(
         is PublicationUiState.Success -> {
             Column(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
-                        .padding(horizontal = 24.dp),
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Carrousel(
@@ -186,9 +185,9 @@ fun PublicationEditScreen(
                         showDialogSelectedUpdateImage = true
                     },
                     modifier =
-                        Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 5.dp),
+                    Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 5.dp),
                 ) {
                     Text(text = "Añadir Foto")
                 }
@@ -340,15 +339,15 @@ fun PublicationEditScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
                         onClick = {
                             viewModel.resetListOfImages()
-                            controller.popBackStack()
+                            controller.navigate(NavigationRoutes.MapScreen.route)
                         },
                     ) {
                         Text("Cancelar")
@@ -361,7 +360,21 @@ fun PublicationEditScreen(
                                     scope.launch {
                                         viewModel.addEditPublicationToFirestore()
                                         if (viewModel.publicationUiState.value is PublicationUiState.Success) {
-                                            controller.navigate(NavigationRoutes.PublicationScreen.withPublicationId(idPublication!!))
+                                            controller.navigate(
+                                                NavigationRoutes.PublicationScreen.withPublicationId(
+                                                    idPublication!!,
+                                                ),
+                                            ) {
+                                                if (viewModel.isEditing.value) {
+                                                    popUpTo(NavigationRoutes.ProfileScreen.route) {
+                                                        inclusive = false
+                                                    }
+                                                } else {
+                                                    popUpTo(NavigationRoutes.MapScreen.route) {
+                                                        inclusive = false
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 } else {
@@ -394,9 +407,9 @@ fun PublicationEditScreen(
         is PublicationUiState.Error -> {
             Box(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
             ) {
                 SnackbarComponent(
                     snackbarHostState = snackbarHostState,
@@ -422,6 +435,31 @@ fun PublicationEditScreen(
             viewModel.resetListBitmapToCamareX()
         }
     }
+    val requestCameraPermission =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            if (isGranted) {
+                openCameraX.value = true
+            } else {
+                Toast.makeText(context, "Permiso denegado", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    val requestGalleryPermission =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            if (isGranted) {
+                val galleryIntent =
+                    Intent(Intent.ACTION_PICK).apply {
+                        setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                    }
+                galleryLauncher.launch(galleryIntent)
+            } else {
+                Toast.makeText(context, "Permiso denegado", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     if (showDialogSelectedUpdateImage) {
         SelectedFormUpdateImage(
@@ -430,15 +468,28 @@ fun PublicationEditScreen(
                 if (viewModel.hasRequirePermission(cameraXPermission, context)) {
                     openCameraX.value = true
                 } else {
-                    ActivityCompat.requestPermissions(context as Activity, cameraXPermission, 0)
+                    requestCameraPermission.launch(Manifest.permission.CAMERA)
                 }
             },
             onGalerrySelected = {
-                val galleryIntent =
-                    Intent(Intent.ACTION_PICK).apply {
-                        setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-                    }
-                galleryLauncher.launch(galleryIntent)
+                if (viewModel.hasRequirePermission(
+                        arrayOf(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            @Suppress("ktlint:standard:max-line-length")
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_MEDIA_IMAGES,
+                        ),
+                        context,
+                    )
+                ) {
+                    val galleryIntent =
+                        Intent(Intent.ACTION_PICK).apply {
+                            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                        }
+                    galleryLauncher.launch(galleryIntent)
+                } else {
+                    requestGalleryPermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                }
             },
         )
     }
@@ -452,9 +503,9 @@ fun PublicationEditScreen(
     }
     Box(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+        Modifier
+            .fillMaxSize()
+            .padding(16.dp),
     ) {
         SnackbarComponent(
             snackbarHostState = snackbarHostState,
