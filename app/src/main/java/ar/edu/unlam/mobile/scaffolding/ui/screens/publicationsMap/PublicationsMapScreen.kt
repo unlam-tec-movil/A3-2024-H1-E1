@@ -51,6 +51,7 @@ fun PublicationsMapScreen(
     controller: NavHostController,
     viewModel: PublicationsMapViewModel = hiltViewModel(),
 ) {
+    val listForSearch = viewModel.publicationsListState
     val permissionState =
         rememberMultiplePermissionsState(
             permissions =
@@ -83,10 +84,9 @@ fun PublicationsMapScreen(
     LaunchedEffect(Unit) {
         viewModel.getMarkers()
     }
+
     Box(
-        modifier =
-            Modifier
-                .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) {
         MapsComponent(
             markers = viewModel.publicationMarkers.collectAsState(),
@@ -103,6 +103,7 @@ fun PublicationsMapScreen(
                 is ViewState.Loading -> {
                     LoadingComponent()
                 }
+
                 is ViewState.Success -> {
                     LaunchedEffect(Unit) {
                         viewModel.centerMapOnUserLocation()
@@ -110,6 +111,7 @@ fun PublicationsMapScreen(
                         cameraState.centerOnLocation(cameraCenterLocation ?: LatLng(0.0, 0.0))
                     }
                 }
+
                 is ViewState.ShouldShowRationale -> {
                     if (showRationaleAlert) {
                         RationaleAlert(
@@ -126,6 +128,7 @@ fun PublicationsMapScreen(
                         )
                     }
                 }
+
                 is ViewState.RevokedPermissions -> {
                     if (showRationaleAlert) {
                         RationaleAlert(
@@ -138,9 +141,7 @@ fun PublicationsMapScreen(
             }
         }
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             SearchBox(
@@ -150,11 +151,14 @@ fun PublicationsMapScreen(
                 onTrailingIconClick = {
                     controller.navigate(NavigationRoutes.ProfileScreen.route)
                 },
+                listForSearch = listForSearch,
+                filterList = { query ->
+                    viewModel.filterPublications(query)
+                },
+                controller = controller,
             )
             Spacer(
-                modifier =
-                    Modifier
-                        .weight(1f),
+                modifier = Modifier.weight(1f),
             )
         }
 
@@ -186,7 +190,10 @@ fun PublicationsMapScreen(
                     .padding(bottom = 16.dp, start = 16.dp)
                     .size(42.dp),
         ) {
-            Icon(painter = painterResource(R.drawable.baseline_my_location_24), contentDescription = "Center map on user location")
+            Icon(
+                painter = painterResource(R.drawable.baseline_my_location_24),
+                contentDescription = "Center map on user location",
+            )
         }
     }
     if (showBottomSheet) {

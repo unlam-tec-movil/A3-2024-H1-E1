@@ -36,7 +36,10 @@ fun GyroscopeSplash(
                     )
                     // Agregar la animación Lottie aquí
                     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gyroscope))
-                    val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
+                    val progress by animateLottieCompositionAsState(
+                        composition,
+                        iterations = LottieConstants.IterateForever,
+                    )
                     LottieAnimation(
                         composition = composition,
                         progress = progress,

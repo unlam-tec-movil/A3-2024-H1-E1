@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.filterSettings
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,32 +19,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.SelectComponent
+import ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList.PublicationsListViewModel
+import kotlin.math.roundToInt
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FilterSettingsScreen(
-    modifier: Modifier = Modifier,
     controller: NavHostController,
-    viewModel: FilterSettingsViewModel = hiltViewModel(),
+    filterSettingsViewModel: FilterSettingsViewModel = hiltViewModel(),
+    publicationsListViewModel: PublicationsListViewModel = hiltViewModel(),
 ) {
-    val list = listOf("Avistamiento", "Busqueda", "Dar en adopcion")
-    var selectedText by remember {
-        mutableStateOf(list[0])
-    }
-    val list1 = listOf("Perro", "Gato", "Pajaro", "Tortuga", "Otros Especies")
-    var selectedText1 by remember {
-        mutableStateOf(list1[0])
-    }
-
-    val distanceSliderState = remember { mutableFloatStateOf(0f) }
-    var dateLost by remember { mutableStateOf("") }
+    val listaTipos = listOf("Avistamiento", "Búsqueda", "Dar en adopción")
+    var tipoSeleccionado by remember { mutableStateOf(listaTipos[0]) }
+    val listaEspecies = listOf("Perro", "Gato", "Pájaro", "Tortuga", "Otras Especies")
+    var especieSeleccionada by remember { mutableStateOf(listaEspecies[0]) }
+    val distanciaSliderState = remember { mutableFloatStateOf(0f) }
+    var fechaPerdida by remember { mutableStateOf("") }
 
     Column(
         modifier =
@@ -61,10 +54,10 @@ fun FilterSettingsScreen(
                     .fillMaxWidth()
                     .padding(top = 30.dp),
         ) {
-            Text("Distancia: ${distanceSliderState.floatValue} km")
+            Text("Distancia: ${distanciaSliderState.value.roundToInt()} km")
             Slider(
-                value = distanceSliderState.floatValue,
-                onValueChange = { newValue -> distanceSliderState.floatValue = newValue },
+                value = distanciaSliderState.value,
+                onValueChange = { nuevoValor -> distanciaSliderState.value = nuevoValor },
                 valueRange = 0f..20f,
                 steps = 20,
             )
@@ -72,42 +65,33 @@ fun FilterSettingsScreen(
         Column(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Fecha de perdida:")
-            DatePickerComponent(
-                onDateSelected = { selectedDate ->
-                },
-            )
+            Text("Fecha de pérdida:")
+            DatePickerComponent(onDateSelected = { fechaSeleccionada ->
+                fechaPerdida = fechaSeleccionada
+            })
         }
-
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             SelectComponent(
                 title = "Especie",
-                list = list1,
-                onItemSelected = { selectedItem ->
-                    selectedText1 = selectedItem
+                list = listaEspecies,
+                onItemSelected = { itemSeleccionado ->
+                    especieSeleccionada = itemSeleccionado
                 },
             )
         }
-
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Tipo de publicacion")
             SelectComponent(
-                title = "Tipo de publicacion",
-                list = list,
-                onItemSelected = { selectedItem ->
-                    selectedText = selectedItem
+                title = "Tipo de publicación",
+                list = listaTipos,
+                onItemSelected = { itemSeleccionado ->
+                    tipoSeleccionado = itemSeleccionado
                 },
             )
         }
-
         Spacer(modifier = Modifier.weight(1f))
         Row(
             modifier =
@@ -116,29 +100,24 @@ fun FilterSettingsScreen(
                     .padding(16.dp),
             horizontalArrangement = Arrangement.End,
         ) {
-            TextButton(
-                onClick = { controller.popBackStack() },
-            ) {
+            TextButton(onClick = { controller.popBackStack() }) {
                 Text("Cancelar")
             }
             Button(
                 onClick = {
-                    controller.popBackStack()
+                    filterSettingsViewModel.selectedSpecies = especieSeleccionada
+                    filterSettingsViewModel.selectedPublicationType = tipoSeleccionado
+                    filterSettingsViewModel.selectedDistance = distanciaSliderState.value
+                    filterSettingsViewModel.selectedDateLost = fechaPerdida
+
+                    val filters = filterSettingsViewModel.getFilters()
+                    publicationsListViewModel.applyFilters(filters)
+
+                    controller.navigateUp()
                 },
-                modifier = Modifier,
             ) {
                 Text("Aplicar Filtros")
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FilterScreenPreview() {
-    val controller = rememberNavController()
-
-    FilterSettingsScreen(
-        controller = controller,
-    )
 }
