@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.domain.models.SimplifiedPublicationMarker
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
@@ -23,6 +24,7 @@ fun MapsComponent(
     cameraPositionState: CameraPositionState,
     isUserLocationEnabled: State<Boolean>,
     userMarker: LatLng? = null,
+    onMarkerClick: (SimplifiedPublicationMarker) -> Boolean = { false },
 ) {
     val uiSettings =
         MapUiSettings(
@@ -44,12 +46,15 @@ fun MapsComponent(
         cameraPositionState = cameraPositionState,
     ) {
         markers.value.forEach { publication ->
-//            Marker(state = MarkerState(position = publication.locationCoordinates))
             MarkerComposable(
                 state = MarkerState(position = publication.locationCoordinates),
+                onClick = { onMarkerClick(publication) },
             ) {
                 val speciesIcon: String = publication.species.getEmoji()
-                Text(text = speciesIcon)
+                Text(
+                    text = speciesIcon,
+                    fontSize = 30.sp,
+                )
             }
         }
         if (userMarker != null) {

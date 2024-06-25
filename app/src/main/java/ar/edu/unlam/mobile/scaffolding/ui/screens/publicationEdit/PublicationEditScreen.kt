@@ -332,7 +332,7 @@ fun PublicationEditScreen(
                         modifier =
                             Modifier
                                 .height(250.dp),
-                        markers = mutableStateOf<List<SimplifiedPublicationMarker>>(emptyList()),
+                        markers = remember { mutableStateOf<List<SimplifiedPublicationMarker>>(emptyList()) },
                         cameraPositionState = cameraState,
                         isUserLocationEnabled = remember { mutableStateOf(false) },
                         userMarker = geocodedLocation,
