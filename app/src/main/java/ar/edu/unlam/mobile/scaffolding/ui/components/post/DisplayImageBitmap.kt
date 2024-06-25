@@ -10,7 +10,7 @@ import androidx.compose.ui.layout.ContentScale
 @Composable
 fun DisplayImageBitmap(
     data: Bitmap,
-    contentDescription: String?,
+    contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
     Image(

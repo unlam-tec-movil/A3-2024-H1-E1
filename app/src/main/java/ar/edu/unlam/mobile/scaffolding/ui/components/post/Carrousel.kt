@@ -58,7 +58,8 @@ fun Carrousel(
             } else {
                 CarrouselItem(
                     item = listOfImage[page],
-                    pageOffset,
+                    pageOffset = pageOffset,
+                    index = page,
                 ) { selectedItem ->
                     onSelectedITem(selectedItem)
                 }
