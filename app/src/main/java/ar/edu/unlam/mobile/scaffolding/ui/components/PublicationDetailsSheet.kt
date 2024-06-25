@@ -89,11 +89,7 @@ fun PreviewPublicationDetailsSheet() {
             species = Species.PERRO,
             type = "Busqueda",
             locationCoordinates = LatLng(-34.6549073, -58.5536355),
-            images =
-                listOf(
-                    @Suppress("ktlint:standard:max-line-length")
-                    "https://firebasestorage.googleapis.com/v0/b/scaffolding-h1.appspot.com/o/1le78K3peCbbRtzmfjzRfgToAyD2%2Febc764c8-a433-43ce-8486-50a4f626ca35%2Fimage_1719179640930.jpg?alt=media&token=e3a05853-3566-455e-99f8-ed0238b988ff",
-                ),
+            images = listOf(""),
         )
 
     // Llama a tu composable con la publicación de ejemplo
