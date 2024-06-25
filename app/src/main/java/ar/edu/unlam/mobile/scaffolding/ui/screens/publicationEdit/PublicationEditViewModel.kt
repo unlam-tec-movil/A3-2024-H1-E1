@@ -405,7 +405,9 @@ class PublicationEditViewModel
                 firestoreService
                     .addPublicationToPublicationCollection(postWithImages)
                     .collect { result ->
-                        firestoreService.addPublication(currentUserId!!, postWithImages)
+                        firestoreService.addPublication(currentUserId!!, postWithImages).collect { result ->
+                            Log.d("Add Publication", "Publication added successfully")
+                        }
                     }
                 _publicationUiState.value = PublicationUiState.Success
             } catch (e: Exception) {
@@ -477,7 +479,10 @@ class PublicationEditViewModel
                         if (addresses.isNotEmpty()) {
                             val location = addresses[0]
                             _geocodedLocation.value = LatLng(location.latitude, location.longitude)
-                            Log.d("PublicationEditViewModel", "Geocoded location: ${_geocodedLocation.value}")
+                            Log.d(
+                                "PublicationEditViewModel",
+                                "Geocoded location: ${_geocodedLocation.value}",
+                            )
                         } else {
                             _geocodedLocation.value = null
                             Log.d("PublicationEditViewModel", "Geocoded location is null")
@@ -543,11 +548,14 @@ class PublicationEditViewModel
                 Log.d("UploadImages", "Uploaded image URL: $urls")
                 val newPostWithImages = createPostWithImage(urls)
                 firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
-                    firestoreService.editPublicationForUser(
-                        currentUserId!!,
-                        id.value,
-                        newPostWithImages,
-                    )
+                    firestoreService
+                        .editPublicationForUser(
+                            currentUserId!!,
+                            id.value,
+                            newPostWithImages,
+                        ).collect { result ->
+                            Log.d("Edit Publication", "Publication edited successfully")
+                        }
                 }
                 _publicationUiState.value = PublicationUiState.Success
             } catch (e: Exception) {

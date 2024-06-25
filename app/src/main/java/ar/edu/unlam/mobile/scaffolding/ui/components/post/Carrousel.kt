@@ -52,7 +52,7 @@ fun Carrousel(
             val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
             if (listOfImage.isEmpty()) {
                 val bitmapIcon =
-                    BitmapFactory.decodeResource(context.resources, R.drawable.icon_subir_magen)
+                    BitmapFactory.decodeResource(context.resources, R.drawable.default_image_pet)
                 CarrouselItem(item = bitmapIcon, pageOffset = pageOffset, index = page) {
                 }
             } else {

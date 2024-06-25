@@ -102,6 +102,7 @@ fun LoginScreen(navHostController: NavHostController) {
         is LoginUiState.Loading -> {
             LoadingComponent()
         }
+
         is LoginUiState.Succes -> {
             Column(
                 modifier =
@@ -184,7 +185,11 @@ fun LoginScreen(navHostController: NavHostController) {
                             loginViewModel.sigInWithEmailAndPassword()
                             navHostController.navigate(NavigationRoutes.MapScreen.route)
                         } else {
-                            Toast.makeText(context, "email o contraseña incorrecto", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                context,
+                                "email o contraseña incorrecto",
+                                Toast.LENGTH_LONG,
+                            ).show()
                         }
                     },
                     modifier =
@@ -217,6 +222,7 @@ fun LoginScreen(navHostController: NavHostController) {
                 }
             }
         }
+
         is LoginUiState.Error -> {
             Toast.makeText(context, "Failed login", Toast.LENGTH_SHORT).show()
         }

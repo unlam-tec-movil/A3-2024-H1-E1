@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -31,6 +29,7 @@ import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBox(
     initialText: String = "",

@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import ar.edu.unlam.mobile.scaffolding.domain.models.SimplifiedPublicationMarker
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetLocationUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetMarkersUseCase
@@ -30,6 +31,8 @@ class PublicationsMapViewModel
         val showRationaleAlert = _showRationaleAlert.asStateFlow()
         private var _cameraCenterLocation = MutableStateFlow<LatLng?>(null)
         val cameraCenterLocation = _cameraCenterLocation.asStateFlow()
+        private val _publicationsListState = MutableStateFlow<List<PublicationCellModel>>(emptyList())
+        val publicationsListState = _publicationsListState
         private val _publicationMarkers = MutableStateFlow<List<SimplifiedPublicationMarker>>(emptyList())
         val publicationMarkers = _publicationMarkers.asStateFlow()
         private val _selectedMarker = MutableStateFlow<SimplifiedPublicationMarker?>(null)
@@ -87,6 +90,9 @@ class PublicationsMapViewModel
 
         fun setSelectedMarker(marker: SimplifiedPublicationMarker) {
             _selectedMarker.value = marker
+        }
+
+        fun filterPublications(query: String) {
         }
     }
 

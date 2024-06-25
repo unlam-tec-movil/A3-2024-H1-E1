@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,6 +28,7 @@ fun SelectComponent(
     placeholder: String = "",
     onItemSelected: (String) -> Unit,
     isError: Boolean = false,
+    dropdownMenuTag: String? = null,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -43,7 +45,10 @@ fun SelectComponent(
         ExposedDropdownMenuBox(
             expanded = isExpanded,
             onExpandedChange = { isExpanded = it },
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .testTag(dropdownMenuTag ?: ""), // Aplicamos el segundo modificador con la etiqueta
         ) {
             TextField(
                 value = selectedItem, // Convertimos el elemento seleccionado a String
@@ -52,7 +57,10 @@ fun SelectComponent(
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
                 },
-                modifier = Modifier.menuAnchor().fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .menuAnchor()
+                        .fillMaxWidth(),
                 placeholder = { Text(placeholder) },
             )
             ExposedDropdownMenu(

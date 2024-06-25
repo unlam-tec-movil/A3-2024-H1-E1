@@ -49,12 +49,13 @@ fun PublicationDetailsScreen(
     }
 
     LaunchedEffect(Unit) {
-        dataStoreManager.readFromDataStore(
-            DataStoreManager.Keys.SHOW_TOOLTIP,
-            true,
-        ).collect { value ->
-            showTooltip = value
-        }
+        dataStoreManager
+            .readFromDataStore(
+                DataStoreManager.Keys.SHOW_TOOLTIP,
+                true,
+            ).collect { value ->
+                showTooltip = value
+            }
     }
 
     LaunchedEffect(publicationId) {
@@ -76,7 +77,7 @@ fun PublicationDetailsScreen(
                     PublicationDetails(
                         it,
                         viewModel.images.value,
-                        onBackClick = { controller.popBackStack() },
+                        onBackClick = { controller.navigateUp() },
                     )
                 }
             }
@@ -92,7 +93,10 @@ fun PublicationDetailsScreen(
                         },
                         onNeverShowAgain = {
                             scope.launch {
-                                dataStoreManager.writeToDataStore(DataStoreManager.Keys.SHOW_TOOLTIP, false)
+                                dataStoreManager.writeToDataStore(
+                                    DataStoreManager.Keys.SHOW_TOOLTIP,
+                                    false,
+                                )
                             }
                         },
                         modifier = Modifier.padding(16.dp),

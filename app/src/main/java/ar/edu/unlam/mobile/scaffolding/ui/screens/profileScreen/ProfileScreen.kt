@@ -88,19 +88,30 @@ fun ProfileScreen(
                     post = publication,
                     onClick = {
                         val publicationId = publication.id
-                        controller.navigate(NavigationRoutes.PublicationDetailsScreen.withPublicationId(publicationId))
+                        controller.navigate(
+                            NavigationRoutes.PublicationDetailsScreen.withPublicationId(
+                                publicationId,
+                            ),
+                        )
                     },
                     onViewClick = {
                         val publicationId = publication.id
-                        controller.navigate(NavigationRoutes.PublicationDetailsScreen.withPublicationId(publicationId))
+                        controller.navigate(
+                            NavigationRoutes.PublicationDetailsScreen.withPublicationId(
+                                publicationId,
+                            ),
+                        )
                     },
                     onEditClick = {
-                        val publicationId = publication.id.toString()
-                        controller.navigate(NavigationRoutes.PublicationEditScreen.withPublicationId(publicationId))
+                        val publicationId = publication.id
+                        controller.navigate(
+                            NavigationRoutes.PublicationEditScreen.withPublicationId(
+                                publicationId,
+                            ),
+                        )
                     },
                     onDeleteClick = {
                         userProfile?.let { profile ->
-
                             viewModel.deletePublication(publicationId, profile.userId)
                             viewModel.deletePublicationInAllPublications(publicationId)
                         }
