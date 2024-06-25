@@ -53,7 +53,7 @@ fun Carrousel(
             if (listOfImage.isEmpty()) {
                 val bitmapIcon =
                     BitmapFactory.decodeResource(context.resources, R.drawable.default_carrousel_image)
-                CarrouselItem(item = bitmapIcon, pageOffset = pageOffset) {
+                CarrouselItem(item = bitmapIcon, pageOffset = pageOffset, index = page) {
                 }
             } else {
                 CarrouselItem(
