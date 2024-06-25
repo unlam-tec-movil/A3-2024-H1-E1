@@ -41,11 +41,13 @@ fun SettingImage(
     ) {
         Card(
             shape = RoundedCornerShape(10.dp),
-            colors = CardColors(
-                containerColor = inverseOnSurfaceLight,
-                contentColor = inverseOnSurfaceLight,
-                disabledContentColor = inverseOnSurfaceLight,
-                disabledContainerColor = Color.Blue),
+            colors =
+                CardColors(
+                    containerColor = inverseOnSurfaceLight,
+                    contentColor = inverseOnSurfaceLight,
+                    disabledContentColor = inverseOnSurfaceLight,
+                    disabledContainerColor = Color.Blue,
+                ),
         ) {
             Column {
                 IconButton(
@@ -72,9 +74,9 @@ fun SettingImage(
                 ) {
                     DisplayImageBitmap(
                         data = item,
-                        contentDescription = null,
+                        contentDescription = "",
                         modifier = Modifier.fillMaxSize(),
-                        )
+                    )
                 }
                 Column(
                     modifier = Modifier.fillMaxWidth(),

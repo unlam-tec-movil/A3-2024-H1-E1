@@ -65,7 +65,7 @@ fun CameraXComponent(
                     onDissmissButton()
                 }
             },
-            contentColor = inverseOnSurfaceLight
+            contentColor = inverseOnSurfaceLight,
         ) { padding ->
             Box(
                 modifier =
@@ -103,7 +103,7 @@ fun CameraXComponent(
                         painter = painterResource(id = R.drawable.outline_flip_camera_ios_24),
                         contentDescription = null,
                         modifier = Modifier.size(50.dp),
-                        tint = onPrimaryDark
+                        tint = onPrimaryDark,
                     )
                 }
                 Row(

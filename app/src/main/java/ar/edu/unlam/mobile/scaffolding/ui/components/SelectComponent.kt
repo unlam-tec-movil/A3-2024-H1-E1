@@ -66,10 +66,10 @@ fun SelectComponent(
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
                 },
                 modifier =
-                Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
-                    .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
+                    Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                        .border(3.dp, primaryDark, RoundedCornerShape(10.dp)),
                 placeholder = {
                     Text(placeholder)
                 },
