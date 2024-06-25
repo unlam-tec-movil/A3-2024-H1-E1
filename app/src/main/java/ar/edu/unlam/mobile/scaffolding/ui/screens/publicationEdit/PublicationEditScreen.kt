@@ -53,6 +53,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.domain.models.PetColors
 import ar.edu.unlam.mobile.scaffolding.domain.models.Sex
+import ar.edu.unlam.mobile.scaffolding.domain.models.SimplifiedPublicationMarker
 import ar.edu.unlam.mobile.scaffolding.domain.models.Species
 import ar.edu.unlam.mobile.scaffolding.ui.components.CheckboxComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.DatePickerComponent
@@ -143,7 +144,11 @@ fun PublicationEditScreen(
                     if (bitmap != null) {
                         if (imageBitmapList.size == 3) {
                             // /solo vamos a dejar que suba 3 imagenes
-                            Toast.makeText(context, "Solo se permite subir 3 imagenes", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                context,
+                                "Solo se permite subir 3 imagenes",
+                                Toast.LENGTH_LONG,
+                            ).show()
                         } else {
                             viewModel.addImage(bitmap)
                         }
@@ -164,6 +169,7 @@ fun PublicationEditScreen(
         is PublicationUiState.Loading -> {
             LoadingComponent()
         }
+
         is PublicationUiState.Success -> {
             Column(
                 modifier =
@@ -330,7 +336,7 @@ fun PublicationEditScreen(
                         modifier =
                             Modifier
                                 .height(250.dp),
-                        markers = emptyList(),
+                        markers = remember { mutableStateOf<List<SimplifiedPublicationMarker>>(emptyList()) },
                         cameraPositionState = cameraState,
                         isUserLocationEnabled = remember { mutableStateOf(false) },
                         userMarker = geocodedLocation,
@@ -404,6 +410,7 @@ fun PublicationEditScreen(
                 }
             }
         }
+
         is PublicationUiState.Error -> {
             Box(
                 modifier =

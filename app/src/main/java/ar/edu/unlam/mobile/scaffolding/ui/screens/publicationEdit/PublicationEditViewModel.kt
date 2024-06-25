@@ -479,7 +479,10 @@ class PublicationEditViewModel
                         if (addresses.isNotEmpty()) {
                             val location = addresses[0]
                             _geocodedLocation.value = LatLng(location.latitude, location.longitude)
-                            Log.d("PublicationEditViewModel", "Geocoded location: ${_geocodedLocation.value}")
+                            Log.d(
+                                "PublicationEditViewModel",
+                                "Geocoded location: ${_geocodedLocation.value}",
+                            )
                         } else {
                             _geocodedLocation.value = null
                             Log.d("PublicationEditViewModel", "Geocoded location is null")
@@ -528,7 +531,7 @@ class PublicationEditViewModel
                 sex = sex.value,
                 age = age.value.toInt(),
                 color = color.value,
-                location = location.value,
+                location = address.value,
                 contact = contact.value.toInt(),
                 images = urls,
                 locationLat = geocodedLocation.value?.latitude ?: 0.0,

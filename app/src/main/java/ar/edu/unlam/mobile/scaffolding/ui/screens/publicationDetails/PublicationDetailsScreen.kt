@@ -93,7 +93,10 @@ fun PublicationDetailsScreen(
                         },
                         onNeverShowAgain = {
                             scope.launch {
-                                dataStoreManager.writeToDataStore(DataStoreManager.Keys.SHOW_TOOLTIP, false)
+                                dataStoreManager.writeToDataStore(
+                                    DataStoreManager.Keys.SHOW_TOOLTIP,
+                                    false,
+                                )
                             }
                         },
                         modifier = Modifier.padding(16.dp),

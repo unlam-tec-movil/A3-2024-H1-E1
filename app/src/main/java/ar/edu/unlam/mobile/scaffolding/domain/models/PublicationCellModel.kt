@@ -7,4 +7,6 @@ data class PublicationCellModel(
     val distance: String,
     val imageResourceId: String,
     val publicationType: String,
+    val species: String,
+    val dateLost: String,
 )

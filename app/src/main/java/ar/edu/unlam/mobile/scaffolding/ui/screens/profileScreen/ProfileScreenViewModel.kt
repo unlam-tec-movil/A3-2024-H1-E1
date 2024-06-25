@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.profileScreen
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -72,6 +73,7 @@ class ProfileScreenViewModel
                             _publications.value = posts
                         }
                 } catch (e: Exception) {
+                    Log.e("ProfileScreenViewModel", "Error fetching publications", e)
                 }
             }
         }
