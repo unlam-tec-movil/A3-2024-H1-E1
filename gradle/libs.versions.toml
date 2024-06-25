@@ -1,10 +1,14 @@
 [versions]
+junitJupiterApi = "5.8.2"
+junitJupiterEngine = "5.8.2"
 agp = "8.4.1"
 kotlin = "1.9.23"
 coreKtx = "1.12.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
+kotlinTestJunit = "1.6.10"
+kotlinxCoroutinesTest = "1.6.1"
 lifecycleRuntimeKtx = "2.7.0"
 activityCompose = "1.8.2"
 composeBom = "2024.04.00"
@@ -20,6 +24,9 @@ androidxComposeUiUtil = "1.6.7"
 coilCompose = "2.4.0"
 firebaseCommonKtx = "21.0.0"
 authFirebase = "22.3.1"
+mockitoCore = "4.3.1"
+mockitoInline = "4.3.1"
+runner = "1.5.2"
 serviceAuth = "21.1.0"
 firebase = "33.0.0"
 coroutineAndroid= "1.7.3"
@@ -35,14 +42,13 @@ storage = "20.3.0"
 firestore= "25.0.0"
 lottieVer = "6.1.0"
 lifecycleRuntimeComposeAndroid = "2.8.1"
-lifecycleRuntimeComposeDesktop = "2.8.1"
-
-
+testCore = "1.5.0"
 firebaseAuthCommon = "9.8.0"
 
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -77,6 +83,10 @@ firebase-auth = {group = "com.google.firebase",name = "firebase-auth-ktx",versio
 google-play-service = {group = "com.google.android.gms",name = "play-services-auth",version.ref = "serviceAuth"}
 firebase = {group = "com.google.firebase",name = "firebase-bom",version.ref = "firebase"}
 coroutine-android = {group  = "org.jetbrains.kotlin",name = "kotlinx-coroutines-android",version.ref = "coroutineAndroid" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlinTestJunit" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 lifecycleViewModel = {group = "androidx.lifecycle",name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
@@ -94,9 +104,9 @@ cameraVideo = { group = "androidx.camera", name = "camera-video", version.ref = 
 cameraView = { group = "androidx.camera", name = "camera-view", version.ref = "cameraX" }
 cameraExtensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "cameraX" }
 androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
-androidx-lifecycle-runtime-compose-desktop = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-desktop", version.ref = "lifecycleRuntimeComposeDesktop" }
-
-
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+androidx-test-core = {group = "androidx.test",name = "core",version.ref = "testCore"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
