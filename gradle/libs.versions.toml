@@ -2,8 +2,6 @@
 junitJupiterApi = "5.8.2"
 junitJupiterEngine = "5.8.2"
 agp = "8.4.1"
-junitJupiterApi = "5.8.2"
-junitJupiterEngine = "5.8.2"
 kotlin = "1.9.23"
 coreKtx = "1.12.0"
 testCore = "1.5.0"
@@ -45,8 +43,7 @@ storage = "20.3.0"
 firestore= "25.0.0"
 lottieVer = "6.1.0"
 lifecycleRuntimeComposeAndroid = "2.8.1"
-testCore = "1.5.0"
-firebaseAuthCommon = "9.8.0"
+lifecycleRuntimeComposeDesktop = "2.8.2"
 
 
 [libraries]
