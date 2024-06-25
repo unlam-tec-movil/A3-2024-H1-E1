@@ -167,10 +167,10 @@ fun PublicationEditScreen(
         is PublicationUiState.Success -> {
             Column(
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = 24.dp),
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Carrousel(
@@ -185,9 +185,9 @@ fun PublicationEditScreen(
                         showDialogSelectedUpdateImage = true
                     },
                     modifier =
-                    Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 5.dp),
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 5.dp),
                 ) {
                     Text(text = "Añadir Foto")
                 }
@@ -339,9 +339,9 @@ fun PublicationEditScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
@@ -407,9 +407,9 @@ fun PublicationEditScreen(
         is PublicationUiState.Error -> {
             Box(
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                    Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
             ) {
                 SnackbarComponent(
                     snackbarHostState = snackbarHostState,
@@ -503,9 +503,9 @@ fun PublicationEditScreen(
     }
     Box(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
     ) {
         SnackbarComponent(
             snackbarHostState = snackbarHostState,
