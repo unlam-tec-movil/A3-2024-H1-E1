@@ -103,12 +103,12 @@ fun ProfileScreen(
                         )
                     },
                     onEditClick = {
-                        val publicationId = publication.id.toString()
+                        val publicationId = publication.id
                         controller.navigate(
                             NavigationRoutes.PublicationEditScreen.withPublicationId(
                                 publicationId,
                             ),
-
+                        )
                     },
                     onDeleteClick = {
                         userProfile?.let { profile ->
