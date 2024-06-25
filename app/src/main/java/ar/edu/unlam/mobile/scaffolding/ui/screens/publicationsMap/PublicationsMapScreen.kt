@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -51,7 +52,6 @@ fun PublicationsMapScreen(
     controller: NavHostController,
     viewModel: PublicationsMapViewModel = hiltViewModel(),
 ) {
-    val listForSearch = viewModel.publicationsListState
     val permissionState =
         rememberMultiplePermissionsState(
             permissions =
@@ -151,7 +151,7 @@ fun PublicationsMapScreen(
                 onTrailingIconClick = {
                     controller.navigate(NavigationRoutes.ProfileScreen.route)
                 },
-                listForSearch = listForSearch,
+                listForSearch = viewModel.publicationsListState.collectAsState(),
                 filterList = { query ->
                     viewModel.filterPublications(query)
                 },
@@ -184,6 +184,8 @@ fun PublicationsMapScreen(
                     }
                 }
             },
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = MaterialTheme.colorScheme.primary,
             modifier =
                 Modifier
                     .align(alignment = Alignment.BottomStart)
@@ -194,6 +196,31 @@ fun PublicationsMapScreen(
                 painter = painterResource(R.drawable.baseline_my_location_24),
                 contentDescription = "Center map on user location",
             )
+        }
+    }
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = sheetState,
+        ) {
+            // Sheet content
+            selectedMarker?.let {
+                PublicationDetailsSheet(publication = it, primaryButtonOnClick = {
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            showBottomSheet = false
+                            controller.navigate(
+                                NavigationRoutes.PublicationDetailsScreen.withPublicationId(
+                                    selectedMarker?.id?.toString()
+                                        ?: "0",
+                                ),
+                            )
+                        }
+                    }
+                })
+            }
         }
     }
     if (showBottomSheet) {
