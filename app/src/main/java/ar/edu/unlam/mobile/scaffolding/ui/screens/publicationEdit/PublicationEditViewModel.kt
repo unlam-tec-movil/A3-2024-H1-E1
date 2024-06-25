@@ -529,7 +529,7 @@ class PublicationEditViewModel
                 sex = sex.value,
                 age = age.value.toInt(),
                 color = color.value,
-                location = location.value,
+                location = address.value,
                 contact = contact.value.toInt(),
                 images = urls,
                 locationLat = geocodedLocation.value?.latitude ?: 0.0,
