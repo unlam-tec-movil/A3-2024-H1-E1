@@ -22,11 +22,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,7 +53,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.utils.capitalizeFirstLetter
 import com.example.compose.inverseOnSurfaceLight
 import com.example.compose.onPrimaryDark
 import com.example.compose.primaryLight
-import com.google.accompanist.pager.ExperimentalPagerApi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +68,7 @@ fun PublicationDetails(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(inverseOnSurfaceLight)
+                .background(inverseOnSurfaceLight),
     ) {
         Column(
             modifier =
@@ -100,9 +97,10 @@ fun PublicationDetails(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = inverseOnSurfaceLight,
-                ),
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = inverseOnSurfaceLight,
+                    ),
             )
             Box(
                 modifier =
@@ -151,20 +149,21 @@ fun PublicationDetails(
                         try {
                             context.startActivity(mapIntent)
                         } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(
-                                context,
-                                "Error al abrir el mapa",
-                                Toast.LENGTH_SHORT,
-                            )
-                                .show()
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Error al abrir el mapa",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
                         }
                     },
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
-                    colors = ButtonDefaults.elevatedButtonColors(
-                        containerColor = onPrimaryDark,
-                        contentColor = inverseOnSurfaceLight,
-                    )
+                    colors =
+                        ButtonDefaults.elevatedButtonColors(
+                            containerColor = onPrimaryDark,
+                            contentColor = inverseOnSurfaceLight,
+                        ),
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
@@ -182,7 +181,8 @@ fun PublicationDetails(
                     onClick = { showDialogContact = true },
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
-                    colors = ButtonDefaults.elevatedButtonColors(
+                    colors =
+                        ButtonDefaults.elevatedButtonColors(
                             containerColor = onPrimaryDark,
                             contentColor = inverseOnSurfaceLight,
                         ),
@@ -235,21 +235,25 @@ fun PublicationDetailItem(
 @Preview(showBackground = true)
 @Composable
 fun PublicationDetailsPreview() {
-    PublicationDetails(post = PostWithImages(
-        id = "",
-        type = "",
-        title = "Michico",
-        description = "esto es una descripcion",
-        dateLost = "",
-        sex = "Macho",
-        age = 20,
-        species = "Perro",
-        color = "Black",
-        location = "",
-        contact = 123456789,
+    PublicationDetails(
+        post =
+            PostWithImages(
+                id = "",
+                type = "",
+                title = "Michico",
+                description = "esto es una descripcion",
+                dateLost = "",
+                sex = "Macho",
+                age = 20,
+                species = "Perro",
+                color = "Black",
+                location = "",
+                contact = 123456789,
+                images = emptyList(),
+                locationLat = 0.0,
+                locationLng = 0.0,
+            ),
         images = emptyList(),
-        locationLat = 0.0,
-        locationLng = 0.0,
-    ), images = emptyList()) {
+    ) {
     }
 }
