@@ -103,7 +103,7 @@ fun ProfileScreen(
                         )
                     },
                     onEditClick = {
-                        val publicationId = publication.id.toString()
+                        val publicationId = publication.id
                         controller.navigate(
                             NavigationRoutes.PublicationEditScreen.withPublicationId(
                                 publicationId,
@@ -112,7 +112,6 @@ fun ProfileScreen(
                     },
                     onDeleteClick = {
                         userProfile?.let { profile ->
-
                             viewModel.deletePublication(publicationId, profile.userId)
                             viewModel.deletePublicationInAllPublications(publicationId)
                         }

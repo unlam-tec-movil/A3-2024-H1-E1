@@ -21,18 +21,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +48,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.post.Carrousel
 import ar.edu.unlam.mobile.scaffolding.ui.utils.capitalizeFirstLetter
 import com.google.accompanist.pager.ExperimentalPagerApi
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PublicationDetails(
     post: PostWithImages,
@@ -58,15 +63,34 @@ fun PublicationDetails(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp, vertical = 5.dp)
                     .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(15.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "",
+                    )
+                },
+                modifier = Modifier.align(Alignment.End),
+                actions = {
+                    IconButton(
+                        onClick = onBackClick,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "back",
+                            modifier = Modifier.size(32.dp),
+                        )
+                    }
+                },
+            )
             Box(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .height(400.dp),
+                        .height(350.dp),
             ) {
                 Carrousel(listOfImage = images, paddingValues = 10.dp)
             }
@@ -107,12 +131,12 @@ fun PublicationDetails(
                         try {
                             context.startActivity(mapIntent)
                         } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(
-                                context,
-                                "Error al abrir el mapa",
-                                Toast.LENGTH_SHORT,
-                            )
-                                .show()
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Error al abrir el mapa",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
                         }
                     },
                     modifier = Modifier.weight(1f),

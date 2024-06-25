@@ -405,7 +405,9 @@ class PublicationEditViewModel
                 firestoreService
                     .addPublicationToPublicationCollection(postWithImages)
                     .collect { result ->
-                        firestoreService.addPublication(currentUserId!!, postWithImages)
+                        firestoreService.addPublication(currentUserId!!, postWithImages).collect { result ->
+                            Log.d("Add Publication", "Publication added successfully")
+                        }
                     }
                 _publicationUiState.value = PublicationUiState.Success
             } catch (e: Exception) {
@@ -545,14 +547,16 @@ class PublicationEditViewModel
                 val urls = uploadImagesToStorage(listImageUser.value, currentUserId!!, id.value)
                 Log.d("UploadImages", "Uploaded image URL: $urls")
                 val newPostWithImages = createPostWithImage(urls)
-                firestoreService.editPublicationInAllPublications(id.value, newPostWithImages)
-                    .collect { result ->
-                        firestoreService.editPublicationForUser(
+                firestoreService.editPublicationInAllPublications(id.value, newPostWithImages).collect { result ->
+                    firestoreService
+                        .editPublicationForUser(
                             currentUserId!!,
                             id.value,
                             newPostWithImages,
-                        )
-                    }
+                        ).collect { result ->
+                            Log.d("Edit Publication", "Publication edited successfully")
+                        }
+                }
                 _publicationUiState.value = PublicationUiState.Success
             } catch (e: Exception) {
                 Log.e("Edit Publication", "Failed upload to Firestore edit Publication")

@@ -53,16 +53,16 @@ fun PublicationCellEdit(
                 val imagePainter =
                     if (post.images.isNotEmpty()) {
                         rememberAsyncImagePainter(
-                            ImageRequest.Builder(LocalContext.current)
-                                .data(post.images)
+                            ImageRequest
+                                .Builder(LocalContext.current)
+                                .data(post.images.first())
                                 .apply {
                                     crossfade(true)
                                     transformations(CircleCropTransformation())
-                                }
-                                .build(),
+                                }.build(),
                         )
                     } else {
-                        painterResource(id = R.drawable.loading_image)
+                        painterResource(id = R.drawable.default_image_pet)
                     }
 
                 Image(
