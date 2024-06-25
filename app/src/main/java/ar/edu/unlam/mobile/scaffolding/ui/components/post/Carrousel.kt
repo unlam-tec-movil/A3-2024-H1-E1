@@ -53,12 +53,13 @@ fun Carrousel(
             if (listOfImage.isEmpty()) {
                 val bitmapIcon =
                     BitmapFactory.decodeResource(context.resources, R.drawable.icon_subir_magen)
-                CarrouselItem(item = bitmapIcon, pageOffset = pageOffset) {
+                CarrouselItem(item = bitmapIcon, pageOffset = pageOffset, index = page) {
                 }
             } else {
                 CarrouselItem(
                     item = listOfImage[page],
-                    pageOffset,
+                    pageOffset = pageOffset,
+                    index = page,
                 ) { selectedItem ->
                     onSelectedITem(selectedItem)
                 }

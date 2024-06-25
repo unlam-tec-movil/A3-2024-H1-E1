@@ -10,12 +10,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,7 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.MapsComponent
+import ar.edu.unlam.mobile.scaffolding.ui.components.PublicationDetailsSheet
 import ar.edu.unlam.mobile.scaffolding.ui.components.RationaleAlert
 import ar.edu.unlam.mobile.scaffolding.ui.components.SearchBox
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
@@ -34,8 +42,9 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PublicationsMapScreen(
     modifier: Modifier = Modifier,
@@ -57,7 +66,12 @@ fun PublicationsMapScreen(
     val isUserLocationEnabled by viewModel.isUserLocationEnabled.collectAsState()
     val cameraCenterLocation by viewModel.cameraCenterLocation.collectAsState()
     val showRationaleAlert by viewModel.showRationaleAlert.collectAsState()
+    val selectedMarker by viewModel.selectedMarker.collectAsState()
     val publicationMarkers by viewModel.publicationMarkers.collectAsState()
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    val showBottomSheetState = remember { mutableStateOf(false) }
+    var showBottomSheet by showBottomSheetState::value
 
     LaunchedEffect(cameraCenterLocation) {
         if (permissionState.allPermissionsGranted) {
@@ -75,19 +89,19 @@ fun PublicationsMapScreen(
                 .fillMaxSize(),
     ) {
         MapsComponent(
-            markers = publicationMarkers,
+            markers = viewModel.publicationMarkers.collectAsState(),
             cameraPositionState = cameraState,
             isUserLocationEnabled = viewModel.isUserLocationEnabled.collectAsState(),
+            onMarkerClick = { publication ->
+                viewModel.setSelectedMarker(publication)
+                showBottomSheet = true
+                true
+            },
         )
         with(viewState) {
             when (this) {
                 is ViewState.Loading -> {
-//                    Box(
-//                        modifier = Modifier.fillMaxSize(),
-//                        contentAlignment = Alignment.Center,
-//                    ) {
-//                        CircularProgressIndicator()
-//                    }
+                    LoadingComponent()
                 }
                 is ViewState.Success -> {
                     LaunchedEffect(Unit) {
@@ -173,6 +187,31 @@ fun PublicationsMapScreen(
                     .size(42.dp),
         ) {
             Icon(painter = painterResource(R.drawable.baseline_my_location_24), contentDescription = "Center map on user location")
+        }
+    }
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = sheetState,
+        ) {
+            // Sheet content
+            selectedMarker?.let {
+                PublicationDetailsSheet(publication = it, primaryButtonOnClick = {
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            showBottomSheet = false
+                            controller.navigate(
+                                NavigationRoutes.PublicationDetailsScreen.withPublicationId(
+                                    selectedMarker?.id?.toString()
+                                        ?: "0",
+                                ),
+                            )
+                        }
+                    }
+                })
+            }
         }
     }
 }

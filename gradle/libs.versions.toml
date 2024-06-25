@@ -1,4 +1,6 @@
 [versions]
+junitJupiterApi = "5.8.2"
+junitJupiterEngine = "5.8.2"
 agp = "8.4.1"
 junitJupiterApi = "5.8.2"
 junitJupiterEngine = "5.8.2"
@@ -27,6 +29,7 @@ firebaseCommonKtx = "21.0.0"
 authFirebase = "22.3.1"
 mockitoCore = "4.3.1"
 mockitoInline = "4.3.1"
+runner = "1.5.2"
 serviceAuth = "21.1.0"
 firebase = "33.0.0"
 coroutineAndroid= "1.7.3"
@@ -42,14 +45,13 @@ storage = "20.3.0"
 firestore= "25.0.0"
 lottieVer = "6.1.0"
 lifecycleRuntimeComposeAndroid = "2.8.1"
-lifecycleRuntimeComposeDesktop = "2.8.1"
-
-
+testCore = "1.5.0"
 firebaseAuthCommon = "9.8.0"
 
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -110,7 +112,6 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-test-core = {group = "androidx.test",name = "core",version.ref="testCore"}
-
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
