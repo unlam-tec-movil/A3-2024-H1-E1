@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -73,6 +74,7 @@ fun PublicationsMapScreen(
     val scope = rememberCoroutineScope()
     val showBottomSheetState = remember { mutableStateOf(false) }
     var showBottomSheet by showBottomSheetState::value
+    val didRequestPermission by viewModel.didRequestPermission.collectAsState()
 
     LaunchedEffect(cameraCenterLocation) {
         if (permissionState.allPermissionsGranted) {
@@ -83,6 +85,7 @@ fun PublicationsMapScreen(
     }
     LaunchedEffect(Unit) {
         viewModel.getMarkers()
+        viewModel.getRequestPermissionFlag()
     }
 
     Box(
@@ -100,6 +103,8 @@ fun PublicationsMapScreen(
         )
         with(viewState) {
             when (this) {
+                is ViewState.Idle -> {
+                }
                 is ViewState.Loading -> {
                     LoadingComponent()
                 }
@@ -116,6 +121,16 @@ fun PublicationsMapScreen(
                     if (showRationaleAlert) {
                         RationaleAlert(
                             onDismiss = { viewModel.dismissRationaleAlert() },
+                            onConfirm = { },
+//                            confirmButtonText = "Conceder permisos",
+                        )
+                    }
+                }
+
+                is ViewState.RevokedPermissions -> {
+                    if (showRationaleAlert) {
+                        RationaleAlert(
+                            onDismiss = { viewModel.dismissRationaleAlert() },
                             onConfirm = {
                                 val intent =
                                     Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -125,16 +140,6 @@ fun PublicationsMapScreen(
                                 context.startActivity(intent)
                             },
                             confirmButtonText = "Abrir configuración",
-                        )
-                    }
-                }
-
-                is ViewState.RevokedPermissions -> {
-                    if (showRationaleAlert) {
-                        RationaleAlert(
-                            onDismiss = { viewModel.dismissRationaleAlert() },
-                            onConfirm = { },
-//                            confirmButtonText = "Conceder permisos",
                         )
                     }
                 }
@@ -164,23 +169,26 @@ fun PublicationsMapScreen(
 
         FloatingActionButton(
             onClick = {
-                if (!permissionState.allPermissionsGranted) {
-                    permissionState.launchMultiplePermissionRequest()
-                }
-                when {
-                    permissionState.allPermissionsGranted -> {
-                        viewModel.handle(PermissionEvent.Granted)
-                        currentLocation.let {
-                            viewModel.centerMapOnUserLocation()
+                scope.launch {
+                    Log.i("PublicationMapScreen", "permissionState: $permissionState")
+
+                    if (!didRequestPermission && !permissionState.allPermissionsGranted) {
+                        permissionState.launchMultiplePermissionRequest()
+                        viewModel.setRequestPermissionFlag(true)
+                    } else {
+                        if (!permissionState.allPermissionsGranted) {
+                            if (permissionState.shouldShowRationale) {
+                                viewModel.handle(PermissionEvent.ShouldShowRationale)
+                            } else {
+                                viewModel.handle(PermissionEvent.Revoked)
+                            }
+                            permissionState.launchMultiplePermissionRequest()
+                        } else {
+                            viewModel.handle(PermissionEvent.Granted)
+                            currentLocation.let {
+                                viewModel.centerMapOnUserLocation()
+                            }
                         }
-                    }
-
-                    permissionState.shouldShowRationale -> {
-                        viewModel.handle(PermissionEvent.ShouldShowRationale)
-                    }
-
-                    !permissionState.allPermissionsGranted && !permissionState.shouldShowRationale -> {
-                        viewModel.handle(PermissionEvent.Revoked)
                     }
                 }
             },

@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsMap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.data.local.DataStoreManager
 import ar.edu.unlam.mobile.scaffolding.domain.models.PublicationCellModel
 import ar.edu.unlam.mobile.scaffolding.domain.models.SimplifiedPublicationMarker
 import ar.edu.unlam.mobile.scaffolding.domain.usecases.GetLocationUseCase
@@ -20,6 +21,7 @@ class PublicationsMapViewModel
     constructor(
         private val getLocationUseCase: GetLocationUseCase,
         private val getMarkersUseCase: GetMarkersUseCase,
+        private val dataStoreManager: DataStoreManager,
     ) : ViewModel() {
         private val _viewState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState.Loading)
         val viewState = _viewState.asStateFlow()
@@ -33,14 +35,19 @@ class PublicationsMapViewModel
         val cameraCenterLocation = _cameraCenterLocation.asStateFlow()
         private val _publicationsListState = MutableStateFlow<List<PublicationCellModel>>(emptyList())
         val publicationsListState = _publicationsListState
-        private val _publicationMarkers = MutableStateFlow<List<SimplifiedPublicationMarker>>(emptyList())
+        private val _publicationMarkers =
+            MutableStateFlow<List<SimplifiedPublicationMarker>>(emptyList())
         val publicationMarkers = _publicationMarkers.asStateFlow()
         private val _selectedMarker = MutableStateFlow<SimplifiedPublicationMarker?>(null)
         val selectedMarker = _selectedMarker.asStateFlow()
 
+        private val _didRequestPermission = MutableStateFlow<Boolean>(false)
+        val didRequestPermission = _didRequestPermission.asStateFlow()
+
         fun handle(event: PermissionEvent) {
             when (event) {
                 is PermissionEvent.Granted -> {
+                    _viewState.value = ViewState.Loading
                     viewModelScope.launch {
                         getLocationUseCase.invoke().collect { location ->
                             _viewState.value = ViewState.Success(location)
@@ -63,13 +70,16 @@ class PublicationsMapViewModel
         }
 
         fun getMarkers() {
+            _viewState.value = ViewState.Loading
             viewModelScope.launch {
-                _viewState.value = ViewState.Loading
                 getMarkersUseCase.invoke().collect { publicationMarkers ->
                     publicationMarkers.forEach { publicationMarker ->
                         Log.d("PublicationMarker", publicationMarker.toString())
                     }
                     _publicationMarkers.value = publicationMarkers
+                    if (!_isUserLocationEnabled.value) {
+                        _viewState.value = ViewState.Idle
+                    }
                 }
             }
         }
@@ -94,9 +104,28 @@ class PublicationsMapViewModel
 
         fun filterPublications(query: String) {
         }
+
+        suspend fun getRequestPermissionFlag() {
+            dataStoreManager
+                .readFromDataStore(
+                    DataStoreManager.Keys.HAS_REQUESTED_LOCATION_PERMISSIONS,
+                    false,
+                ).collect { value ->
+                    _didRequestPermission.value = value
+                }
+        }
+
+        suspend fun setRequestPermissionFlag(value: Boolean) {
+            dataStoreManager.writeToDataStore(
+                DataStoreManager.Keys.HAS_REQUESTED_LOCATION_PERMISSIONS,
+                value,
+            )
+        }
     }
 
 sealed interface ViewState {
+    object Idle : ViewState
+
     object Loading : ViewState
 
     object RevokedPermissions : ViewState
