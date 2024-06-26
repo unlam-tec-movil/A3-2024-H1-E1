@@ -79,7 +79,7 @@ fun LoginScreen(navHostController: NavHostController) {
                     scope.launch {
                         val user = loginViewModel.signInWithGoogleCredential(credential)
 
-                        Toast.makeText(context, "Bienvenido $user", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Bienvenido", Toast.LENGTH_SHORT).show()
                         navHostController.navigate(NavigationRoutes.MapScreen.route) {
                             popUpTo(NavigationRoutes.MapScreen.route) {
                                 inclusive = true
