@@ -146,7 +146,7 @@ fun LoginScreen(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.padding(10.dp))
                     TextFieldPassword(
                         tittle = "Contraseña",
-                        placeholder = "ej: Pepito18",
+                        placeholder = "******",
                     ) { password ->
                         loginViewModel.setPassword(password)
                     }

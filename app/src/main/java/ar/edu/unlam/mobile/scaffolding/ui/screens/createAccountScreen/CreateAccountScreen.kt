@@ -73,8 +73,8 @@ fun CreateAccountScreen(navHostController: NavHostController) {
             )
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldOwn(
-                tittle = "Nombre",
-                placeholder = "nombre",
+                tittle = "Usuario",
+                placeholder = "usuario",
             ) { name ->
                 createAccountVM.setName(name)
             }
