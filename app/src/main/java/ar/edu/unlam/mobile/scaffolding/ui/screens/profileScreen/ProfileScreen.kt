@@ -77,7 +77,7 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = "Publicaciones",
+            text = "Tus publicaciones",
             fontWeight = FontWeight.Bold,
         )
 
