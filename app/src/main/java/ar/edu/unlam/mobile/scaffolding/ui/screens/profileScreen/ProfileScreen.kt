@@ -83,7 +83,7 @@ fun ProfileScreen(
         )
 
         LazyColumn(modifier = Modifier.weight(1f)) {
-            items(userPublications) { publication ->
+            items(viewModel.publications.value) { publication ->
                 PublicationCellEdit(
                     post = publication,
                     onClick = {
@@ -112,8 +112,8 @@ fun ProfileScreen(
                     },
                     onDeleteClick = {
                         userProfile?.let { profile ->
-                            viewModel.deletePublication(publicationId, profile.userId)
-                            viewModel.deletePublicationInAllPublications(publicationId)
+                            viewModel.deletePublication(publication.id, profile.userId)
+                            viewModel.deletePublicationInAllPublications(publication.id)
                         }
                     },
                 )
