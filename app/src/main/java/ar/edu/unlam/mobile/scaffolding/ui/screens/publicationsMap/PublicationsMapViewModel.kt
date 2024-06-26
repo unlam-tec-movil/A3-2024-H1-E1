@@ -47,6 +47,7 @@ class PublicationsMapViewModel
         fun handle(event: PermissionEvent) {
             when (event) {
                 is PermissionEvent.Granted -> {
+                    _viewState.value = ViewState.Loading
                     viewModelScope.launch {
                         getLocationUseCase.invoke().collect { location ->
                             _viewState.value = ViewState.Success(location)
