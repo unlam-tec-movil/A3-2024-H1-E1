@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import android.util.Log
@@ -475,19 +476,32 @@ class PublicationEditViewModel
             withContext(Dispatchers.IO) {
                 try {
                     val geocoder = Geocoder(context)
-                    geocoder.getFromLocationName(address, 1) { addresses ->
-                        if (addresses.isNotEmpty()) {
-                            val location = addresses[0]
-                            _geocodedLocation.value = LatLng(location.latitude, location.longitude)
-                            Log.d(
-                                "PublicationEditViewModel",
-                                "Geocoded location: ${_geocodedLocation.value}",
-                            )
-                        } else {
-                            _geocodedLocation.value = null
-                            Log.d("PublicationEditViewModel", "Geocoded location is null")
-                        }
+                    val addresses: MutableList<Address>? = geocoder.getFromLocationName(address, 1)
+                    if (addresses != null && addresses.isNotEmpty()) {
+                        val location = addresses[0]
+                        _geocodedLocation.value = LatLng(location.latitude, location.longitude)
+                        Log.d(
+                            "PublicationEditViewModel",
+                            "Geocoded location: ${_geocodedLocation.value}",
+                        )
+                    } else {
+                        _geocodedLocation.value = null
+                        Log.d("PublicationEditViewModel", "Geocoded location is null")
                     }
+// / For later implementation this would be the way to do it
+//                    geocoder.getFromLocationName(address, 1) { addresses ->
+//                        if (addresses.isNotEmpty()) {
+//                            val location = addresses[0]
+//                            _geocodedLocation.value = LatLng(location.latitude, location.longitude)
+//                            Log.d(
+//                                "PublicationEditViewModel",
+//                                "Geocoded location: ${_geocodedLocation.value}",
+//                            )
+//                        } else {
+//                            _geocodedLocation.value = null
+//                            Log.d("PublicationEditViewModel", "Geocoded location is null")
+//                        }
+//                    }
                 } catch (e: Exception) {
                     Log.e("PublicationEditViewModel", "Failed to geocode address", e)
                 }
