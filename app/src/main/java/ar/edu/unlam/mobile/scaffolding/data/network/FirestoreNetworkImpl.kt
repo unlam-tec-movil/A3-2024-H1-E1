@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.network
 
+import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.domain.models.PostWithImages
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,7 +18,8 @@ class FirestoreNetworkImpl
             flow {
                 try {
                     val documentSnapshot =
-                        firebaseFirestore.collection("publications")
+                        firebaseFirestore
+                            .collection("publications")
                             .document("AllPublications")
                             .get()
                             .await()
@@ -55,7 +57,8 @@ class FirestoreNetworkImpl
             flow {
                 try {
                     val documentSnapshot =
-                        firebaseFirestore.collection("users")
+                        firebaseFirestore
+                            .collection("users")
                             .document(idUser)
                             .get()
                             .await()
@@ -93,7 +96,8 @@ class FirestoreNetworkImpl
                 try {
                     // Obtiene el documento de todas las publicaciones
                     val documentSnapshot =
-                        firebaseFirestore.collection("publications")
+                        firebaseFirestore
+                            .collection("publications")
                             .document("AllPublications")
                             .get()
                             .await()
@@ -194,7 +198,8 @@ class FirestoreNetworkImpl
                 try {
                     // Obtiene el documento del usuario
                     val documentSnapshot =
-                        firebaseFirestore.collection("users")
+                        firebaseFirestore
+                            .collection("users")
                             .document(idUser)
                             .get()
                             .await()
@@ -228,7 +233,8 @@ class FirestoreNetworkImpl
                         }
 
                     // Actualiza el documento del usuario con la lista de publicaciones actualizada
-                    firebaseFirestore.collection("users")
+                    firebaseFirestore
+                        .collection("users")
                         .document(idUser)
                         .update("publications", updatedPublications)
                         .await()
@@ -249,7 +255,8 @@ class FirestoreNetworkImpl
                 try {
                     // Obtiene el documento de todas las publicaciones
                     val documentSnapshot =
-                        firebaseFirestore.collection("publications")
+                        firebaseFirestore
+                            .collection("publications")
                             .document("AllPublications")
                             .get()
                             .await()
@@ -283,7 +290,8 @@ class FirestoreNetworkImpl
                         }
 
                     // Actualiza el documento de todas las publicaciones con la lista actualizada
-                    firebaseFirestore.collection("publications")
+                    firebaseFirestore
+                        .collection("publications")
                         .document("AllPublications")
                         .update("AllPublications", updatedPublications)
                         .await()
@@ -304,7 +312,8 @@ class FirestoreNetworkImpl
                 try {
                     // Obtiene el documento del usuario
                     val documentSnapshot =
-                        firebaseFirestore.collection("users")
+                        firebaseFirestore
+                            .collection("users")
                             .document(idUser)
                             .get()
                             .await()
@@ -315,11 +324,18 @@ class FirestoreNetworkImpl
                     // Filtra las publicaciones para eliminar la que coincida con idPublication
                     val updatedPublications =
                         publications.filterNot { publicationData ->
-                            publicationData["id"] == idPublication
+                            val publicationId = publicationData["id"].toString()
+                            Log.d("deletePublicationForUser", "Comparando: $publicationId con $idPublication")
+                            publicationId == idPublication
                         }
-
+                    if (publications.size == updatedPublications.size) {
+                        Log.e("deletePublicationForUser", "La publicación con ID $idPublication no fue encontrada")
+                        emit(false)
+                        return@flow
+                    }
                     // Actualiza el documento del usuario con la lista de publicaciones actualizada
-                    firebaseFirestore.collection("users")
+                    firebaseFirestore
+                        .collection("users")
                         .document(idUser)
                         .update("publications", updatedPublications)
                         .await()
@@ -337,7 +353,8 @@ class FirestoreNetworkImpl
                 try {
                     // Obtiene el documento de todas las publicaciones
                     val documentSnapshot =
-                        firebaseFirestore.collection("publications")
+                        firebaseFirestore
+                            .collection("publications")
                             .document("AllPublications")
                             .get()
                             .await()
@@ -348,11 +365,12 @@ class FirestoreNetworkImpl
                     // Filtra las publicaciones para eliminar la que coincida con idPublication
                     val updatedPublications =
                         allPublications.filterNot { publicationData ->
-                            publicationData["id"] == idPublication
+                            publicationData["id"].toString() == idPublication
                         }
 
                     // Actualiza el documento de todas las publicaciones con la lista actualizada
-                    firebaseFirestore.collection("publications")
+                    firebaseFirestore
+                        .collection("publications")
                         .document("AllPublications")
                         .update("AllPublications", updatedPublications)
                         .await()

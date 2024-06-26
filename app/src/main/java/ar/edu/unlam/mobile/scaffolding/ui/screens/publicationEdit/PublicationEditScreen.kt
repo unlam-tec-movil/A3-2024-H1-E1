@@ -369,7 +369,7 @@ fun PublicationEditScreen(
                                         if (viewModel.publicationUiState.value is PublicationUiState.Success) {
                                             controller.navigate(
                                                 NavigationRoutes.PublicationScreen.withPublicationId(
-                                                    idPublication!!,
+                                                    viewModel.id.value,
                                                 ),
                                             ) {
                                                 if (viewModel.isEditing.value) {
@@ -393,7 +393,11 @@ fun PublicationEditScreen(
                                                 NavigationRoutes.PublicationScreen.withPublicationId(
                                                     viewModel.id.value,
                                                 ),
-                                            )
+                                            ) {
+                                                popUpTo(NavigationRoutes.MapScreen.route) {
+                                                    inclusive = false
+                                                }
+                                            }
                                         }
                                     }
                                 }

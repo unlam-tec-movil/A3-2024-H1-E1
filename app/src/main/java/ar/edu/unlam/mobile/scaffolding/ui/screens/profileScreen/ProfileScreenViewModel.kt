@@ -68,7 +68,8 @@ class ProfileScreenViewModel
         fun fetchPublications(userId: String) {
             viewModelScope.launch {
                 try {
-                    firestoreService.getPublicationsByUserId(userId)
+                    firestoreService
+                        .getPublicationsByUserId(userId)
                         .collect { posts ->
                             _publications.value = posts
                         }
@@ -83,29 +84,29 @@ class ProfileScreenViewModel
             userId: String,
         ) {
             viewModelScope.launch {
-                firestoreService.deletePublicationForUser(userId, publicationId)
+                firestoreService
+                    .deletePublicationForUser(userId, publicationId)
                     .catch { e ->
                         _deleteSuccess.value = false
                         e.printStackTrace()
-                    }
-                    .collect { success ->
+                    }.collect { success ->
                         _deleteSuccess.value = success
-                        if (success) {
-                            fetchPublications(userId)
-                        }
+                        fetchPublications(userId)
+                        Log.d("ProfileScreenViewModel", "Publication deleted: $success")
                     }
             }
         }
 
         fun deletePublicationInAllPublications(publicationId: String) {
             viewModelScope.launch {
-                firestoreService.deletePublicationInAllPublications(publicationId)
+                firestoreService
+                    .deletePublicationInAllPublications(publicationId)
                     .catch { e ->
                         // Manejar errores si es necesario
                         e.printStackTrace()
-                    }
-                    .collect { success ->
+                    }.collect { success ->
                         _deleteSuccess.value = success
+                        Log.d("ProfileScreenViewModel", "Publication deleted in all publications: $success")
                     }
             }
         }
