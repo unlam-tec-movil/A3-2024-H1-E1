@@ -45,8 +45,7 @@ fun TextFieldOwn(
             },
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .border(3.dp, BlueMarine, RoundedCornerShape(10.dp)),
+                    .fillMaxWidth(),
             placeholder = {
                 Text(
                     text = placeholder,

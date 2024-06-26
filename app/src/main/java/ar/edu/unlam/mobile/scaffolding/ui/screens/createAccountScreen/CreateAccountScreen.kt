@@ -33,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldOwn
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldPassword
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
-import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueMarine
+import ar.edu.unlam.mobile.scaffolding.ui.theme.ArenaDark
 
 @Composable
 fun CreateAccountScreen(navHostController: NavHostController) {
@@ -73,8 +73,8 @@ fun CreateAccountScreen(navHostController: NavHostController) {
             )
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldOwn(
-                tittle = "Name",
-                placeholder = "name",
+                tittle = "Nombre",
+                placeholder = "nombre",
             ) { name ->
                 createAccountVM.setName(name)
             }
@@ -88,8 +88,8 @@ fun CreateAccountScreen(navHostController: NavHostController) {
             }
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldPassword(
-                tittle = "Password",
-                placeholder = "password",
+                tittle = "Contraseña",
+                placeholder = "Pepito18",
             ) { password ->
                 // manejamos el resultado de la contraseña aca
                 createAccountVM.setPassword(password)
@@ -116,7 +116,7 @@ fun CreateAccountScreen(navHostController: NavHostController) {
                 Modifier
                     .fillMaxWidth()
                     .padding(top = 35.dp, bottom = 5.dp),
-            containerColor = BlueMarine,
+            containerColor = ArenaDark,
         ) {
             Text(
                 text = "Crear cuenta",
