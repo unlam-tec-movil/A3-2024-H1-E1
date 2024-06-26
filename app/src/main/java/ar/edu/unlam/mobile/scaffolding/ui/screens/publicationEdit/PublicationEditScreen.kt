@@ -144,11 +144,12 @@ fun PublicationEditScreen(
                     if (bitmap != null) {
                         if (imageBitmapList.size == 3) {
                             // /solo vamos a dejar que suba 3 imagenes
-                            Toast.makeText(
-                                context,
-                                "Solo se permite subir 3 imagenes",
-                                Toast.LENGTH_LONG,
-                            ).show()
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Solo se permite subir 3 imagenes",
+                                    Toast.LENGTH_LONG,
+                                ).show()
                         } else {
                             viewModel.addImage(bitmap)
                         }
@@ -231,7 +232,7 @@ fun PublicationEditScreen(
                 }
                 // /textField para el titulo
                 TextFieldComponent(
-                    title = "titulo",
+                    title = "Titulo",
                     value = viewModel.title.value,
                     onValueChange = { viewModel.setTitle(it) },
                     placeholder = "Ingrese el titulo",

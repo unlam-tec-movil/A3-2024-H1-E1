@@ -42,7 +42,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.LoadingComponent
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldOwn
 import ar.edu.unlam.mobile.scaffolding.ui.components.TextFieldPassword
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationRoutes
-import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueMarine
+import ar.edu.unlam.mobile.scaffolding.ui.theme.ArenaDark
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -67,7 +67,8 @@ fun LoginScreen(navHostController: NavHostController) {
                     )
             ) {
                 is AuthRes.Error -> {
-                    Toast.makeText(context, "Error: ${account.errorMessage}", Toast.LENGTH_SHORT)
+                    Toast
+                        .makeText(context, "Error: ${account.errorMessage}", Toast.LENGTH_SHORT)
                         .show()
                 }
 
@@ -144,8 +145,8 @@ fun LoginScreen(navHostController: NavHostController) {
                     }
                     Spacer(modifier = Modifier.padding(10.dp))
                     TextFieldPassword(
-                        tittle = "Password",
-                        placeholder = "password",
+                        tittle = "Contraseña",
+                        placeholder = "******",
                     ) { password ->
                         loginViewModel.setPassword(password)
                     }
@@ -185,18 +186,19 @@ fun LoginScreen(navHostController: NavHostController) {
                             loginViewModel.sigInWithEmailAndPassword()
                             navHostController.navigate(NavigationRoutes.MapScreen.route)
                         } else {
-                            Toast.makeText(
-                                context,
-                                "email o contraseña incorrecto",
-                                Toast.LENGTH_LONG,
-                            ).show()
+                            Toast
+                                .makeText(
+                                    context,
+                                    "email o contraseña incorrecto",
+                                    Toast.LENGTH_LONG,
+                                ).show()
                         }
                     },
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .padding(top = 35.dp, bottom = 5.dp),
-                    containerColor = BlueMarine,
+                    containerColor = ArenaDark,
                 ) {
                     Text(
                         text = "iniciar sesion",
@@ -226,8 +228,6 @@ fun LoginScreen(navHostController: NavHostController) {
         is LoginUiState.Error -> {
             Toast.makeText(context, "Failed login", Toast.LENGTH_SHORT).show()
         }
-
-        else -> {}
     }
 }
 
