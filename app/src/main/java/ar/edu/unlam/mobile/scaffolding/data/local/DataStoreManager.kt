@@ -51,6 +51,7 @@ object DataStoreManager {
         val NOTIFICATION_ENABLED = booleanPreferencesKey("notifications_enabled")
         val LAST_LOGIN_TIMESTAMP = longPreferencesKey("last_login_timestamp")
         val SHOW_TOOLTIP = booleanPreferencesKey("show_tooltip")
+        val HAS_REQUESTED_LOCATION_PERMISSIONS = booleanPreferencesKey("has_requested_location_permissions")
         // Add other keys as needed
     }
 }
