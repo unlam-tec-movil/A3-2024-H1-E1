@@ -6,10 +6,8 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.location.Address
 import android.location.Geocoder
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -470,7 +468,6 @@ class PublicationEditViewModel
             }
         }
 
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         suspend fun geocodeAddress(address: String) {
             Log.d("PublicationEditViewModel", "Geocoding address: $address")
             withContext(Dispatchers.IO) {
