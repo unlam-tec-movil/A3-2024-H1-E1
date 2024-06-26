@@ -42,13 +42,13 @@ fun PublicationCellEdit(
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 )
             },
-            supportingContent = {
-                Text(
-                    text = post.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            },
+//            supportingContent = {
+//                Text(
+//                    text = post.description,
+//                    style = MaterialTheme.typography.bodySmall,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                )
+//            },
             leadingContent = {
                 val imagePainter =
                     if (post.images.isNotEmpty()) {

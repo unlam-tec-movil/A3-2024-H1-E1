@@ -60,7 +60,6 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(text = "User Profile")
                 Spacer(modifier = Modifier.height(50.dp))
                 Image(
                     painter = rememberImagePainter(data = profile.photoUrl),
@@ -73,12 +72,12 @@ fun ProfileScreen(
                 )
                 Text(text = "  ${profile.displayName}")
             }
-        } ?: Text("Profile is loading...")
+        } ?: Text("El perfil esta cargando")
 
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = "Publications",
+            text = "Publicaciones",
             fontWeight = FontWeight.Bold,
         )
 
