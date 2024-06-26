@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -99,6 +101,7 @@ fun LoginScreen(navHostController: NavHostController) {
         composition = composition,
         iterations = LottieConstants.IterateForever,
     )
+    val scrollState = rememberScrollState()
     when (loginViewModel.loginUiState.value) {
         is LoginUiState.Loading -> {
             LoadingComponent()
@@ -109,6 +112,7 @@ fun LoginScreen(navHostController: NavHostController) {
                 modifier =
                     Modifier
                         .fillMaxSize()
+                        .verticalScroll(scrollState)
                         .padding(horizontal = 25.dp, vertical = 20.dp),
             ) {
                 Box(
