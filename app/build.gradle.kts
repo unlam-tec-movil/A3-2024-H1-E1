@@ -153,6 +153,10 @@ dependencies {
     testImplementation("androidx.arch.core:core-testing:2.1.0")
     testImplementation("io.mockk:mockk:1.12.0")
 
+    // Espresso
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.4.0")
+
     // coil
     implementation("io.coil-kt:coil-compose:1.4.0")
 }
