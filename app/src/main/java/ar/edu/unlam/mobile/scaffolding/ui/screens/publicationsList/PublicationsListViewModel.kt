@@ -27,7 +27,9 @@ sealed interface PublicationsState {
     data object Loading : PublicationsState
 }
 
-data class PublicationsUiState(val publicationsState: PublicationsState = PublicationsState.Loading)
+data class PublicationsUiState(
+    val publicationsState: PublicationsState = PublicationsState.Loading,
+)
 
 @HiltViewModel
 class PublicationsListViewModel
@@ -49,13 +51,13 @@ class PublicationsListViewModel
 
         init {
             // nuestra publicacion debe obtener todas las
-
             getPublications()
         }
 
         private fun getPublications() {
             viewModelScope.launch {
-                firestoreService.getAllPublications()
+                firestoreService
+                    .getAllPublications()
                     .map { postWithImageList ->
                         postWithImageList.map {
                             PublicationCellModel(
