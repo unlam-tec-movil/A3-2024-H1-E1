@@ -32,7 +32,7 @@ class PublicationsListViewModelTest {
         }
 
     @Test
-    fun initialStateIsLoading() =
+    fun stateIsSuccessWhenPublicationsAreFetched() =
         runTest {
             // Given
             `when`(firestoreService.getAllPublications()).thenReturn(mockGetAllFlow())
@@ -43,8 +43,4 @@ class PublicationsListViewModelTest {
             // Then
             assertEquals(expected, actual)
         }
-
-    @Test
-    fun stateIsSuccessWhenPublicationsAreFetched() {
-    }
 }

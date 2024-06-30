@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding
+package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import android.content.Intent
 import androidx.test.espresso.intent.Intents
