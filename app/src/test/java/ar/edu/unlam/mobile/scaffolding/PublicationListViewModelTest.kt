@@ -72,7 +72,7 @@ class PublicationListViewModelTest {
             coEvery { firestoreService.getAllPublications() } returns flow { emit(publicationList) }
 
             viewModel.publications.value
-            
+
             assertEquals(PublicationsState.Loading, viewModel.uiState.value.publicationsState)
 
             advanceUntilIdle() //avanza el tiempo de la coroutine
