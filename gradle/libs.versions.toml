@@ -1,9 +1,12 @@
 [versions]
+coilComposeVersion = "1.4.0"
+coreTesting = "2.1.0"
 junitJupiterApi = "5.8.2"
 junitJupiterEngine = "5.8.2"
 agp = "8.4.1"
 kotlin = "1.9.23"
 coreKtx = "1.12.0"
+mockk = "1.12.0"
 testCore = "1.5.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -50,7 +53,9 @@ mockitoVersion = "5.3.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+coil-compose-v140 = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -109,6 +114,7 @@ androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose-desktop = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-desktop", version.ref = "lifecycleRuntimeComposeDesktop" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-test-core = {group = "androidx.test",name = "core",version.ref="testCore"}
 org-mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoVersion" }
