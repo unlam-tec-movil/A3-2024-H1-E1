@@ -95,6 +95,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.androidx.test.core)
+    debugImplementation(libs.org.mockito.kotlin)
 
     // Map
     implementation(libs.google.maps)
