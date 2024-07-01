@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.publicationsList
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -85,7 +84,7 @@ class PublicationsListViewModel
         fun filterPublicationByTittle(query: String) {
             _publicationFilter.value =
                 _publications.value.filter { it.title.contains(query, ignoreCase = true) }
-            Log.d("PublicationsListViewModel", "Filtered by title: ${_publicationFilter.value}")
+//            Log.d("PublicationsListViewModel", "Filtered by title: ${_publicationFilter.value}")
         }
 
         fun applyFilters(filters: FilterSettings) {
@@ -104,16 +103,16 @@ class PublicationsListViewModel
                     val dateMatch =
                         filters.selectedDateLost.isEmpty() || publication.dateLost == filters.selectedDateLost
 
-                    Log.d("PublicationsListViewModel", "Checking publication: $publication")
-                    Log.d("PublicationsListViewModel", "Species match: $speciesMatch")
-                    Log.d("PublicationsListViewModel", "Type match: $typeMatch")
-                    Log.d("PublicationsListViewModel", "Distance match: $distanceMatch")
-                    Log.d("PublicationsListViewModel", "Date match: $dateMatch")
+//                    Log.d("PublicationsListViewModel", "Checking publication: $publication")
+//                    Log.d("PublicationsListViewModel", "Species match: $speciesMatch")
+//                    Log.d("PublicationsListViewModel", "Type match: $typeMatch")
+//                    Log.d("PublicationsListViewModel", "Distance match: $distanceMatch")
+//                    Log.d("PublicationsListViewModel", "Date match: $dateMatch")
 
                     speciesMatch && typeMatch && distanceMatch && dateMatch
                 }
 
-            Log.d("PublicationsListViewModel", "Filtered publications: ${_publicationFilter.value}")
+//            Log.d("PublicationsListViewModel", "Filtered publications: ${_publicationFilter.value}")
         }
 
         private fun applyCurrentFilters() {
