@@ -1,7 +1,5 @@
 import java.util.Properties
 
-
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -101,7 +99,7 @@ dependencies {
     implementation(libs.google.maps)
     implementation(libs.google.play.services.location)
     implementation(libs.google.play.services.maps)
-    // Permisions
+    // Permissions
     implementation(libs.accompanistPermissions)
     // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
@@ -151,6 +149,9 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     debugImplementation(libs.androidx.test.core)
 
-    // coil
-    implementation("io.coil-kt:coil-compose:1.4.0")
+    testImplementation(libs.androidx.core.testing)
+
+    // Espresso
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
 }
