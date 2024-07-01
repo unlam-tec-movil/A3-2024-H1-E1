@@ -149,7 +149,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     debugImplementation(libs.androidx.test.core)
-
     // coil
     implementation("io.coil-kt:coil-compose:1.4.0")
 }
