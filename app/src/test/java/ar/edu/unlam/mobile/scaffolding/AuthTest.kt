@@ -84,28 +84,4 @@ class AuthRepositoryTest {
 
             assertEquals(user, response)
         }
-
-    /*
-    @Test
-    fun createSignInWithEmailAndPasswordIsError() =
-        runTest {
-            val name = "Isaias"
-            val email = "john.mclean@examplepetstore.com"
-            val password = "123456"
-
-            val authResult: Task<AuthResult> = Mockito.mock(Task::class.java) as Task<AuthResult>
-            val mockAuthResult: AuthResult = Mockito.mock(AuthResult::class.java)
-            val firebaseUser: FirebaseUser = Mockito.mock(FirebaseUser::class.java)
-
-            launch {
-                `when`(firebaseAuth.createUserWithEmailAndPassword(email, password)).thenReturn(authResult)
-                `when`(authResult.result).thenReturn(mockAuthResult)
-                `when`(mockAuthResult.user).thenReturn(firebaseUser)
-            }
-            // /mi problema es que authNetwork tiene una instancia de firebase , y aca lo estoy mockeando por eso me da siempre error
-            val response = authNetworktImp.createUserWithEmailAndPassword(name, email, password)
-            assert(response is AuthRes.Error)
-        }
-
-     */
 }
