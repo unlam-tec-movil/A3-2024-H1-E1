@@ -46,6 +46,7 @@ lifecycleRuntimeComposeAndroid = "2.8.1"
 lifecycleRuntimeComposeDesktop = "2.8.2"
 
 mockitoVersion = "5.3.1"
+navigationTesting = "2.7.7"
 
 
 [libraries]
@@ -112,6 +113,7 @@ mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito
 ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-test-core = {group = "androidx.test",name = "core",version.ref="testCore"}
 org-mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoVersion" }
+androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigationTesting" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
