@@ -45,6 +45,8 @@ lottieVer = "6.1.0"
 lifecycleRuntimeComposeAndroid = "2.8.1"
 lifecycleRuntimeComposeDesktop = "2.8.2"
 
+mockitoVersion = "5.3.1"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -109,6 +111,7 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-test-core = {group = "androidx.test",name = "core",version.ref="testCore"}
+org-mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

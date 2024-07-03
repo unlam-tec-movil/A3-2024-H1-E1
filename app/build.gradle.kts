@@ -95,6 +95,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.androidx.test.core)
+    debugImplementation(libs.org.mockito.kotlin)
 
     // Map
     implementation(libs.google.maps)
@@ -149,6 +150,9 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     debugImplementation(libs.androidx.test.core)
+    testImplementation("androidx.arch.core:core-testing:2.1.0")
+    testImplementation("io.mockk:mockk:1.12.0")
+
     // coil
     implementation("io.coil-kt:coil-compose:1.4.0")
 }
