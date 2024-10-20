@@ -1,10 +1,18 @@
 [versions]
-agp = "8.3.2"
+coilComposeVersion = "1.4.0"
+coreTesting = "2.1.0"
+junitJupiterApi = "5.8.2"
+junitJupiterEngine = "5.8.2"
+agp = "8.4.1"
 kotlin = "1.9.23"
 coreKtx = "1.12.0"
+mockk = "1.12.0"
+testCore = "1.5.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
+kotlinxCoroutinesTest = "1.6.1"
+kotlinTestJunit = "1.6.10"
 lifecycleRuntimeKtx = "2.7.0"
 activityCompose = "1.8.2"
 composeBom = "2024.04.00"
@@ -13,9 +21,42 @@ ksp = "1.9.23-1.0.20"
 androidXHilt = "1.2.0"
 kover = "0.7.6"
 ktlint = "12.1.0"
+googleMaps = "4.3.3"
+dataStore = "1.1.1"
+accompanistPager = "0.20.0"
+androidxComposeUiUtil = "1.6.7"
+coilCompose = "2.4.0"
+firebaseCommonKtx = "21.0.0"
+authFirebase = "22.3.1"
+mockitoCore = "4.3.1"
+mockitoInline = "4.3.1"
+runner = "1.5.2"
+serviceAuth = "21.1.0"
+firebase = "33.0.0"
+coroutineAndroid= "1.7.3"
+googleService = "4.4.1"
+playServicesLocation = "21.3.0"
+playServicesMaps = "18.2.0"
+mapsPlatform = "2.0.1"
+accompanistPermissions = "0.20.0"
+lifecycleRuntimeCompose = "2.8.1"
+runtimeLivedata = "1.6.7"
+cameraX = "1.3.0-rc01"
+storage = "20.3.0"
+firestore= "25.0.0"
+lottieVer = "6.1.0"
+lifecycleRuntimeComposeAndroid = "2.8.1"
+lifecycleRuntimeComposeDesktop = "2.8.2"
+
+mockitoVersion = "5.3.1"
+navigationTesting = "2.7.7"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+coil-compose-v140 = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -30,11 +71,55 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidXHilt" }
+google-maps = { group = "com.google.maps.android", name = "maps-compose", version.ref = "googleMaps" }
+google-play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+google-play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+accompanistPermissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
+lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStore" }
+androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "dataStore" }
 
+accompanist-pager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanistPager" }
+androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util", version.ref = "androidxComposeUiUtil" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 
 google-dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 google-dagger-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 google-dagger-hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "dagger" }
+firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
+firebase-auth = {group = "com.google.firebase",name = "firebase-auth-ktx",version.ref = "authFirebase"}
+google-play-service = {group = "com.google.android.gms",name = "play-services-auth",version.ref = "serviceAuth"}
+firebase = {group = "com.google.firebase",name = "firebase-bom",version.ref = "firebase"}
+coroutine-android = {group  = "org.jetbrains.kotlin",name = "kotlinx-coroutines-android",version.ref = "coroutineAndroid" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlinTestJunit" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+lifecycleViewModel = {group = "androidx.lifecycle",name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+
+
+
+firebase-storage = {group = "com.google.firebase",name = "firebase-storage-ktx",version.ref = "storage"}
+firebase-firestore = {group = "com.google.firebase",name = "firebase-firestore",version.ref = "firestore"}
+lottie-compose = {group = "com.airbnb.android",name = "lottie-compose",version.ref = "lottieVer"}
+
+cameraCore = { group = "androidx.camera", name = "camera-core", version.ref = "cameraX" }
+cameraCamera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraX" }
+cameraLifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraX" }
+cameraVideo = { group = "androidx.camera", name = "camera-video", version.ref = "cameraX" }
+cameraView = { group = "androidx.camera", name = "camera-view", version.ref = "cameraX" }
+cameraExtensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "cameraX" }
+androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
+androidx-lifecycle-runtime-compose-desktop = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-desktop", version.ref = "lifecycleRuntimeComposeDesktop" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+androidx-test-core = {group = "androidx.test",name = "core",version.ref="testCore"}
+org-mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoVersion" }
+androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigationTesting" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -43,3 +128,7 @@ daggerHiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "dagg
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover"}
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+google-service = {id = "com.google.gms.google-services",version.ref="googleService"}
+maps-platform = {id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin",version.ref="mapsPlatform"}
+
+

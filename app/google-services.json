@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "71136976485",
+    "project_id": "scaffolding-h1",
+    "storage_bucket": "scaffolding-h1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71136976485:android:bf3353de17e6f83c4e708c",
+        "android_client_info": {
+          "package_name": "ar.edu.unlam.mobile.scaffolding"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71136976485-gi9d30898thfm6o2kgfis0tp63qro3ad.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ar.edu.unlam.mobile.scaffolding",
+            "certificate_hash": "77ab2dc5686366d9be3b41d4f1dac98613d11cfd"
+          }
+        },
+        {
+          "client_id": "71136976485-s3dodbdvn5n0c48q2v7mhs9gbupd1j69.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6Rg34X-_Efk2Zpky29zgSnC47Y2CvqL4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71136976485-s3dodbdvn5n0c48q2v7mhs9gbupd1j69.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
